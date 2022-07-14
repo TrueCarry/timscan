@@ -34,8 +34,10 @@
 <script>
 // import Vue from 'vue'
 import {SmartContract} from "~/ton-contract-executor/src";
-import ValueWrapper from './ValueWrapper.tsx';
+import ValueWrapper from './ValueWrapper.tsx'; 
 import { isProxy, toRaw } from 'vue';
+import {LiteClient, LiteSingleEngine, LiteRoundRobinEngine} from '../../../ton-lite-client/src/index'
+import axios from 'axios';
 
 const abiNft = {
   methods: {
@@ -120,6 +122,32 @@ export default {
     }
   },
 
+  async mounted () {
+    const configUrl =
+      process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/global.config.json'
+
+    const { data } = await axios(configUrl)
+
+    const engines = []
+    // while (engines.length < 50) {
+      for (const ls of data.liteservers.slice(0, 1)) {
+        engines.push(
+          new LiteSingleEngine({
+            host: intToIP(ls.ip),
+            port: ls.port,
+            publicKey: Buffer.from(ls.id.key, 'base64'),
+          })
+        )
+      }
+    // }
+
+      const engine = new LiteRoundRobinEngine(engines)
+      const liteClient = new LiteClient({ engine })
+      console.log('lite', liteClient)
+      const info  = await liteClient.getMasterchainInfo()
+      console.log('info', info)
+  },
+
   watch: {
     async code () {
       console.log('async code')
@@ -177,4 +205,14 @@ export default {
     }
   }
 }
+
+function intToIP(int) {  
+  const part1 = int & 255
+  const part2 = (int >> 8) & 255
+  const part3 = (int >> 16) & 255
+  const part4 = (int >> 24) & 255
+
+  return `${part4}.${part3}.${part2}.${part1}`
+}
+
 </script>
