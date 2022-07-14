@@ -56,11 +56,13 @@ export const getAddressInfo = async function (address) {
  * @return {Promise<Array>}
  */
 export const getTransactions = async function (address, lt, hash, limit = 50) {
-    const query = { address, lt, limit,
+    const query = { 
+        address, lt, limit,
         hash: base64ToHex(hash),
+        api_key: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992'
     };
 
-    const { data: { result }} = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query });
+    const { data: { result }} = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query,  });
 
     return result.map((tx) => {
         const is_service = !tx.in_msg && tx.out_msgs.length < 1;
@@ -106,9 +108,9 @@ export const getTransaction = async function ({ address, lt, hash, to_lt }) {
         hash: base64ToHex(hash),
     };
 
-    const { data: { result }} = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query });
+    const { data: { result }} = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query, apiKey: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992' });
 
-    return Object.freeze(result.find(tx => tx.transaction_id?.hash == hash));
+    return Object.freeze(result.find(tx => tx.transaction_id?.hash == hash)); 
 };
 
 /**

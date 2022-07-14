@@ -1,5 +1,5 @@
 <template>
-    <span class="ui-copy" v-clipboard:copy="copy" v-clipboard:success="addressCopied">
+    <span class="ui-copy" >
         <slot/>
 
         <span v-if="showButton">
@@ -42,10 +42,10 @@ export default {
 
     methods: {
         addressCopied() {
-            this.$bus.$emit('showToast', this.successMessage);
+            // this.$bus.$emit('showToast', this.successMessage);
 
-            this.successVisible = true;
-            setTimeout(() => this.successVisible = false, 1800);
+            // this.successVisible = true;
+            // setTimeout(() => this.successVisible = false, 1800);
         },
     },
 };

@@ -63,10 +63,12 @@
 
                 <div v-if="contractTypeVisible" class="card-row">
                     <div class="card-row__name" v-text="$t('address.info.contract_type')"/>
+
                     <div v-if="!contractExtendedInfo" class="card-row__value">
                         <span v-if="wallet.wallet_type" v-text="wallet.wallet_type"/>
                         <span v-else class="skeleton">wallet v123</span>
                     </div>
+                    
                     <div v-else class="card-row__value">
                         <router-link
                             v-if="contractExtendedInfo.type === 'collection'"
@@ -74,7 +76,7 @@
                             v-text="'NFT Collection'"/>
 
                         <router-link
-                            v-else-if="contractExtendedInfo.type === 'item'"
+                            v-else-if="contractExtendedInfo.type === 'nft_item'"
                             v-bind:to="{ name: 'nft', params: { address, skeletonHint: 'item' }}"
                             v-text="'NFT Item'"/>
 
@@ -82,6 +84,8 @@
                     </div>
                 </div>
             </div>
+
+            <ContractInfo :code="code" :data="data" />
 
             <div class="card">
                 <div v-if="emptyHistory" class="tx-history-empty-panel" v-text="$t('address.tx_table.empty')"/>
@@ -122,16 +126,16 @@
                     </table>
                 </div>
 
-                <mugen-scroll v-bind:handler="loadMore" v-bind:should-handle="shouldHandleScroll" style="display: flex;">
+                <!-- <mugen-scroll v-bind:handler="loadMore" v-bind:should-handle="shouldHandleScroll" style="display: flex;">
                     <div v-on:click="loadMore" class="tx-table-loader-button" v-show="showPreloader">
                         <span v-if="isLoading" v-text="$t('address.tx_table.loader_loading')"/>
                         <span v-else v-text="$t('address.tx_table.loader')"/>
                     </div>
-                </mugen-scroll>
+                </mugen-scroll> -->
             </div>
         </section>
 
-        <ui-modal class="qr-modal" v-bind:isOpen.sync="qrModalVisible">
+        <ui-modal class="qr-modal" :isOpen="qrModalVisible">
             <qr-code class="qr-modal__layer" level="H" render-as="svg" foreground="#111"
                 v-bind:value="`ton://transfer/${address}`"
                 v-bind:size="300"/>
@@ -149,8 +153,11 @@ import QrCode from 'qrcode.vue';
 import TxRowSkeleton from './TxRowSkeleton.vue';
 import TxRow from './TxRow.vue';
 import { getAddressInfo, getTransactions } from '~/api.js';
-import MugenScroll from 'vue-mugen-scroll';
+// import MugenScroll from 'vue-mugen-scroll';
 import { checkAddress } from '~/nft.js';
+import {Address, Cell, TonClient} from "ton/src";
+import {SmartContract} from "~/ton-contract-executor/src";
+import ContractInfo from './ContractInfo.vue';
 
 export default {
     props: {
@@ -171,6 +178,9 @@ export default {
             emptyHistory: false,
             qrModalVisible: false,
             contractExtendedInfo: undefined,
+
+            code: {},
+            data: {},
         };
     },
 
@@ -196,6 +206,30 @@ export default {
 
     created() {
         this.loadData();
+    },
+
+    async mounted () {
+        const contractAddress = Address.parse(this.address)
+        let client = new TonClient({
+             endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC'    ,
+         apiKey: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992',
+        })
+
+        let state = await client.getContractState(contractAddress)
+
+        let code = Cell.fromBoc(state.code)[0]
+        let data = Cell.fromBoc(state.data)[0]
+
+        console.log('hash', code.hash().toString('hex'))
+
+        this.code = code
+        this.data = data
+
+        // let wallet = await SmartContract.fromCell(code, data)
+
+        // let res = await wallet.invokeGetMethod('get_nft_data', [])
+        
+        // console.log('Wallet seq is: ', res, res.result[2].readAddress().toString(), res.result[3].readAddress().toString())
     },
 
     methods: {
@@ -231,6 +265,9 @@ export default {
             if (this.wallet.wallet_type == 'Unknown') {
                 checkAddress(this.address)
                     .then((nftInfo) => this.contractExtendedInfo = nftInfo)
+                    .then(() => {
+                        console.log('got ext ifno', this.contractExtendedInfo)
+                    })
                     .catch(e => void e);
             }
         },
@@ -255,7 +292,8 @@ export default {
     },
 
     components: {
-        TxRow, TxRowSkeleton, MugenScroll, QrCode,
+        TxRow, TxRowSkeleton,  QrCode,
+        ContractInfo,
     },
 };
 </script>

@@ -1,0 +1,7 @@
+{
+  "public": "dist",
+  "rewrites": [
+    { "source": "address/**", "destination": "/index.html" },
+    { "source": "nft/**", "destination": "/index.html" }
+  ]
+}

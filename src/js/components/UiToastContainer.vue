@@ -16,17 +16,17 @@ export default {
     },
 
     created() {
-        this.$bus.$on('showToast', (message) => {
-            this.message = message;
-            this.visible = true;
+        // this.$bus.$on('showToast', (message) => {
+        //     this.message = message;
+        //     this.visible = true;
 
-            clearTimeout(timerHandle);
-            timerHandle = setTimeout(() => this.visible = false, 2000);
-        });
+        //     clearTimeout(timerHandle);
+        //     timerHandle = setTimeout(() => this.visible = false, 2000);
+        // });
     },
 
     beforeDestroy() {
-        this.$bus.$off('showToast');
+        // this.$bus.$off('showToast');
     },
 }
 </script>

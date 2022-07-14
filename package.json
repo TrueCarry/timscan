@@ -6,29 +6,46 @@
   "author": "catchain",
   "version": "0.0.1",
   "scripts": {
-    "dev": "npm run development",
-    "development": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=webpack.config.js",
+    "dev": "vite",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=webpack.config.js",
     "watch": "npm run development -- --watch",
     "watch-poll": "npm run watch -- --watch-poll",
     "prod": "npm run production",
-    "production": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=webpack.config.js",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=webpack.config.js",
     "prod_testnet": "TESTNET=1 npm run production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@tonstack/xed25519": "^0.0.2",
+    "@vitejs/plugin-vue": "^2.3.3",
+    "@vitejs/plugin-vue-jsx": "^1.3.10",
+    "@vitejs/plugin-vue2": "^1.1.2",
     "axios": "^0.24.0",
     "axios-retry": "^3.2.4",
+    "bn.js": "^5.2.1",
+    "buffer": "^6.0.3",
+    "curve25519-js": "^0.0.4",
     "qrcode.vue": "^1.7.0",
+    "randombytes": "^2.1.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "rollup-plugin-polyfill-node": "^0.10.1",
     "timeago.js": "^4.0.2",
-    "vue": "^2.6.14",
+    "ton": "file:./src/ton",
+    "ton-tl": "^0.2.2",
+    "ts-loader": "^9.3.1",
+    "tweetnacl": "^1.0.3",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.14",
+    "vue": "^3.2.37",
     "vue-clipboard2": "^0.3.3",
-    "vue-i18n": "^8.26.8",
+    "vue-i18n": "^9.1.10",
     "vue-mugen-scroll": "^0.2.6",
-    "vue-router": "^3.5.3",
-    "vuex": "^3.6.2"
+    "vue-router": "^4.1.1",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.16.10",
+    "@babel/plugin-transform-runtime": "^7.17.10",
     "@babel/preset-env": "^7.16.11",
     "@symfony/webpack-encore": "^1.8.1",
     "dotenv": "^8.2.0",
@@ -36,10 +53,10 @@
     "html-webpack-plugin": "^5.5.0",
     "sass": "^1.49.0",
     "sass-loader": "^12.4.0",
-    "vue-loader": "^15.9.8",
-    "vue-template-compiler": "^2.6.11"
+    "vue-loader": "^17.0.0",
+    "vue-template-compiler": "^2.7.4"
   },
   "engines": {
-    "node": ">=17.0.0"
+    "node": ">=16.0.0"
   }
 }

@@ -1,5 +1,6 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router'
+// import Vue from 'vue';
+// import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import PageAddressInvalid from '~/components/address/PageAddressInvalid.vue';
 import PageAddress from '~/components/address/PageAddress.vue';
 import PageBlock from '~/components/block/PageBlock.vue';
@@ -10,11 +11,13 @@ import PageTx from '~/components/tx/PageTx.vue';
 import PageNft from '~/components/nft/PageNft.vue';
 import { ADDRESS_REGEX } from '~/config.js';
 
-Vue.use(VueRouter);
 
-const routes = new VueRouter({
+// Vue.use(VueRouter);
+
+// const routes = new VueRouter({
+const router = createRouter({
     hashbang: false,
-    mode: 'history',
+    history: createWebHistory(),
     routes: [{
         name: 'index',
         path: '/',
@@ -62,17 +65,17 @@ const routes = new VueRouter({
     }],
 });
 
-routes.afterEach((to, from) => {
-    Vue.nextTick(() => {
-        if (to.name == 'address') {
-            document.title = `${to.meta.title} :: ${to.params.address}`;
-            return;
-        }
+// router.afterEach((to, from) => {
+//     Vue.nextTick(() => {
+//         if (to.name == 'address') {
+//             document.title = `${to.meta.title} :: ${to.params.address}`;
+//             return;
+//         }
 
-        if (to.meta?.title) {
-            document.title = to.meta.title;
-        }
-    });
-});
+//         if (to.meta?.title) {
+//             document.title = to.meta.title;
+//         }
+//     });
+// });
 
-export default routes;
+export default router;

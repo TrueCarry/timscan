@@ -1,10 +1,11 @@
-import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+// import Vue from 'vue';
+import { createI18n } from 'vue-i18n'
 import ru from './ru.js';
 import en from './en.js';
 import './timeago.js';
 
-Vue.use(VueI18n);
+
+// Vue.use(VueI18n);
 
 /**
  * Так как нам нужно поддерживать человекочитаемый формат (1К, 2М), то
@@ -36,7 +37,7 @@ const defaultPluralization = function defaultRuleForLatinLanguages(value, choice
 };
 
 
-export default new VueI18n({
+export default createI18n({
     locale: 'en',
     messages: { ru, en },
 

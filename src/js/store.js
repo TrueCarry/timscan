@@ -1,10 +1,10 @@
-import Vuex from 'vuex';
-import Vue from 'vue';
+import { createStore } from 'vuex'
+// import Vue from 'vue';
 import { ADDRBOOK_LOCATION, COINGECKO_ENDPOINT } from '~/config.js';
 
-Vue.use(Vuex);
+// Vue.use(Vuex);
 
-export default new Vuex.Store({
+export default createStore({
     state: {
         addrbook: {},
         exchangeRate: 0,

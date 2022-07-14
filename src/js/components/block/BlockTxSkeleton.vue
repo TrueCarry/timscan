@@ -1,4 +1,4 @@
-<template functional>
+<template>
     <tr v-once v-pre>
         <td>
             <div class="tx-table-cell-icon"><svg/></div>

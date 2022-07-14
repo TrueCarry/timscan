@@ -1,4 +1,4 @@
-<template functional>
+<template>
     <tr>
         <td>
             <router-link class="tx-table-cell-icon" v-bind:to="{ name: 'tx', params: {

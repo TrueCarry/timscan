@@ -122,18 +122,18 @@ export default {
     },
 
     created() {
-        this.$bus.$on('tx-close-all', () => this.isVisible = false);
+        // this.$bus.$on('tx-close-all', () => this.isVisible = false);
     },
 
     beforeDestroy() {
-        this.$bus.$off('tx-close-all');
+        // this.$bus.$off('tx-close-all');
     },
 
     methods: {
-        open() {
-            !this.isVisible && this.$bus.$emit('tx-close-all');
-            this.isVisible = !this.isVisible;
-        },
+        // open() {
+        //     !this.isVisible && this.$bus.$emit('tx-close-all');
+        //     this.isVisible = !this.isVisible;
+        // },
     },
 };
 </script>

@@ -1,0 +1,3 @@
+[submodule "src/ton"]
+	path = src/ton
+	url = git@github.com:tonwhales/ton.git
