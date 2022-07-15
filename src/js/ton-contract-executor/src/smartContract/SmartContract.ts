@@ -1,4 +1,4 @@
-import {Cell, ExternalMessage, InternalMessage, Slice} from "ton/src";
+import {Cell, ExternalMessage, InternalMessage, Slice} from "@/ton/src";
 import {
     buildC7,
     C7Config,

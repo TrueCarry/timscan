@@ -1,5 +1,5 @@
 import {SmartContract} from "./SmartContract";
-import {Address, Cell, CellMessage, CommonMessageInfo, ExternalMessage, InternalMessage, Slice, toNano} from "ton/src";
+import {Address, Cell, CellMessage, CommonMessageInfo, ExternalMessage, InternalMessage, Slice, toNano} from "@/ton/src";
 import {
     TVMStackEntryTuple
 } from "../executor/executor";

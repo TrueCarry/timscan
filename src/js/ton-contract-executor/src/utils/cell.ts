@@ -1,4 +1,4 @@
-import {Cell} from "ton/src"
+import {Cell} from "@/ton/src"
 
 export const cellToBoc = (cell: Cell) => {
     return cell.toBoc({idx: false}).toString('base64')

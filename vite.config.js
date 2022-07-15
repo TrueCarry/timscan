@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 // import builtins from 'rollup-plugin-node-builtins';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import { visualizer } from "rollup-plugin-visualizer";
 
 
 
@@ -14,7 +15,10 @@ dotenv.config()
 // builtinsPlugin.name = 'builtins';
 
 export default defineConfig({
-  plugins: [vue(), vueJsx()],
+  server: {
+    port: 3000,
+  },
+  plugins: [vue(), vueJsx(),       visualizer()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -31,7 +35,10 @@ export default defineConfig({
     'process.env': process.env
   },
   rollupOptions: {
-    plugins: [nodePolyfills({crypto: true})],
-},
+    // plugins: [
+    //   visualizer()
+    //   // nodePolyfills({crypto: true})
+    // ],
+  },
 
 })

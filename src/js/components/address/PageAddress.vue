@@ -1,10 +1,10 @@
 <template>
     <section>
-        <section v-if="wallet.invalid">
+        <!-- <section v-if="wallet.invalid">
             <div class="alert" v-text="$t('error.invalid_address')"/>
-        </section>
+        </section> -->
 
-        <section v-show="!wallet.invalid">
+        <section>
             <div class="card">
                 <div class="card-row">
                     <div class="card-row__name" v-text="$t('address.info.address')"/>
@@ -26,12 +26,12 @@
 
                 <div class="card-row">
                     <div class="card-row__name" v-text="$t('address.info.balance')"/>
-                    <div class="card-row__value" v-if="wallet.balance == '0' || wallet.balance">
-                        {{$ton(wallet.balance)}}
+                    <div class="card-row__value" v-if="wallet?.balance?.coins">
+                        {{$ton(wallet?.balance?.coins.toNumber())}}
                         <span v-text="addressMeta.tonIcon || 'TON'" title="TON"/>
-                        <span v-if="$store.state.exchangeRate" style="color: #717579">
+                        <!-- <span v-if="$store.state.exchangeRate" style="color: #717579">
                             ≈ ${{$fiat(wallet.balance * $store.state.exchangeRate)}}
-                        </span>
+                        </span> -->
                     </div>
                     <div v-else class="card-row__value">
                         <span class="skeleton">00000 TON ≈ 00000 USD</span>
@@ -42,7 +42,7 @@
                     <div class="card-row__name" v-text="$t('address.info.last_activity')"/>
                     <div class="card-row__value">
                         <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span>
-                        <span v-else-if="!lastActivity" v-text="this.$t('address.info.no_activity')"/>
+                        <span v-else-if="!lastActivity" v-text="$t('address.info.no_activity')"/>
                         <ui-timeago v-else v-bind:timestamp="lastActivity"/>
                     </div>
                 </div>
@@ -50,10 +50,10 @@
                 <div class="card-row">
                     <div class="card-row__name" v-text="$t('address.info.state')"/>
                     <div class="card-row__value">
-                        <span v-if="wallet.is_frozen" class="card-row-wallet-activity card-row-wallet-activity--frozen"
+                        <span v-if="wallet?.state?.storage.state.type === 'frozen'" class="card-row-wallet-activity card-row-wallet-activity--frozen"
                             v-text="$t('address.info.type_frozen')"/>
 
-                        <span v-else-if="wallet.is_active" class="card-row-wallet-activity card-row-wallet-activity--active"
+                        <span v-else-if="wallet?.state?.storage.state.type === 'active'" class="card-row-wallet-activity card-row-wallet-activity--active"
                             v-text="$t('address.info.type_active')"/>
 
                         <span v-else class="card-row-wallet-activity card-row-wallet-activity--passive"
@@ -65,12 +65,12 @@
                     <div class="card-row__name" v-text="$t('address.info.contract_type')"/>
 
                     <div v-if="!contractExtendedInfo" class="card-row__value">
-                        <span v-if="wallet.wallet_type" v-text="wallet.wallet_type"/>
-                        <span v-else class="skeleton">wallet v123</span>
+                        <!-- <span v-if="wallet.wallet_type" v-text="wallet.wallet_type"/> -->
+                        <!-- <span v-else class="skeleton">wallet v123</span> -->
                     </div>
                     
                     <div v-else class="card-row__value">
-                        <router-link
+                        <!-- <router-link
                             v-if="contractExtendedInfo.type === 'collection'"
                             v-bind:to="{ name: 'nft', params: { address, skeletonHint: 'collection' }}"
                             v-text="'NFT Collection'"/>
@@ -78,14 +78,14 @@
                         <router-link
                             v-else-if="contractExtendedInfo.type === 'nft_item'"
                             v-bind:to="{ name: 'nft', params: { address, skeletonHint: 'item' }}"
-                            v-text="'NFT Item'"/>
+                            v-text="'NFT Item'"/> -->
 
-                        <span v-else>Unknown</span>
+                        <span>Unknown</span>
                     </div>
                 </div>
-            </div>
+            </div> 
 
-            <ContractInfo :code="code" :data="data" />
+            <ContractInfo :code="code" :data="data"/>
 
             <div class="card">
                 <div v-if="emptyHistory" class="tx-history-empty-panel" v-text="$t('address.tx_table.empty')"/>
@@ -148,18 +148,21 @@
     </section>
 </template>
 
-<script>
-import QrCode from 'qrcode.vue';
+<script lang="ts">
+import QrCode from 'qrcode.vue';  
 import TxRowSkeleton from './TxRowSkeleton.vue';
 import TxRow from './TxRow.vue';
-import { getAddressInfo, getTransactions } from '~/api.js';
-// import MugenScroll from 'vue-mugen-scroll';
-import { checkAddress } from '~/nft.js';
-import {Address, Cell, TonClient} from "ton/src";
+import { AccountState, getAddressInfo, getTransactions } from '~/api'
+// import MugenScroll from 'vue-mugen-scroll'; 
+import { checkAddress } from '~/nft.js'; 
+import {Address, Cell, TonClient} from "@/ton/src";
 import {SmartContract} from "~/ton-contract-executor/src";
-import ContractInfo from './ContractInfo.vue';
+import ContractInfo from './ContractInfo.vue'
+import { defineComponent } from 'vue'
 
-export default {
+// let x: number = 1
+
+export default defineComponent({ 
     props: {
         address: {
             type: String,
@@ -167,20 +170,33 @@ export default {
         },
     },
 
-    data() {
+    data(): {
+        contractTypeVisible: boolean
+        wallet: AccountState | null
+        transactions: any[]
+        lastActivity: number | null
+        isLoading: boolean
+        hasMore: boolean
+        emptyHistory: boolean
+        qrModalVisible: boolean
+        contractExtendedInfo?: unknown
+
+        code?: Cell
+        data?: Cell
+    } {
         return {
             contractTypeVisible: true,
-            wallet: {},
+            wallet: null,
             transactions: [],
-            lastActivity: undefined,
+            lastActivity: null,
             isLoading: true,
             hasMore: true,
             emptyHistory: false,
             qrModalVisible: false,
             contractExtendedInfo: undefined,
 
-            code: {},
-            data: {},
+            code: undefined,
+            data: undefined,
         };
     },
 
@@ -209,21 +225,21 @@ export default {
     },
 
     async mounted () {
-        const contractAddress = Address.parse(this.address)
-        let client = new TonClient({
-             endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC'    ,
-         apiKey: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992',
-        })
+        // const contractAddress = Address.parse(this.address)
+        // let client = new TonClient({
+        //      endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC'    ,
+        //  apiKey: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992',
+        // })
 
-        let state = await client.getContractState(contractAddress)
+        // let state = await client.getContractState(contractAddress)
 
-        let code = Cell.fromBoc(state.code)[0]
-        let data = Cell.fromBoc(state.data)[0]
+        // let code = Cell.fromBoc(state.code)[0]
+        // let data = Cell.fromBoc(state.data)[0]
 
-        console.log('hash', code.hash().toString('hex'))
+        // console.log('hash', code.hash().toString('hex'))
 
-        this.code = code
-        this.data = data
+        // this.code = code
+        // this.data = data
 
         // let wallet = await SmartContract.fromCell(code, data)
 
@@ -234,9 +250,9 @@ export default {
 
     methods: {
         reset() {
-            this.wallet = {};
+            this.wallet = null;
             this.transactions = [];
-            this.lastActivity = undefined;
+            this.lastActivity = 0;
             this.qrModalVisible = false;
             this.contractExtendedInfo = undefined;
         },
@@ -244,32 +260,38 @@ export default {
         async loadData() {
             this.reset();
 
-            this.wallet = await getAddressInfo(this.address);
+            this.wallet = await getAddressInfo(this.$lc, this.address);
+            console.log('got wallet', this.wallet)
 
-            if (this.wallet.invalid) {
+            if (this.wallet.state?.storage.state.type === 'uninit') {
                 return;
+            } else if (this.wallet.state?.storage.state.type === 'active') {
+                console.log('set code')
+                this.code = this.wallet.state?.storage.state.state.code as Cell
+                this.data = this.wallet.state?.storage.state.state.data as Cell
             }
 
-            this.contractTypeVisible = this.wallet.is_active;
-            this.emptyHistory = this.wallet.last_tx_lt == '0';
+            this.contractTypeVisible = false //this.wallet.is_active;
+            this.emptyHistory = this.wallet.lastTx?.lt !== '0'
+            // this.wallet.last_tx_lt == '0';
 
             // Don't make extra requests:
-            if (! this.emptyHistory) {
-                this.transactions = await getTransactions(this.address, this.wallet.last_tx_lt, this.wallet.last_tx_hash, 20);
-            }
+            // if (! this.emptyHistory) {
+            //     this.transactions = await getTransactions(this.address, this.wallet.last_tx_lt, this.wallet.last_tx_hash, 20);
+            // }
 
             this.lastActivity = this.transactions[0]?.timestamp || null;
             this.hasMore = this.transactions.length >= 20;
             this.isLoading = false;
 
-            if (this.wallet.wallet_type == 'Unknown') {
+            // if (this.wallet.wallet_type == 'Unknown') {
                 checkAddress(this.address)
                     .then((nftInfo) => this.contractExtendedInfo = nftInfo)
                     .then(() => {
                         console.log('got ext ifno', this.contractExtendedInfo)
                     })
                     .catch(e => void e);
-            }
+            // }
         },
 
         async loadMore() {
@@ -295,5 +317,5 @@ export default {
         TxRow, TxRowSkeleton,  QrCode,
         ContractInfo,
     },
-};
+})
 </script>

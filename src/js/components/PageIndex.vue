@@ -23,12 +23,13 @@
 </template>
 
 <script>
-import { matchAddress } from '~/search.js';
+import {defineComponent} from 'vue';
+import { matchAddress } from '~/search';
 
-export default {
+export default defineComponent({
     data() {
         return {
-            searchValue: undefined,
+            searchValue: '',
             addressLoading: false,
         };
     },
@@ -61,5 +62,5 @@ export default {
             this.searchValue = '';
         },
     },
-};
+})
 </script>

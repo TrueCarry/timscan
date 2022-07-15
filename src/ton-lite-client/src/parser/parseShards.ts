@@ -1,5 +1,5 @@
 import BN from "bn.js";
-import { parseDict, Slice } from "ton";
+import { parseDict, Slice } from "../../../ton/src";
 import { TLReadBuffer } from "ton-tl";
 
 // Source: https://github.com/ton-foundation/ton/blob/ae5c0720143e231c32c3d2034cfe4e533a16d969/crypto/block/mc-config.cpp#L1232

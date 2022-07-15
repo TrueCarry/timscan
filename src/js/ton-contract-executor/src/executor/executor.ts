@@ -1,4 +1,4 @@
-import {Address, Cell, Slice} from "ton/src";
+import {Address, Cell, Slice} from "@/ton/src";
 import {crc16} from "../utils/crc16";
 import {vm_exec} from '../vm-exec/vmExec'
 // import {randomBytes} from "crypto";

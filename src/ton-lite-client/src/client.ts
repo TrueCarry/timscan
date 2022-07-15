@@ -1,6 +1,6 @@
 import BN from "bn.js";
-import { Address, Cell, parseAccount, RawCurrencyCollection, RawStorageInfo, RawAccountStorage, parseDict } from "ton";
-import { parseShardStateUnsplit } from "ton/dist/block/parse";
+import { Address, Cell, parseAccount, RawCurrencyCollection, RawStorageInfo, RawAccountStorage, parseDict } from "../../ton/src";
+import { parseShardStateUnsplit } from "../../ton/src/block/parse";
 import { LiteEngine } from "./engines/engine";
 import { parseShards } from "./parser/parseShards";
 import { Functions, liteServer_blockHeader, liteServer_transactionId, liteServer_transactionId3, tonNode_blockIdExt } from "./schema";
@@ -154,6 +154,7 @@ export class LiteClient {
     //
 
     getAccountState = async (src: Address, block: { seqno: number, shard: string, workchain: number, rootHash: Buffer, fileHash: Buffer }, timeout: number = 5000) => {
+        console.log('getAccountState')
         let res = (await this.engine.query(Functions.liteServer_getAccountState, {
             kind: 'liteServer.getAccountState',
             id: {

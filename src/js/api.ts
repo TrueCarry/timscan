@@ -1,6 +1,9 @@
 import axios from 'axios';
-import { LITE_API_ENDPOINT } from '~/config.js';
+import { LITE_API_ENDPOINT } from './config.js';
 import { base64ToHex, hexToAddress, dechex } from '~/utils.js';
+import { LiteClient } from '../ton-lite-client/src';
+import { Address, RawAccountStorage, RawCurrencyCollection, RawStorageInfo } from '@/ton/src';
+import { tonNode_blockIdExt } from '../ton-lite-client/src/schema';
 
 /**
  * @param  {String} address
@@ -16,36 +19,63 @@ export const detectAddress = async function (address) {
     return data.result;
 };
 
+
+export interface AccountState {
+    state: {
+        address: Address | null;
+        storageStat: RawStorageInfo;
+        storage: RawAccountStorage;
+    } | null;
+    lastTx: {
+        lt: string;
+        hash: Buffer;
+    } | null;
+    balance: RawCurrencyCollection;
+    raw: Buffer;
+    proof: Buffer;
+    block: tonNode_blockIdExt;
+    shardBlock: tonNode_blockIdExt;
+    shardProof: Buffer;
+}
 /**
  * @param  {String} address
  * @return {Promise<Object>}
  */
-export const getAddressInfo = async function (address) {
-    let result = undefined;
+export const getAddressInfo = async function (lc: LiteClient, address: string): Promise<AccountState> {
+    console.log('get address info ====== ', address);
+    let result: AccountState;
 
     try {
-        const response = await axios.get(`${LITE_API_ENDPOINT}/getWalletInformation`, { params: { address }});
-        result = response.data.result;
+        const block = await lc.getMasterchainInfo()
+        const response = await lc.getAccountState(Address.parse(address), block.last)
+        console.log('got address=====', address)
+        // const response = await axios.get(`${LITE_API_ENDPOINT}/getWalletInformation`, { params: { address }});
+        result = response as unknown as AccountState;
 
     } catch (error) {
-        if ('response' in error && !error.response.data.ok) {
-            return { invalid: true };
-        }
+        // if ('response' in error && !error.response.data.ok) {
+        //     return { invalid: true };
+        // }
 
         // See ya in Sentry!
+        console.log('error', error)
+        console.error(error)
         throw error;
     }
+    console.log('got res=======', result)
 
-    return Object.freeze({ address,
-        invalid: false,
-        is_wallet: result.wallet,
-        balance: result.balance,
-        is_active: result.account_state === 'active',
-        is_frozen: result.account_state === 'frozen',
-        wallet_type: result.wallet_type || 'Unknown',
-        last_tx_lt: result.last_transaction_id?.lt,
-        last_tx_hash: result.last_transaction_id?.hash,
-    });
+    return result
+
+    // return Object.freeze({ address,
+    //     invalid: false,
+    //     is_wallet: result.wallet,
+    //     balance: result.balance,
+    //     is_active: result.account_state === 'active',
+    //     is_frozen: result.account_state === 'frozen',
+    //     wallet_type: result.wallet_type || 'Unknown',
+    //     last_tx_lt: result.last_transaction_id?.lt,
+    //     last_tx_hash: result.last_transaction_id?.hash,
+    // });
 };
 
 /**
@@ -108,7 +138,7 @@ export const getTransaction = async function ({ address, lt, hash, to_lt }) {
         hash: base64ToHex(hash),
     };
 
-    const { data: { result }} = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query, apiKey: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992' });
+    const { data: { result }} = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query,  });
 
     return Object.freeze(result.find(tx => tx.transaction_id?.hash == hash)); 
 };

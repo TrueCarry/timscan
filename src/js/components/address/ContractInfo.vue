@@ -31,13 +31,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 // import Vue from 'vue'
 import {SmartContract} from "~/ton-contract-executor/src";
-import ValueWrapper from './ValueWrapper.tsx'; 
-import { isProxy, toRaw } from 'vue';
+import ValueWrapper from './ValueWrapper'; 
+import { isProxy, PropType, toRaw } from 'vue';
 import {LiteClient, LiteSingleEngine, LiteRoundRobinEngine} from '../../../ton-lite-client/src/index'
 import axios from 'axios';
+import {defineComponent} from 'vue'
+import { Cell } from "@/ton/src";
+import { NormalizedStyle } from "@vue/shared";
 
 const abiNft = {
   methods: {
@@ -85,32 +88,34 @@ const abiMap = {
 
 
 
-export default {
+export default defineComponent({
   components: { ValueWrapper },
   props: {
     code: {
-      type: Object,
-      required: true
+      type: Object as PropType<Cell>,
+      required: true,
+      // default: () => undefined
     },
     data: {
-      type: Object,
-      required: true
+      type: Object as PropType<Cell>,
+      required: false,
+      default: () => undefined
     }
   },
 
   computed: {
     abi () {
-      const abi = this.code.kind && abiMap[toRaw(this.code).hash().toString('hex')] || []
+      const abi = this.code&&this.code.kind && abiMap[toRaw(this.code).hash().toString('hex')] || []
       console.log('abi', abi)
       return abi
     },
 
     codeString() {
-      return this.code.kind && toRaw(this.code).toBoc().toString('base64')
+      return this.code&&this.code.kind && toRaw(this.code).toBoc().toString('base64')
     },
 
     dataString() {
-      return this.data.kind && toRaw(this.data).toBoc().toString('base64')
+      return this.data&&this.data.kind && toRaw(this.data).toBoc().toString('base64')
     }
   },
 
@@ -123,35 +128,39 @@ export default {
   },
 
   async mounted () {
-    const configUrl =
-      process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/global.config.json'
+    // const configUrl =
+    //   process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/global.config.json'
 
-    const { data } = await axios(configUrl)
+    // const { data } = await axios(configUrl)
 
-    const engines = []
-    // while (engines.length < 50) {
-      for (const ls of data.liteservers.slice(0, 1)) {
-        engines.push(
-          new LiteSingleEngine({
-            host: intToIP(ls.ip),
-            port: ls.port,
-            publicKey: Buffer.from(ls.id.key, 'base64'),
-          })
-        )
-      }
-    // }
+    // const engines = []
+    // // while (engines.length < 50) {
+    //   for (const ls of data.liteservers.slice(0, 1)) {
+    //     engines.push(
+    //       new LiteSingleEngine({
+    //         host: intToIP(ls.ip),
+    //         port: ls.port,
+    //         publicKey: Buffer.from(ls.id.key, 'base64'),
+    //       })
+    //     )
+    //   }
+    // // }
 
-      const engine = new LiteRoundRobinEngine(engines)
-      const liteClient = new LiteClient({ engine })
-      console.log('lite', liteClient)
-      const info  = await liteClient.getMasterchainInfo()
-      console.log('info', info)
+    //   const engine = new LiteRoundRobinEngine(engines)
+    //   const liteClient = new LiteClient({ engine })
+    //   console.log('lite', liteClient)
+    // setTimeout(async () => {
+      console.log('get masterchain_block_title')
+      const info  = await this.$lc.getMasterchainInfo()
+      // this.$ton
+      console.log('masterchain_block_title', info)
+    // }, 1000)
   },
 
   watch: {
     async code () {
       console.log('async code')
-      if (!this.code.kind || !this.data.kind) {
+      if (!this.code || !this.code.kind || !this.data || !this.data.kind) {
         return
       }
       for (const method of Object.keys(this.abi.methods)) {
@@ -171,11 +180,14 @@ export default {
 
   methods: {
     async callMethod(name, info) {
-      console.log(1, this.code.target, this.data)
-      let wallet = await SmartContract.fromCell(toRaw(this.code), toRaw(this.data))
-      console.log(2)
+      // console.log(1, this.code.target, this.data)
+      if (!this.code || !this.code.kind || !this.data) {
+        return
+      }
+      let wallet = await SmartContract.fromCell(toRaw<Cell>(this.code), toRaw(this.data))
+      // console.log(2)
       let res = await wallet.invokeGetMethod(name, [])
-      console.log(3)
+      // console.log(3)
 
       if (res.type !== 'success') {
         console.log('not type', res.type)
@@ -187,7 +199,7 @@ export default {
         return res
       }
 
-      const values = []
+      const values: any[] = []
             // console.log(res.results], res)
       for (let i = 0; i < info.output.length; i++) {
         console.log(i)
@@ -204,7 +216,7 @@ export default {
       return values
     }
   }
-}
+})
 
 function intToIP(int) {  
   const part1 = int & 255

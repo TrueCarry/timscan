@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { Cell, Slice } from 'ton/src'
+import { Cell, Slice } from '@/ton/src'
 import { defineComponent, toRaw } from 'vue'
 
 export default defineComponent({ 

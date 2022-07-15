@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { getTransaction } from '~/api.js';
+import { getTransaction } from '~/api';
 import TxMsg from './TxMsg.vue';
 
 export default {

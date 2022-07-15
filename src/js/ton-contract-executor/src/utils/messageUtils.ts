@@ -1,4 +1,4 @@
-import {RawCommonMessageInfo, RawCurrencyCollection, RawMessage, RawStateInit, Slice} from "ton/src";
+import {RawCommonMessageInfo, RawCurrencyCollection, RawMessage, RawStateInit, Slice} from "@/ton/src";
 
 export function readCurrencyCollection(slice: Slice): RawCurrencyCollection {
     const coins = slice.readCoins();

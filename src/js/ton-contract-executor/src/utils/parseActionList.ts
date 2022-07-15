@@ -1,4 +1,4 @@
-import {Cell, RawCurrencyCollection, RawMessage, Slice} from "ton/src";
+import {Cell, RawCurrencyCollection, RawMessage, Slice} from "@/ton/src";
 import {readCurrencyCollection, readMessage} from "./messageUtils";
 
 // out_list_empty$_ = OutList 0;

@@ -100,7 +100,7 @@ class ADNLClient extends EventEmitter {
         const packet = new ADNLPacket(data)
         const encrypted = this.encrypt(packet.data)
 
-        console.log('write', data)
+        // console.log('write', data)
         this.socket.send(encrypted)
 
         // this.socket instanceof WebSocket
@@ -147,25 +147,25 @@ class ADNLClient extends EventEmitter {
 
     }
     private async  onData (data: WebSocket.MessageEvent): Promise<void> {
-        console.log('got data', data.data)
+        // console.log('got data', data.data)
         // data
         let buffer: Buffer
         if (typeof data.data === 'string') {
             buffer = Buffer.from(data.data)
         } else if (data.data instanceof Buffer) {
-            console.log('is buffer!!!!')
+            // console.log('is buffer!!!!')
             buffer = data.data
         } else if (data.data instanceof ArrayBuffer) {
-            console.log('array buffer !!!!!!!!!!!!!!')
+            // console.log('array buffer !!!!!!!!!!!!!!')
             buffer = Buffer.from([0])
             // data.data.arrayBuffer()
         } else {
             const buf = await (data.data as unknown as Blob).arrayBuffer()
             buffer = Buffer.from(buf)
-            console.log('else !!!!!!!!!!!!!!', buffer)
+            // console.log('else !!!!!!!!!!!!!!', buffer)
         }
         // const buffer = await data.data.arrayBuffer()
-        console.log('buffer', typeof data.data, buffer)
+        // console.log('buffer', typeof data.data, buffer)
         const decrypted = this.decrypt(buffer)
 
 
@@ -232,7 +232,7 @@ class ADNLClient extends EventEmitter {
         const payload = cipher.encrypt(this.params.bytes)
         const packet = Buffer.concat([ this.address.hash, this.keys.public, this.params.hash, payload ])
 
-        console.log('handshake', packet)
+        // console.log('handshake', packet)
         this.socket.send(packet)
         // this.socket instanceof WebSocket
         //     ? this.socket.write(packet)
@@ -245,7 +245,7 @@ class ADNLClient extends EventEmitter {
     }
 
     private decrypt (data: Buffer): Buffer {
-        console.log('decrypt', data)
+        // console.log('decrypt', data)
         // return Buffer.concat([ this.decipher.update(data) ])
         return Buffer.from(this.decipher.decrypt(data))
     }

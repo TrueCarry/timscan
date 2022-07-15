@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { matchAddress } from '~/search.js';
+import { matchAddress } from '~/search';
 
 export default {
     props: {

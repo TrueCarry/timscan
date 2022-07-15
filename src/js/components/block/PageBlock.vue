@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import { getBlockHeader, getBlockTransactions, getShards, getLastBlock } from '~/api.js';
+import { getBlockHeader, getBlockTransactions, getShards, getLastBlock } from '~/api';
 import ShardSkeleton from './BlockShardSkeleton.vue';
 import TxSkeleton from './BlockTxSkeleton.vue';
 import TxRow from './BlockTxRow.vue';

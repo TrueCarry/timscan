@@ -28,7 +28,7 @@
                         v-bind:placeholder="$t('header.search_placeholder')"
                         v-model.trim="searchValue"
                         v-on:blur="handleBlur()"
-                        v-on:keyup.enter="search()"
+                        v-on:keyup.enter="doSearch()"
                         v-on:keyup.esc="reset()">
 
                     <svg v-show="addressLoading" class="header-search__loader" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 18 18">
@@ -37,7 +37,7 @@
                         </circle>
                     </svg>
                 </div>
-            </div>
+            </div> 
         </header>
 
         <div class="content">
@@ -48,59 +48,116 @@
     </section>
 </template>
 
-<script>
-import { matchAddress } from '~/search.js';
+<script setup lang="ts">
+import { ref, onMounted, nextTick, toRaw } from 'vue'
+import { matchAddress } from '../search';
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+
+const search = ref<HTMLInputElement | null>(null)
+const searchVisible = ref<boolean>(false)
+const searchValue = ref<string>('')
+const addressLoading = ref<boolean>(false)
+
+// onMounted(() => {
+//     console.log('route', toRaw(route.path))
+//     if (route.path === '/') {
+//   search.value?.focus()
+//     }
+// })
+
+async function doSearch() {
+    addressLoading.value = true;
+    const match = await matchAddress(searchValue.value);
+    addressLoading.value = false;
+
+    if (! match) {
+        // Иначе сначала показывается алерт, а потом останавливается спиннер:
+        return nextTick(() => alert('Invalid address format'));
+    }
+
+    router.push({
+        name: 'address',
+        params: { address: match },
+    });
+
+    // reset();
+}
+
+        // function reset() {
+        //     this.searchValue = '';
+        //     this.searchVisible = false;
+        //     this.$refs.search.blur();
+        // },
+
+        // function handleBlur() {
+        //     if (!this.searchValue || this.searchValue.length == 0) {
+        //         this.searchVisible = false;
+        //     }
+        // },
+</script>
+
+<!-- <script>
+
+import {defineComponent} from 'vue';
+import { matchAddress } from '~/search';
 import ToastContainer from './UiToastContainer.vue';
 
-export default {
-    data() {
-        return {
-            searchVisible: false,
-            searchValue: undefined,
-            addressLoading: false,
-        };
-    },
+// export default defineComponent({
+//     data() {
+//         return {
+//             searchVisible: false,
+//             searchValue: '',
+//             addressLoading: false,
+//         };
+//     },
 
-    watch: {
-        searchVisible(isVisible) {
-            if (isVisible) {
-                this.$nextTick(() => this.$refs.search.focus());
-            }
-        },
-    },
+//     $refs: {
+//         search: HTMLInputElement
+//     },
 
-    methods: {
-        async search() {
-            this.addressLoading = true;
-            const match = await matchAddress(this.searchValue);
-            this.addressLoading = false;
+//     watch: {
+//         searchVisible(isVisible) {
+//             if (isVisible) {
+//                 this.$nextTick(() => this.$refs.search.focus());
+//             }
+//         },
+//     },
 
-            if (! match) {
-                // Иначе сначала показывается алерт, а потом останавливается спиннер:
-                return this.$nextTick(() => alert('Invalid address format'));
-            }
+//     methods: {
+//         async search() {
+//             this.addressLoading = true;
+//             const match = await matchAddress(this.searchValue);
+//             this.addressLoading = false;
 
-            this.$router.push({
-                name: 'address',
-                params: { address: match },
-            });
+//             if (! match) {
+//                 // Иначе сначала показывается алерт, а потом останавливается спиннер:
+//                 return this.$nextTick(() => alert('Invalid address format'));
+//             }
 
-            this.reset();
-        },
+//             this.$router.push({
+//                 name: 'address',
+//                 params: { address: match },
+//             });
 
-        reset() {
-            this.searchValue = '';
-            this.searchVisible = false;
-            this.$refs.search.blur();
-        },
+//             this.reset();
+//         },
 
-        handleBlur() {
-            if (!this.searchValue || this.searchValue.length == 0) {
-                this.searchVisible = false;
-            }
-        },
-    },
+//         reset() {
+//             this.searchValue = '';
+//             this.searchVisible = false;
+//             this.$refs.search.blur();
+//         },
 
-    components: { ToastContainer },
-};
-</script>
+//         handleBlur() {
+//             if (!this.searchValue || this.searchValue.length == 0) {
+//                 this.searchVisible = false;
+//             }
+//         },
+//     },
+
+//     components: { ToastContainer },
+// })
+</script> -->
