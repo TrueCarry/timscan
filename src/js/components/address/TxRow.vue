@@ -14,24 +14,24 @@
             <td>
                 <div class="tx-table__cell tx-table__cell--align-right">
                     <span v-if="!from">hidden</span>
-                    <ui-address v-else v-bind:address="from" v-bind:disabled="is_out"/>
+                    <ui-address v-else v-bind:address="from.toFriendly({urlSafe: true, bounceable: true})" v-bind:disabled="isOut"/>
                 </div>
             </td>
             <td>
                 <div class="tx-table__cell" style="padding: 0;">
-                    <span v-if="is_service" class="tx-table__badge tx-table__badge--service">OUT</span>
-                    <span v-else-if="is_out" class="tx-table__badge tx-table__badge--out">OUT</span>
+                    <span v-if="isService" class="tx-table__badge tx-table__badge--service">OUT</span>
+                    <span v-else-if="isOut" class="tx-table__badge tx-table__badge--out">OUT</span>
                     <span v-else class="tx-table__badge tx-table__badge--in">IN</span>
                 </div>
             </td>
             <td>
                 <div class="tx-table__cell">
-                    <ui-address v-bind:address="to" v-bind:disabled="!is_out"/>
+                    <ui-address v-bind:address="to.toFriendly({urlSafe: true, bounceable: true})" v-bind:disabled="!isOut"/>
                 </div>
             </td>
             <td>
                 <div class="tx-table__cell tx-table__cell--align-right" style="position: relative; padding-right: 26px;" v-bind:title="message">
-                    {{$ton(amount)}} TON
+                    {{$ton(amount.coins.toString())}} TON
 
                     <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg>
                 </div>
@@ -85,14 +85,15 @@
     </tbody>
 </template>
 
-<script>
+<script>import {Address} from '@/ton/src';
+
 export default {
     props: {
         date: String,
-        from: String,
-        is_out: Boolean,
-        is_service: Boolean,
-        to: String,
+        from: Address,
+        isOut: Boolean,
+        isService: Boolean,
+        to: Address,
         amount: String,
         message: String,
         timestamp: Number,
@@ -112,7 +113,7 @@ export default {
             return {
                 lt: this.txLt,
                 hash: this.txHash,
-                address: this.is_out ? this.from : this.to,
+                address: this.isOut ? this.from : this.to,
             };
         },
 

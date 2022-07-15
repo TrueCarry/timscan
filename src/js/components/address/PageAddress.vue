@@ -120,9 +120,9 @@
                         </tbody>
 
                         <tx-row v-for="tx in transactions" v-bind="tx"
-                            v-bind:key="tx.transaction_id.hash"
-                            v-bind:txHash="tx.transaction_id.hash"
-                            v-bind:txLt="tx.transaction_id.lt"/>
+                            v-bind:key="tx.transactionId.hash"
+                            v-bind:txHash="tx.transactionId.hash.toString()"
+                            v-bind:txLt="tx.transactionId.lt"/>
                     </table>
                 </div>
 
@@ -272,13 +272,17 @@ export default defineComponent({
             }
 
             this.contractTypeVisible = false //this.wallet.is_active;
-            this.emptyHistory = this.wallet.lastTx?.lt !== '0'
+            this.emptyHistory = this.wallet.lastTx?.lt === '0'
+
+            console.log('')
             // this.wallet.last_tx_lt == '0';
 
             // Don't make extra requests:
-            // if (! this.emptyHistory) {
-            //     this.transactions = await getTransactions(this.address, this.wallet.last_tx_lt, this.wallet.last_tx_hash, 20);
-            // }
+            if (!this.emptyHistory) {
+                console.log('transactions')
+                this.transactions = await getTransactions(this.$lc, this.address, this.wallet.lastTx?.lt || "", this.wallet.lastTx?.hash || Buffer.from([]), 20);
+                console.log('this.transactions', this.transactions)
+            }
 
             this.lastActivity = this.transactions[0]?.timestamp || null;
             this.hasMore = this.transactions.length >= 20;
@@ -299,9 +303,9 @@ export default defineComponent({
 
             const limit = 50;
             const lastTx = this.transactions[ this.transactions.length - 1 ];
-            const { transaction_id: { lt, hash }} = lastTx;
+            const { transactionId: { lt, hash }} = lastTx;
 
-            const newTx = await getTransactions(this.address, lt, hash, limit);
+            const newTx = await getTransactions(this.$lc, this.address, lt, hash, limit);
 
             this.hasMore = newTx.length >= limit;
             this.isLoading = false;
