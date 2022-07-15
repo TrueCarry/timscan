@@ -154,7 +154,7 @@ import TxRowSkeleton from './TxRowSkeleton.vue';
 import TxRow from './TxRow.vue';
 import { AccountState, getAddressInfo, getTransactions } from '~/api'
 // import MugenScroll from 'vue-mugen-scroll'; 
-import { checkAddress } from '~/nft.js'; 
+import { checkAddress } from '~/nft'; 
 import {Address, Cell, TonClient} from "@/ton/src";
 import {SmartContract} from "~/ton-contract-executor/src";
 import ContractInfo from './ContractInfo.vue'

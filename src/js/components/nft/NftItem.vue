@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { checkAddress } from '~/nft.js';
+import { checkAddress } from '~/nft';
 
 export default {
     props: {

@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { getNftCollectionItems } from '~/nft.js';
+import { getNftCollectionItems } from '~/nft';
 import MugenScroll from 'vue-mugen-scroll';
 import NftItemPreviewCard from './NftItemPreviewCard.vue';
 

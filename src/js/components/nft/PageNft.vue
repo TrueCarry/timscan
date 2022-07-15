@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { checkAddress } from '~/nft.js';
+import { checkAddress } from '~/nft';
 import NftCollection from './NftCollection.vue';
 import NftItem from './NftItem.vue';
 
