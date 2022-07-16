@@ -26,8 +26,8 @@
 
                 <div class="card-row">
                     <div class="card-row__name" v-text="$t('address.info.balance')"/>
-                    <div class="card-row__value" v-if="wallet?.balance?.coins">
-                        {{$ton(wallet?.balance?.coins.toNumber())}}
+                    <div class="card-row__value" v-if="balance">
+                        {{$ton(parseInt(balance))}}
                         <span v-text="addressMeta.tonIcon || 'TON'" title="TON"/>
                         <!-- <span v-if="$store.state.exchangeRate" style="color: #717579">
                             ≈ ${{$fiat(wallet.balance * $store.state.exchangeRate)}}
@@ -50,10 +50,10 @@
                 <div class="card-row">
                     <div class="card-row__name" v-text="$t('address.info.state')"/>
                     <div class="card-row__value">
-                        <span v-if="wallet?.state?.storage.state.type === 'frozen'" class="card-row-wallet-activity card-row-wallet-activity--frozen"
+                        <span v-if="wallet?.state?.type === 'frozen'" class="card-row-wallet-activity card-row-wallet-activity--frozen"
                             v-text="$t('address.info.type_frozen')"/>
 
-                        <span v-else-if="wallet?.state?.storage.state.type === 'active'" class="card-row-wallet-activity card-row-wallet-activity--active"
+                        <span v-else-if="wallet?.state.type === 'active'" class="card-row-wallet-activity card-row-wallet-activity--active"
                             v-text="$t('address.info.type_active')"/>
 
                         <span v-else class="card-row-wallet-activity card-row-wallet-activity--passive"
@@ -119,10 +119,10 @@
                             <tx-row-skeleton v-for="i in 8" v-bind:key="`tx_skeleton_${i}`"/>
                         </tbody>
 
-                        <tx-row v-for="tx in transactions" v-bind="tx"
-                            v-bind:key="tx.transactionId.hash"
-                            v-bind:txHash="tx.transactionId.hash.toString()"
-                            v-bind:txLt="tx.transactionId.lt"/>
+                        <TxRow v-for="tx in transactions"
+                            :tx="tx"
+                            :key="tx.lt.toString()"
+                        />
                     </table>
                 </div>
 
@@ -155,10 +155,11 @@ import TxRow from './TxRow.vue';
 import { AccountState, getAddressInfo, getTransactions } from '~/api'
 // import MugenScroll from 'vue-mugen-scroll'; 
 import { checkAddress } from '~/nft'; 
-import {Address, Cell, TonClient} from "@/ton/src";
+import {Address, Cell, RawTransaction, TonClient} from "@/ton/src";
 import {SmartContract} from "~/ton-contract-executor/src";
 import ContractInfo from './ContractInfo.vue'
 import { defineComponent } from 'vue'
+import { AccountPlainState } from '@/js/models/AccountState';
 
 // let x: number = 1
 
@@ -172,8 +173,8 @@ export default defineComponent({
 
     data(): {
         contractTypeVisible: boolean
-        wallet: AccountState | null
-        transactions: any[]
+        wallet: AccountPlainState | null
+        transactions: RawTransaction[]
         lastActivity: number | null
         isLoading: boolean
         hasMore: boolean
@@ -181,8 +182,8 @@ export default defineComponent({
         qrModalVisible: boolean
         contractExtendedInfo?: unknown
 
-        code?: Cell
-        data?: Cell
+        code?: string
+        data?: string
     } {
         return {
             contractTypeVisible: true,
@@ -214,10 +215,18 @@ export default defineComponent({
         showPreloader() {
             return this.transactions.length > 0 && this.hasMore;
         },
+
+        balance() {
+            console.log('Balance change', this.wallet?.balance.coins)
+            return this.wallet && this.wallet.balance.coins
+        }
     },
 
     watch: {
-        '$route': 'loadData',
+        address: 'loadData',
+        wallet (newVal) {
+            console.log('wallet watch', newVal)
+        }
     },
 
     created() {
@@ -250,7 +259,7 @@ export default defineComponent({
 
     methods: {
         reset() {
-            this.wallet = null;
+            // this.wallet = null;
             this.transactions = [];
             this.lastActivity = 0;
             this.qrModalVisible = false;
@@ -259,16 +268,25 @@ export default defineComponent({
 
         async loadData() {
             this.reset();
+            // if (1 > 0 )return
 
-            this.wallet = await getAddressInfo(this.$lc, this.address);
-            console.log('got wallet', this.wallet)
+            const wallet = await getAddressInfo(this.$lc, this.address);
+            this.wallet = wallet
+            console.log('got wallet', wallet, this.wallet, this.address)
+            // if (1 > 0 )return
 
-            if (this.wallet.state?.storage.state.type === 'uninit') {
+            if (this.wallet?.state.type === 'uninit') {
                 return;
-            } else if (this.wallet.state?.storage.state.type === 'active') {
+            } else if (this.wallet?.state.type === 'active') {
+                if (this.wallet.state?.code && this.wallet.state?.data) {
+                    this.code = this.wallet.state?.code
+                    //Cell.fromBoc(Buffer.from(this.wallet.state?.code, 'base64'))[0]
+                    this.data = this.wallet.state?.data
+                    //Cell.fromBoc(Buffer.from(this.wallet.state?.data, 'base64'))[0]
+                }
                 console.log('set code')
-                this.code = this.wallet.state?.storage.state.state.code as Cell
-                this.data = this.wallet.state?.storage.state.state.data as Cell
+                // this.code = this.wallet.state?.code as Cell
+                // this.data = this.wallet.state?.data as Cell
             }
 
             this.contractTypeVisible = false //this.wallet.is_active;
@@ -280,11 +298,15 @@ export default defineComponent({
             // Don't make extra requests:
             if (!this.emptyHistory) {
                 console.log('transactions')
-                this.transactions = await getTransactions(this.$lc, this.address, this.wallet.lastTx?.lt || "", this.wallet.lastTx?.hash || Buffer.from([]), 20);
+                try {
+                    this.transactions = await getTransactions(this.$lc, this.address, this.wallet.lastTx?.lt || "", Buffer.from(this.wallet.lastTx?.hash, "base64") || Buffer.from([]), 20);
+                } catch(e) {
+                    console.log('tx error', e)
+                }
                 console.log('this.transactions', this.transactions)
             }
 
-            this.lastActivity = this.transactions[0]?.timestamp || null;
+            this.lastActivity = this.transactions[0]?.time || null;
             this.hasMore = this.transactions.length >= 20;
             this.isLoading = false;
 

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import axios from 'axios'
 import { LITE_API_ENDPOINT } from './config.js'
 import { base64ToHex, hexToAddress, dechex } from '~/utils.js'
@@ -11,6 +12,8 @@ import {
   RawStorageInfo,
 } from '@/ton/src'
 import { tonNode_blockIdExt } from '../ton-lite-client/src/schema'
+import AppDb from '~/db'
+import { AccountPlainState, AccountStateToPlain } from './models/AccountState.js'
 
 /**
  * @param  {String} address
@@ -50,7 +53,16 @@ export interface AccountState {
 export const getAddressInfo = async function (
   lc: LiteClient,
   address: string
-): Promise<AccountState> {
+): Promise<AccountPlainState> {
+  console.log('get Address Info', address)
+  const db = new AppDb()
+  const rawAddress = Address.parse(address).toString()
+  const existing = await db.accounts.where('address').equals(rawAddress).first()
+
+  console.log('got existing========', existing)
+  if (existing) {
+    return existing
+  }
   console.log('get address info ====== ', address)
   let result: AccountState
 
@@ -71,8 +83,19 @@ export const getAddressInfo = async function (
     throw error
   }
   console.log('got res=======', result)
+  const plain = AccountStateToPlain(result)
 
-  return result
+  const putRes = await db.accounts.put(
+    plain,
+    // {
+    //   address: rawAddress,
+    //   raw: result.raw.toString(),
+    //   ...AccountStateToPlain(result),
+    // },
+    rawAddress
+  )
+  console.log(putRes)
+  return plain
 
   // return Object.freeze({ address,
   //     invalid: false,
@@ -150,15 +173,15 @@ export const getTransactions = async function (
 
     return Object.freeze({
       ...tx,
-      isService,
-      isOut,
-      message,
-      transactionId,
-      amount: amount || 0,
-      to: to || address,
-      from: from || address,
-      timestamp: parseInt(tx.time + '000'),
-      fee: tx.fees.coins.toNumber(),
+      // isService,
+      // isOut,
+      // message,
+      // transactionId,
+      // amount: amount || 0,
+      // to: to || address,
+      // from: from || address,
+      // timestamp: parseInt(tx.time + '000'),
+      // fee: tx.fees.coins.toNumber(),
     })
   })
 }
@@ -177,7 +200,7 @@ export const getTransaction = async function ({ address, lt, hash, to_lt }) {
     data: { result },
   } = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query })
 
-  return Object.freeze(result.find((tx) => tx.transaction_id?.hash == hash))
+  return Object.freeze(result.find((tx) => tx.transaction_id?.hash === hash))
 }
 
 /**

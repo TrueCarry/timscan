@@ -136,9 +136,9 @@ async function addLc() {
   lc = liteClient
   endWait()
 
-  // setInterval(async () => {
-  //   console.log('ping', await liteClient.getMasterchainInfo())
-  // }, 1000)
+  setInterval(async () => {
+    liteClient.getMasterchainInfo()
+  }, 1000)
 }
 
 addLc()

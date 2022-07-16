@@ -1,4 +1,4 @@
-import { getLiteClient } from "./js/getLiteclient";
+import { getLiteClient } from './js/getLiteclient'
 
 async function main() {
   const liteClient = await getLiteClient()

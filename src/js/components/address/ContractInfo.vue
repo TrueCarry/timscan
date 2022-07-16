@@ -2,12 +2,17 @@
   <div class="card">
     <div class="card-row">
       <div class="card-row__name">Code</div>
-      <div class="card-row__value">{{codeString}}</div>
+      <div class="card-row__value">{{code}}</div>
+    </div>
+
+    <div class="card-row">
+      <div class="card-row__name">Code Hash</div>
+      <div class="card-row__value">{{codeHash}}</div>
     </div>
 
     <div class="card-row">
       <div class="card-row__name">Data</div>
-      <div class="card-row__value">{{dataString}}</div>
+      <div class="card-row__value">{{data}}</div>
     </div>
 
     <div class="card-row">
@@ -19,8 +24,10 @@
       <div class="card-row__value">
 
         <div class="card-row" v-for="(output, i) in results[method]" :key="i">
-          <div class="card-row__name">{{output.name}}</div>
-          <div class="card-row__value"><value-wrapper :info="output" /></div>
+          <template v-if="output">
+            <div class="card-row__name">{{output.name}}</div>
+            <div class="card-row__value"><value-wrapper :info="output" /></div>
+          </template>
         </div>
 
       </div>
@@ -80,10 +87,22 @@ const abiWallet = {
   }
 }
 
+const abiHighloadWallet = {
+  methods: {
+    get_public_key: {
+      input: [],
+      output: [
+        {name: 'public_key', type: 'int', length: 256},
+      ],
+    }
+  }
+}
+
 const abiMap = {
   '4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42': abiNft, // standard nft
   '9892766765d3ea42809a417abbd7ff9ce681b145d05ae6b118a614b38c8ded15': abiNft, // standard editable nft
-  'feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0': abiWallet
+  'feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0': abiWallet,
+  '9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812': abiHighloadWallet
 }
 
 
@@ -92,31 +111,48 @@ export default defineComponent({
   components: { ValueWrapper },
   props: {
     code: {
-      type: Object as PropType<Cell>,
-      required: true,
-      // default: () => undefined
+      type: String,
+      required: false,
+      default: () => null
     },
     data: {
-      type: Object as PropType<Cell>,
+      type: String,
       required: false,
-      default: () => undefined
+      default: () => null
     }
   },
 
   computed: {
     abi () {
-      const abi = this.code&&this.code.kind && abiMap[toRaw(this.code).hash().toString('hex')] || []
+      if (!this.codeCell) {
+        return []
+      }
+      const abi = this.code && abiMap[toRaw(this.codeCell).hash().toString('hex')] || []
       console.log('abi', abi)
       return abi
     },
 
-    codeString() {
-      return this.code&&this.code.kind && toRaw(this.code).toBoc().toString('base64')
+    codeCell (): Cell | null {
+      return this.code 
+        ? Cell.fromBoc(Buffer.from(this.code, 'base64'))[0] 
+        : null
     },
 
-    dataString() {
-      return this.data&&this.data.kind && toRaw(this.data).toBoc().toString('base64')
-    }
+    codeHash() {
+      return this.codeCell && this.codeCell.hash().toString('hex')
+    },
+
+    dataCell () {
+      return this.data && Cell.fromBoc(Buffer.from(this.data, 'base64'))[0]
+    },
+
+    // codeString() {
+    //   return this.code&&this.code.kind && toRaw(this.code).toBoc().toString('base64')
+    // },
+
+    // dataString() {
+    //   return this.data&&this.data.kind && toRaw(this.data).toBoc().toString('base64')
+    // }
   },
 
   data () {
@@ -127,52 +163,54 @@ export default defineComponent({
     }
   },
 
-  async mounted () {
-    // const configUrl =
-    //   process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/global.config.json'
+  // async mounted () {
+  //   // const configUrl =
+  //   //   process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/global.config.json'
 
-    // const { data } = await axios(configUrl)
+  //   // const { data } = await axios(configUrl)
 
-    // const engines = []
-    // // while (engines.length < 50) {
-    //   for (const ls of data.liteservers.slice(0, 1)) {
-    //     engines.push(
-    //       new LiteSingleEngine({
-    //         host: intToIP(ls.ip),
-    //         port: ls.port,
-    //         publicKey: Buffer.from(ls.id.key, 'base64'),
-    //       })
-    //     )
-    //   }
-    // // }
+  //   // const engines = []
+  //   // // while (engines.length < 50) {
+  //   //   for (const ls of data.liteservers.slice(0, 1)) {
+  //   //     engines.push(
+  //   //       new LiteSingleEngine({
+  //   //         host: intToIP(ls.ip),
+  //   //         port: ls.port,
+  //   //         publicKey: Buffer.from(ls.id.key, 'base64'),
+  //   //       })
+  //   //     )
+  //   //   }
+  //   // // }
 
-    //   const engine = new LiteRoundRobinEngine(engines)
-    //   const liteClient = new LiteClient({ engine })
-    //   console.log('lite', liteClient)
-    // setTimeout(async () => {
-      console.log('get masterchain_block_title')
-      const info  = await this.$lc.getMasterchainInfo()
-      // this.$ton
-      console.log('masterchain_block_title', info)
-    // }, 1000)
-  },
+  //   //   const engine = new LiteRoundRobinEngine(engines)
+  //   //   const liteClient = new LiteClient({ engine })
+  //   //   console.log('lite', liteClient)
+  //   // setTimeout(async () => {
+  //     console.log('get masterchain_block_title')
+  //     const info  = await this.$lc.getMasterchainInfo()
+  //     // this.$ton
+  //     console.log('masterchain_block_title', info)
+  //   // }, 1000)
+  // },
 
   watch: {
-    async code () {
+    async codeCell () {
       console.log('async code')
-      if (!this.code || !this.code.kind || !this.data || !this.data.kind) {
+      if (!this.code || !this.data || !this.abi.methods) {
         return
       }
       for (const method of Object.keys(this.abi.methods)) {
         const info = this.abi.methods[method]
         console.log('info abi', info)
         const res = await this.callMethod(method, info)
-        console.log(res)
-        const tmp = {
-          ...this.results
+        if (res) {
+          console.log(res)
+          const tmp = {
+            ...this.results
+          }
+          tmp[method] = res
+          this.results = tmp
         }
-        tmp[method] = res
-        this.results = tmp
       }
     }
   },
@@ -180,40 +218,45 @@ export default defineComponent({
 
   methods: {
     async callMethod(name, info) {
+      try {
       // console.log(1, this.code.target, this.data)
-      if (!this.code || !this.code.kind || !this.data) {
-        return
-      }
-      let wallet = await SmartContract.fromCell(toRaw<Cell>(this.code), toRaw(this.data))
-      // console.log(2)
-      let res = await wallet.invokeGetMethod(name, [])
-      // console.log(3)
+        if (!this.codeCell || !this.dataCell) {
+          return
+        }
+        let wallet = await SmartContract.fromCell(toRaw<Cell>(this.codeCell), toRaw(this.dataCell))
+        // console.log(2)
+        let res = await wallet.invokeGetMethod(name, [])
+        // console.log(3)
 
-      if (res.type !== 'success') {
-        console.log('not type', res.type)
-        console.log(res)
-        return res
-      }
+        if (res.type !== 'success') {
+          console.log('not type', res.type)
+          console.log(res)
+          return null
+        }
 
-      if (res.exit_code !== 0) {
-        return res
-      }
+        if (res.exit_code !== 0) {
+          return null
+        }
 
-      const values: any[] = []
-            // console.log(res.results], res)
-      for (let i = 0; i < info.output.length; i++) {
-        console.log(i)
-        switch (info.output[i].type) {
-          default: {
-            values.push({
-              ...info.output[i],
-              value: res.result[i],
-            })
+        const values: any[] = []
+              // console.log(res.results], res)
+        for (let i = 0; i < info.output.length; i++) {
+          console.log(i)
+          switch (info.output[i].type) {
+            default: {
+              values.push({
+                ...info.output[i],
+                value: res.result[i],
+              })
+            }
           }
         }
-      }
 
       return values
+    } catch(e) {
+      console.log('e', e)
+      return null
+    }
     }
   }
 })

@@ -1,2 +1,2 @@
-import { Buffer } from 'buffer';
-window.Buffer = Buffer;
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
