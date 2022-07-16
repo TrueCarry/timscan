@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, provide } from 'vue'
 import axios from 'axios'
 // import VueClipboard from 'vue-clipboard2';
 import store from './store'
@@ -42,10 +42,10 @@ app.use(i18n)
 app.use(router)
 app.use(store)
 
-app.component('ui-copy-button', UiCopyButton)
-app.component('ui-address', UiAddress)
-app.component('ui-timeago', UiTimeago)
-app.component('ui-modal', UiModal)
+app.component('UiCopyButton', UiCopyButton)
+app.component('UiAddress', UiAddress)
+app.component('UiTimeago', UiTimeago)
+app.component('UiModal', UiModal)
 
 app.config.globalProperties.$ton = formatTons
 app.config.globalProperties.$fee = formatFee
@@ -94,7 +94,23 @@ async function addLc() {
     }
   }
   const tempWait = {}
-  for (const name of ['getMasterchainInfo', 'getAccountState']) {
+  for (const name of [
+    'getMasterchainInfo',
+    'getAccountState',
+    'getAccountTransactions',
+    'sendMessage',
+    'getMasterchainInfoExt',
+    'getCurrentTime',
+    'getVersion',
+    'getConfig',
+    'getAccountTransaction',
+    'runMethod',
+    'lookupBlockByID',
+    'getBlockHeader',
+    'getAllShardsInfo',
+    'listBlockTransactions',
+    'getFullBlock',
+  ]) {
     tempWait[name] = createShim(name)
   }
 
@@ -110,6 +126,7 @@ async function addLc() {
   }
 
   app.config.globalProperties.$lc = tempWait
+  app.provide('$lc', tempWait)
 
   const configUrl =
     process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/testnet-global.config.json'
@@ -133,6 +150,7 @@ async function addLc() {
   const liteClient = new LiteClient({ engine })
 
   app.config.globalProperties.$lc = liteClient
+  app.provide('$lc', liteClient)
   lc = liteClient
   endWait()
 
