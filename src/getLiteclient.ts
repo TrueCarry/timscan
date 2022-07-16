@@ -6,6 +6,7 @@ import {
   LiteRoundRobinEngine,
   LiteSingleEngine,
 } from '@/ton-lite-client/src/index'
+import { liteServer_masterchainInfo } from './ton-lite-client/src/schema'
 // import { liteServer_masterchainInfo } from '../ton-lite-client/dist/schema'
 // import { callTonApi } from './callTonApi'
 
@@ -70,10 +71,10 @@ export async function getLiteClient(): Promise<LiteClient> {
   return liteClient
 }
 // eslint-disable-next-line camelcase
-let cachedMaterInfo: { info?: any; ts?: number } = {}
+let cachedMaterInfo: { info?: liteServer_masterchainInfo; ts?: number } = {}
 
 // eslint-disable-next-line camelcase
-export async function getLastLiteBlock(lc: LiteClient): Promise<any> {
+export async function getLastLiteBlock(lc: LiteClient): Promise<liteServer_masterchainInfo> {
   if (cachedMaterInfo.ts && cachedMaterInfo.info && Date.now() - cachedMaterInfo.ts < 1000) {
     return cachedMaterInfo.info
   }

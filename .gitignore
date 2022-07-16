@@ -6,3 +6,4 @@ package-lock.json
 dist/*
 Caddyfile
 yarn-error.log
+stats.html
