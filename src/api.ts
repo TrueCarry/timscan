@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { LITE_API_ENDPOINT } from './config.js'
 import { base64ToHex, hexToAddress, dechex } from '~/utils.js'
-import { LiteClient } from '../ton-lite-client/src'
+import { LiteClient } from '@/ton-lite-client/src'
 import {
   Address,
   Cell,
@@ -11,7 +11,7 @@ import {
   RawCurrencyCollection,
   RawStorageInfo,
 } from '@/ton/src'
-import { tonNode_blockIdExt } from '../ton-lite-client/src/schema'
+import { tonNode_blockIdExt } from '@/ton-lite-client/src/schema'
 import AppDb from '~/db'
 import { AccountPlainState, AccountStateToPlain } from './models/AccountState.js'
 

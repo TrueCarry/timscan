@@ -43,7 +43,7 @@
 import {SmartContract} from "~/ton-contract-executor/src";
 import ValueWrapper from './ValueWrapper'; 
 import { isProxy, PropType, toRaw } from 'vue';
-import {LiteClient, LiteSingleEngine, LiteRoundRobinEngine} from '../../../ton-lite-client/src/index'
+import {LiteClient, LiteSingleEngine, LiteRoundRobinEngine} from '@/ton-lite-client/src/index'
 import axios from 'axios';
 import {defineComponent} from 'vue'
 import { Cell } from "@/ton/src";

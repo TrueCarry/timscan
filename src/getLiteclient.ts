@@ -1,10 +1,15 @@
 /* eslint-disable camelcase */
 import axios from 'axios'
-import { LiteClient, LiteEngine, LiteRoundRobinEngine, LiteSingleEngine } from '../ton-lite-client/src/index'
-// import { liteServer_masterchainInfo } from '../ton-lite-client/dist/schema' 
-// import { callTonApi } from './callTonApi'     
-        
-// testnet    
+import {
+  LiteClient,
+  LiteEngine,
+  LiteRoundRobinEngine,
+  LiteSingleEngine,
+} from '@/ton-lite-client/src/index'
+// import { liteServer_masterchainInfo } from '../ton-lite-client/dist/schema'
+// import { callTonApi } from './callTonApi'
+
+// testnet
 // const sandboxLiteClientServer = {
 //   ip: -1903905862,
 //   port: 33599,
@@ -23,8 +28,8 @@ import { LiteClient, LiteEngine, LiteRoundRobinEngine, LiteSingleEngine } from '
 //     key: 'R1KsqYlNks2Zows+I9s4ywhilbSevs9dH1x2KF9MeSU=',
 //   },
 // }
- 
-function intToIP(int: number) {  
+
+function intToIP(int: number) {
   const part1 = int & 255
   const part2 = (int >> 8) & 255
   const part3 = (int >> 16) & 255
@@ -46,17 +51,17 @@ export async function getLiteClient(): Promise<LiteClient> {
 
   const { data } = await axios(configUrl)
 
-  const engines = []
+  const engines: LiteSingleEngine[] = []
   // while (engines.length < 50) {
-    for (const ls of data.liteservers.slice(0, 1)) {
-      engines.push(
-        new LiteSingleEngine({
-          host: intToIP(ls.ip),
-          port: ls.port,
-          publicKey: Buffer.from(ls.id.key, 'base64'),
-        })
-      )
-    }
+  for (const ls of data.liteservers.slice(0, 1)) {
+    engines.push(
+      new LiteSingleEngine({
+        host: intToIP(ls.ip),
+        port: ls.port,
+        publicKey: Buffer.from(ls.id.key, 'base64'),
+      })
+    )
+  }
   // }
 
   const engine: LiteEngine = new LiteRoundRobinEngine(engines)

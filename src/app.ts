@@ -11,8 +11,8 @@ import UiModal from '~/components/UiModal.vue'
 // import { IS_TESTNET } from '~/config.js'
 import { formatFee, formatTons, formatFiat } from '~/helpers'
 import i18n from '~/i18n'
-import '../sass/app.scss'
-import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from '../ton-lite-client/src/index'
+import './sass/app.scss'
+import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from '@/ton-lite-client/src/index'
 
 // Vue.use(VueClipboard);
 
