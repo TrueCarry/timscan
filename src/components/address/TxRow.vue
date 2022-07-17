@@ -110,7 +110,65 @@
   </tbody>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { RawTransaction, Address } from '@/ton/src'
+import BN from 'bn.js'
+import { computed, PropType, ref } from 'vue'
+
+const props = defineProps({
+  tx: {
+    type: Object as PropType<RawTransaction>,
+    required: true,
+    // default: () => undefined
+  },
+  address: {
+    type: Object as PropType<Address>,
+    required: false,
+    default: () => undefined,
+  },
+})
+
+const isVisible = ref<boolean>(false)
+
+const messages = computed(() => {
+  return [props.tx.inMessage, ...props.tx.outMessages]
+})
+// txLinkRouteParams() {
+//     return {
+//         lt: this.txLt,
+//         hash: this.txHash,
+//         address: this.isOut ? this.from : this.to,
+//     };
+// },
+
+// dateTime() {
+//     return new Date(this.timestamp);
+// },
+
+const sourceAddress = computed(() => {
+  return props.tx.inMessage?.info.src || props.tx.outMessages[0]?.info.src
+})
+
+const isOut = computed(() => {
+  return props.address && sourceAddress.value && props.address.equals(sourceAddress.value)
+})
+
+const from = computed(() => {
+  return props.tx.inMessage?.info.src
+})
+
+const isService = computed(() => {
+  return false
+})
+
+const amount = computed(() => {
+  return {
+    coins: new BN(0),
+  }
+})
+</script>
+
+<!-- <script lang="ts">
 import { Address, Cell, RawTransaction } from '@/ton/src'
 import { defineComponent, PropType } from 'vue'
 import BN from 'bn.js'
@@ -205,4 +263,4 @@ export default defineComponent({
     // },
   },
 })
-</script>
+</script> -->

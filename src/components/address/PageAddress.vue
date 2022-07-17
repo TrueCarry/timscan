@@ -107,53 +107,95 @@
         </div>
       </div>
 
-      <ContractInfo :code="code" :data="data" />
+      <div class="card card--tabbed">
+        <nav class="card-title-tabs">
+          <div
+            class="card-title-tab"
+            :class="selectedTab === 'transactions' && 'card-title-tab--active'"
+            @click="selectedTab = 'transactions'"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              class="card-title-tab__icon"
+            >
+              <path
+                d="M4 13c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 4c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0-8c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zm0 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zM7 8c0 .55.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1zm-3 5c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 4c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0-8c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zm0 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zM7 8c0 .55.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1z"
+              ></path>
+            </svg>
+            Transactions
+          </div>
+          <div
+            class="card-title-tab"
+            :class="selectedTab === 'contract' && 'card-title-tab--active'"
+            @click="selectedTab = 'contract'"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              class="card-title-tab__icon"
+            >
+              <path
+                d="M4 7v2c0 .55-.45 1-1 1H2v4h1c.55 0 1 .45 1 1v2c0 1.65 1.35 3 3 3h3v-2H7c-.55 0-1-.45-1-1v-2c0-1.3-.84-2.42-2-2.83v-.34C5.16 11.42 6 10.3 6 9V7c0-.55.45-1 1-1h3V4H7C5.35 4 4 5.35 4 7zM21 10c-.55 0-1-.45-1-1V7c0-1.65-1.35-3-3-3h-3v2h3c.55 0 1 .45 1 1v2c0 1.3.84 2.42 2 2.83v.34c-1.16.41-2 1.52-2 2.83v2c0 .55-.45 1-1 1h-3v2h3c1.65 0 3-1.35 3-3v-2c0-.55.45-1 1-1h1v-4h-1z"
+              ></path>
+            </svg>
+            Contract
+          </div>
+        </nav>
 
-      <div class="card">
-        <div
-          v-if="emptyHistory"
-          class="tx-history-empty-panel"
-          v-text="$t('address.tx_table.empty')"
-        />
+        <template v-if="selectedTab === 'transactions'">
+          <div
+            v-if="emptyHistory"
+            class="tx-history-empty-panel"
+            v-text="$t('address.tx_table.empty')"
+          />
 
-        <div v-show="!emptyHistory" class="tx-history-wrap">
-          <table class="tx-table">
-            <thead>
-              <tr>
-                <th v-pre width="40" />
-                <th width="100">
-                  <div class="tx-table__cell" v-text="$t('address.tx_table.age')" />
-                </th>
-                <th>
-                  <div
-                    class="tx-table__cell tx-table__cell--align-right"
-                    v-text="$t('address.tx_table.from')"
-                  />
-                </th>
-                <th v-pre width="50" />
-                <th>
-                  <div class="tx-table__cell" v-text="$t('address.tx_table.to')" />
-                </th>
-                <th>
-                  <div
-                    class="tx-table__cell tx-table__cell--align-right"
-                    style="padding-right: 26px"
-                    v-text="$t('address.tx_table.value')"
-                  />
-                </th>
-                <th v-pre width="40">
-                  <div class="tx-table__cell" />
-                </th>
-              </tr>
-            </thead>
+          <div v-show="!emptyHistory" class="tx-history-wrap">
+            <table class="tx-table">
+              <thead>
+                <tr>
+                  <th v-pre width="40" />
+                  <th width="100">
+                    <div class="tx-table__cell" v-text="$t('address.tx_table.age')" />
+                  </th>
+                  <th>
+                    <div
+                      class="tx-table__cell tx-table__cell--align-right"
+                      v-text="$t('address.tx_table.from')"
+                    />
+                  </th>
+                  <th v-pre width="50" />
+                  <th>
+                    <div class="tx-table__cell" v-text="$t('address.tx_table.to')" />
+                  </th>
+                  <th>
+                    <div
+                      class="tx-table__cell tx-table__cell--align-right"
+                      style="padding-right: 26px"
+                      v-text="$t('address.tx_table.value')"
+                    />
+                  </th>
+                  <th v-pre width="40">
+                    <div class="tx-table__cell" />
+                  </th>
+                </tr>
+              </thead>
 
-            <tbody v-show="transactions.length == 0">
-              <tx-row-skeleton v-for="i in 8" :key="`tx_skeleton_${i}`" />
-            </tbody>
+              <tbody v-show="transactions.length == 0">
+                <tx-row-skeleton v-for="i in 8" :key="`tx_skeleton_${i}`" />
+              </tbody>
 
-            <TxRow v-for="tx in transactions" :key="tx.lt.toString()" :tx="tx" />
-          </table>
-        </div>
+              <TxRow
+                v-for="tx in transactions"
+                :key="tx.lt.toString()"
+                :tx="(tx as RawTransaction)"
+              />
+            </table>
+          </div>
+        </template>
+        <template v-else-if="selectedTab === 'contract'">
+          <ContractInfo :code="code" :data="data"
+        /></template>
 
         <!-- <mugen-scroll v-bind:handler="loadMore" v-bind:should-handle="shouldHandleScroll" style="display: flex;">
                     <div v-on:click="loadMore" class="tx-table-loader-button" v-show="showPreloader">
@@ -208,8 +250,9 @@ import ContractInfo from './ContractInfo.vue'
 import { defineComponent, ref, computed, watch, inject } from 'vue'
 import { AccountPlainState } from '@/models/AccountState'
 import { useStore } from 'vuex'
+import { LiteClient } from '@/ton-lite-client/src'
 
-const $lc = inject('$lc')
+const $lc = inject('$lc') as LiteClient
 console.log('lc', $lc)
 
 const props = defineProps({
@@ -230,6 +273,7 @@ const qrModalVisible = ref<boolean>(false)
 const contractExtendedInfo = ref<unknown | undefined>(undefined)
 const code = ref<string | undefined>(undefined)
 const data = ref<string | undefined>(undefined)
+const selectedTab = ref<'transactions' | 'contract'>('transactions')
 
 const store = useStore()
 
