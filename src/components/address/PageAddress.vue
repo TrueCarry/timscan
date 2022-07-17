@@ -143,55 +143,8 @@
           </div>
         </nav>
 
-        <template v-if="selectedTab === 'transactions'">
-          <div
-            v-if="emptyHistory"
-            class="tx-history-empty-panel"
-            v-text="$t('address.tx_table.empty')"
-          />
-
-          <div v-show="!emptyHistory" class="tx-history-wrap">
-            <table class="tx-table">
-              <thead>
-                <tr>
-                  <th v-pre width="40" />
-                  <th width="100">
-                    <div class="tx-table__cell" v-text="$t('address.tx_table.age')" />
-                  </th>
-                  <th>
-                    <div
-                      class="tx-table__cell tx-table__cell--align-right"
-                      v-text="$t('address.tx_table.from')"
-                    />
-                  </th>
-                  <th v-pre width="50" />
-                  <th>
-                    <div class="tx-table__cell" v-text="$t('address.tx_table.to')" />
-                  </th>
-                  <th>
-                    <div
-                      class="tx-table__cell tx-table__cell--align-right"
-                      style="padding-right: 26px"
-                      v-text="$t('address.tx_table.value')"
-                    />
-                  </th>
-                  <th v-pre width="40">
-                    <div class="tx-table__cell" />
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody v-show="transactions.length == 0">
-                <tx-row-skeleton v-for="i in 8" :key="`tx_skeleton_${i}`" />
-              </tbody>
-
-              <TxRow
-                v-for="tx in transactions"
-                :key="tx.lt.toString()"
-                :tx="(tx as RawTransaction)"
-              />
-            </table>
-          </div>
+        <template v-if="selectedTab === 'transactions' && wallet">
+          <TransactionsList :wallet="wallet" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
           <ContractInfo :code="code" :data="data"
@@ -251,6 +204,7 @@ import { defineComponent, ref, computed, watch, inject } from 'vue'
 import { AccountPlainState } from '@/models/AccountState'
 import { useStore } from 'vuex'
 import { LiteClient } from '@/ton-lite-client/src'
+import TransactionsList from './TransactionsList.vue'
 
 const $lc = inject('$lc') as LiteClient
 console.log('lc', $lc)
@@ -325,25 +279,25 @@ const loadData = async () => {
     // this.data = this.wallet.state?.data as Cell
   }
 
-  contractTypeVisible.value = false // this.wallet.is_active;
+  // contractTypeVisible.value = false // this.wallet.is_active;
   emptyHistory.value = wallet.value.lastTx?.lt === '0'
 
   // Don't make extra requests:
-  if (!emptyHistory.value && wallet.value.lastTx) {
-    try {
-      transactions.value = await getTransactions(
-        $lc,
-        props.address,
-        wallet.value.lastTx.lt || '',
-        Buffer.from(wallet.value.lastTx.hash, 'base64'),
-        // Buffer.from(this.wallet.?lastTx.hash || '', 'base64') || Buffer.from([]),
-        20
-      )
-    } catch (e) {
-      console.log('tx error', e)
-    }
-    console.log('this.transactions', transactions)
-  }
+  // if (!emptyHistory.value && wallet.value.lastTx) {
+  //   try {
+  //     transactions.value = await getTransactions(
+  //       $lc,
+  //       props.address,
+  //       wallet.value.lastTx.lt || '',
+  //       Buffer.from(wallet.value.lastTx.hash, 'base64'),
+  //       // Buffer.from(this.wallet.?lastTx.hash || '', 'base64') || Buffer.from([]),
+  //       20
+  //     )
+  //   } catch (e) {
+  //     console.log('tx error', e)
+  //   }
+  //   console.log('this.transactions', transactions)
+  // }
 
   lastActivity.value = transactions.value[0]?.time || null
   hasMore.value = transactions.value.length >= 20
@@ -363,7 +317,6 @@ const loadData = async () => {
 watch(
   () => props.address,
   () => {
-    console.log('load data')
     loadData()
   }
 )

@@ -1,32 +1,33 @@
-<template>
-    <component v-once v-bind:is="component" class="address-link ui-looong"
-        v-bind:class="{ clickable: !disabled }"
-        v-bind:to="{ name: 'address', params: { address }}"
-        v-bind:data-loopa="name.substr(0, 40)"
-        v-bind:data-poopa="name.substr(40)"/>
-</template>
+<script setup lang="ts">
+import { useStore } from 'vuex'
 
-<script>
-export default {
-    props: {
-        address: {
-            type: String,
-            required: true,
-        },
-        disabled: {
-            type: Boolean,
-            default: false,
-        },
-    },
+const props = defineProps({
+  address: {
+    type: String,
+    required: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+})
 
-    computed: {
-        component() {
-            return this.disabled ? 'span' : 'router-link';
-        },
-
-        name() {
-            return this.$store.getters.getAddressName(this.address);
-        },
-    },
-};
+const store = useStore()
+const name = store.getters.getAddressName(props.address)
 </script>
+
+<template>
+  <router-link
+    v-if="!disabled"
+    class="address-link ui-looong clickable"
+    :to="{ name: 'address', params: { address } }"
+    :data-loopa="name.substr(0, 40)"
+    :data-poopa="name.substr(40)"
+  />
+  <span
+    v-else
+    class="address-link ui-looong"
+    :data-loopa="name.substr(0, 40)"
+    :data-poopa="name.substr(40)"
+  />
+</template>

@@ -41,8 +41,12 @@ class ADNLPacket {
 
   public static parse(data: Buffer) {
     if (!ADNLPacket.containsFullPacket(data)) {
-      throw new Error('Bad packet')
+      console.log('not full packet')
+      return null
+      // throw new Error('Bad packet')
     }
+
+    console.log('full packet')
 
     let cursor = 0
     const size = data.slice(0, (cursor += 4)).readUint32LE(0)
@@ -67,6 +71,7 @@ class ADNLPacket {
       return false
     }
     const size = data.readUint32LE(0)
+    console.log('check for full packet', data.byteLength, size)
     return data.byteLength - 4 >= size
   }
 }

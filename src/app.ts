@@ -135,7 +135,7 @@ async function addLc() {
 
   const engines: LiteSingleEngine[] = []
   // while (engines.length < 50) {
-  for (const ls of data.liteservers.slice(1, 2)) {
+  for (const ls of data.liteservers.slice(0, 1)) {
     engines.push(
       new LiteSingleEngine({
         host: intToIP(ls.ip),
@@ -156,7 +156,7 @@ async function addLc() {
 
   setInterval(async () => {
     liteClient.getMasterchainInfo()
-  }, 1000)
+  }, 30000)
 }
 
 addLc()

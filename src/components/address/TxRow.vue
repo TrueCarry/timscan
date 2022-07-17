@@ -1,77 +1,56 @@
+<script setup lang="ts">
+import { RawTransaction, Address } from '@/ton/src'
+import BN from 'bn.js'
+import { computed, PropType, ref } from 'vue'
+import MessageRow from './MessageRow.vue'
+import MultiOutputRow from './MultiOutputRow.vue'
+
+const props = defineProps({
+  tx: {
+    type: Object as PropType<RawTransaction>,
+    required: true,
+    // default: () => undefined
+  },
+  address: {
+    type: Object as PropType<Address>,
+    required: false,
+    default: () => undefined,
+  },
+})
+
+const isVisible = ref<boolean>(false)
+
+const messages = computed(() => {
+  return [props.tx.inMessage, ...props.tx.outMessages]
+})
+
+// txLinkRouteParams() {
+//     return {
+//         lt: this.txLt,
+//         hash: this.txHash,
+//         address: this.isOut ? this.from : this.to,
+//     };
+// },
+
+// dateTime() {
+//     return new Date(this.timestamp);
+// },
+</script>
+
 <template>
-  <tbody>
-    <tr v-for="(message, i) in messages" :key="i">
-      <td>
-        <a class="tx-table-cell-icon">
-          <svg v-pre xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M7.665 9.301c-.155-.067-.338-.206-.549-.417a2.6 2.6 0 0 1 0-3.677l1.768-1.768a2.6 2.6 0 0 1 3.677 3.677l-1.167 1.167m-3.06-1.584c.156.067.339.206.55.417a2.6 2.6 0 0 1 0 3.677l-1.768 1.768A2.6 2.6 0 1 1 3.44 8.884l1.167-1.167"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-width="1.3"
-            />
-          </svg>
-        </a>
-      </td>
-      <td>
-        <div class="tx-table__cell">
-          <!-- <ui-timeago :timestamp="tx.time"/> -->
-          {{ message }}
-        </div>
-      </td>
-      <td>
-        <div class="tx-table__cell tx-table__cell--align-right">
-          <span v-if="!from">hidden</span>
-          <ui-address
-            v-else
-            :address="from.toFriendly({ urlSafe: true, bounceable: true })"
-            :disabled="isOut"
-          />
-        </div>
-      </td>
-      <td>
-        <div class="tx-table__cell" style="padding: 0">
-          <span v-if="isService" class="tx-table__badge tx-table__badge--service">OUT</span>
-          <span v-else-if="isOut" class="tx-table__badge tx-table__badge--out">OUT</span>
-          <span v-else class="tx-table__badge tx-table__badge--in">IN</span>
-        </div>
-      </td>
-      <td>
-        <div class="tx-table__cell">
-          <!-- <ui-address v-bind:address="to.toFriendly({urlSafe: true, bounceable: true})" v-bind:disabled="!isOut"/> -->
-        </div>
-      </td>
-      <td>
-        <div
-          class="tx-table__cell tx-table__cell--align-right"
-          style="position: relative; padding-right: 26px"
-        >
-          {{ $ton(amount.coins.toNumber()) }} TON
+  <template v-if="tx.outMessagesCount < 10">
+    <tbody v-for="(message, i) in tx.outMessages" :key="i" :class="i > 0 && 'sub-list'">
+      <MessageRow :tx="tx" :message="message" :source="'out'" />
+    </tbody>
+  </template>
+  <MultiOutputRow v-else :tx="tx" />
 
-          <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
-        </div>
-      </td>
-      <td>
-        <div class="tx-table__cell">
-          <svg
-            class="tx-table-expand-caret"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            :class="{ 'tx-table-expand-caret--expanded': isVisible }"
-          >
-            <path
-              stroke="currentColor"
-              stroke-width="1.3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m1.5 4.75 5.5 5.5 5.5-5.5"
-            />
-          </svg>
-        </div>
-      </td>
-    </tr>
+  <tbody v-if="tx.inMessage" :class="messages.length > 1 && 'sub-list'">
+    <MessageRow :tx="tx" :message="tx.inMessage" :source="'in'" />
+  </tbody>
+</template>
 
-    <!-- <tr v-show="isVisible" class="tx-table-row-details">
+<!-- <tr v-show="isVisible" class="tx-table-row-details">
             <td colspan="10">
                 <div class="tx-table-inner-container">
                     <div class="tx-table-inner">
@@ -107,66 +86,7 @@
                 </div>
             </td>
         </tr> -->
-  </tbody>
-</template>
-
-<script setup lang="ts">
-import { RawTransaction, Address } from '@/ton/src'
-import BN from 'bn.js'
-import { computed, PropType, ref } from 'vue'
-
-const props = defineProps({
-  tx: {
-    type: Object as PropType<RawTransaction>,
-    required: true,
-    // default: () => undefined
-  },
-  address: {
-    type: Object as PropType<Address>,
-    required: false,
-    default: () => undefined,
-  },
-})
-
-const isVisible = ref<boolean>(false)
-
-const messages = computed(() => {
-  return [props.tx.inMessage, ...props.tx.outMessages]
-})
-// txLinkRouteParams() {
-//     return {
-//         lt: this.txLt,
-//         hash: this.txHash,
-//         address: this.isOut ? this.from : this.to,
-//     };
-// },
-
-// dateTime() {
-//     return new Date(this.timestamp);
-// },
-
-const sourceAddress = computed(() => {
-  return props.tx.inMessage?.info.src || props.tx.outMessages[0]?.info.src
-})
-
-const isOut = computed(() => {
-  return props.address && sourceAddress.value && props.address.equals(sourceAddress.value)
-})
-
-const from = computed(() => {
-  return props.tx.inMessage?.info.src
-})
-
-const isService = computed(() => {
-  return false
-})
-
-const amount = computed(() => {
-  return {
-    coins: new BN(0),
-  }
-})
-</script>
+<!-- </tbody> -->
 
 <!-- <script lang="ts">
 import { Address, Cell, RawTransaction } from '@/ton/src'

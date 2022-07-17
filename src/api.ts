@@ -14,6 +14,8 @@ import {
 import { tonNode_blockIdExt } from '@/ton-lite-client/src/schema'
 import AppDb from '~/db'
 import { AccountPlainState, AccountStateToPlain } from './models/AccountState.js'
+import { PlainTransaction } from './models/Transaction.js'
+import BN from 'bn.js'
 
 /**
  * @param  {String} address
@@ -121,8 +123,9 @@ export const getTransactions = async function (
   _address: string,
   lt: string,
   hash: Buffer,
-  limit = 50
-) {
+  limit: number
+): Promise<PlainTransaction[]> {
+  const db = new AppDb()
   //   const query = {
   //     address,
   //     lt,
@@ -130,60 +133,118 @@ export const getTransactions = async function (
   //     hash: base64ToHex(hash),
   //     api_key: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992',
   //   }
+  console.log('get txes', lt, hash)
+  const rawAddress = Address.parse(_address).toString()
+  const existing = await db.transactions
+    .where('address')
+    .equals(rawAddress)
+    .limit(limit)
+    .and((tx) => {
+      console.log('check lt', tx.lt)
+      return new BN(tx.lt).lte(new BN(lt))
+    })
+    .reverse()
+    .sortBy('lt')
+  // .toArray()
 
+  console.log('existing transactions', existing)
+  if (existing && existing.length > 0) {
+    if (existing.length >= limit) {
+      return existing
+    }
+
+    const last = existing[existing.length - 1]
+    const tx = parseTransaction(0, Cell.fromBoc(Buffer.from(last.data, 'base64'))[0].beginParse())
+    if (tx.prevTransaction.lt.toNumber() === 0) {
+      return existing
+    }
+  }
+
+  console.log('limit transactions', limit)
   const address = Address.parse(_address)
   const result = await lc.getAccountTransactions(address, lt, hash, limit)
   const cell = Cell.fromBoc(result.transactions)
-  console.log('got tx', cell)
+  console.log('got tx', cell, result, limit)
 
-  const transactions = cell.map((c) => parseTransaction(address.workChain, c.beginParse()))
+  const ltToHash: Map<string, Buffer> = new Map()
+  ltToHash.set(lt, hash)
+
+  const transactions = cell.map((c) => {
+    const tx = parseTransaction(address.workChain, c.beginParse())
+    ltToHash.set(tx.prevTransaction.lt.toString(), tx.prevTransaction.hash)
+    return tx
+  })
 
   //   const {
   //     data: { result },
   //   } = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query })
 
-  return transactions.map((tx) => {
-    const isService = !tx.inMessage && tx.outMessagesCount < 1
-    //   !tx.in_msg && tx.out_msgs.length < 1
-
-    const sourceAddress = tx.inMessage?.info.src || tx.outMessages[0]?.info.src
-    const destAddress = tx.outMessages[0]?.info.src || tx.inMessage?.info.dest
-
-    const isOut = sourceAddress && address.equals(sourceAddress)
-    const from = isOut ? address : sourceAddress
-    const to = isOut ? destAddress : address
-
-    const transactionId = Object.freeze({
-      lt: tx.lt,
-      hash: tx.lt,
-    })
-
-    const msgObject = isOut ? tx.outMessages[0] : tx.inMessage
-    const bodyParse = msgObject?.body.beginParse()
-    const message =
-      bodyParse &&
-      bodyParse.remaining > 0 &&
-      bodyParse.remaining % 8 === 0 &&
-      bodyParse.readRemainingBytes().toString('utf-8')
-    const amount = msgObject?.info.type === 'internal' && msgObject.info.value
-
-    // const message = msgObject?.msg_data?.['@type'] == 'msg.dataText' ? msgObject?.message : null
-    // const amount = msgObject?.value
-    // const amount = msgObject?
-
+  const txes = transactions.map((tx, i): PlainTransaction => {
     return Object.freeze({
-      ...tx,
-      // isService,
-      // isOut,
-      // message,
-      // transactionId,
-      // amount: amount || 0,
-      // to: to || address,
-      // from: from || address,
-      // timestamp: parseInt(tx.time + '000'),
-      // fee: tx.fees.coins.toNumber(),
+      address: address.toString(),
+      lt: tx.lt.toString(),
+      hash: ltToHash.get(tx.lt.toString())!.toString('hex'),
+      data: cell[i].toBoc().toString('base64'),
     })
   })
+
+  await db.transactions.bulkPut(txes)
+
+  // for (const tx of txes) {
+  // await db.transactions.add(tx).catch((e) => {
+  //   if (
+  //     e.message ===
+  //     'Key already exists in the object store.\n ConstraintError: Key already exists in the object store.'
+  //   ) {
+  //     return
+  //   }
+
+  //   throw e
+  // })
+  // }
+
+  return txes
+  // const isService = !tx.inMessage && tx.outMessagesCount < 1
+  // //   !tx.in_msg && tx.out_msgs.length < 1
+
+  // const sourceAddress = tx.inMessage?.info.src || tx.outMessages[0]?.info.src
+  // const destAddress = tx.outMessages[0]?.info.src || tx.inMessage?.info.dest
+
+  // const isOut = sourceAddress && address.equals(sourceAddress)
+  // const from = isOut ? address : sourceAddress
+  // const to = isOut ? destAddress : address
+
+  // const transactionId = Object.freeze({
+  //   lt: tx.lt,
+  //   hash: tx.lt,
+  // })
+
+  // const msgObject = isOut ? tx.outMessages[0] : tx.inMessage
+  // const bodyParse = msgObject?.body.beginParse()
+  // const message =
+  //   bodyParse &&
+  //   bodyParse.remaining > 0 &&
+  //   bodyParse.remaining % 8 === 0 &&
+  //   bodyParse.readRemainingBytes().toString('utf-8')
+  // const amount = msgObject?.info.type === 'internal' && msgObject.info.value
+
+  // const message = msgObject?.msg_data?.['@type'] == 'msg.dataText' ? msgObject?.message : null
+  // const amount = msgObject?.value
+  // const amount = msgObject?
+
+  // return Object.freeze({
+  // ...tx,
+  // isService,
+  // isOut,
+  // message,
+  // transactionId,
+  // amount: amount || 0,
+  // to: to || address,
+  // from: from || address,
+  // timestamp: parseInt(tx.time + '000'),
+  // fee: tx.fees.coins.toNumber(),
+  //   })
+  // })
 }
 
 /**

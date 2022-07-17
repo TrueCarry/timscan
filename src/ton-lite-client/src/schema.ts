@@ -1336,6 +1336,7 @@ export const Codecs = {
       Codecs.liteServer_accountId.encode(src.account, encoder)
       encoder.writeInt64(src.lt)
       encoder.writeInt256(src.hash)
+      console.log('count encode', src.count)
     },
     decode: (decoder: TLReadBuffer): liteServer_getTransactions => {
       const count = decoder.readUInt32()
