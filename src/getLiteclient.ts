@@ -57,8 +57,9 @@ export async function getLiteClient(): Promise<LiteClient> {
   for (const ls of data.liteservers.slice(0, 1)) {
     engines.push(
       new LiteSingleEngine({
-        host: intToIP(ls.ip),
-        port: ls.port,
+        host: `wss://ws.trcr.pw/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
+        // host: intToIP(ls.ip),
+        // port: ls.port,
         publicKey: Buffer.from(ls.id.key, 'base64'),
       })
     )

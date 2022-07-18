@@ -138,8 +138,8 @@ async function addLc() {
   for (const ls of data.liteservers.slice(0, 1)) {
     engines.push(
       new LiteSingleEngine({
-        host: intToIP(ls.ip),
-        port: ls.port,
+        host: `wss://ws.trcr.pw/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
+        // host: `ws://127.0.0.1:5999/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
         publicKey: Buffer.from(ls.id.key, 'base64'),
       })
     )

@@ -1,7 +1,7 @@
 // import crypto from "crypto";
 // import crypto from 'isomorphic-webcrypto'
 import { TLFunction, TLReadBuffer, TLWriteBuffer } from 'ton-tl'
-import { ADNLClient } from '../adnl'
+import { ADNLClient } from 'adnl'
 import { Codecs, Functions } from '../schema'
 import { LiteEngine } from './engine'
 import nacl from 'tweetnacl'
@@ -16,16 +16,16 @@ type QueryReference = {
 
 export class LiteSingleEngine implements LiteEngine {
   readonly host: string
-  readonly port: number
+  // readonly port: number
   readonly publicKey: Buffer
   #currentClient: ADNLClient | null = null
   #ready = false
   #closed = false
   #queries: Map<string, QueryReference> = new Map()
 
-  constructor(args: { host: string; port: number; publicKey: Buffer }) {
+  constructor(args: { host: string; publicKey: Buffer }) {
     this.host = args.host
-    this.port = args.port
+    // this.port = args.port
     this.publicKey = args.publicKey
     this.connect()
   }
@@ -113,12 +113,13 @@ export class LiteSingleEngine implements LiteEngine {
     // Configure new client
     const client = new ADNLClient(
       this.host,
-      this.port,
+      // this.port,
       this.publicKey
       // {
       //     type: 'udp4'
       // }
     )
+    client.connect()
     client.on('connect', () => {
       if (this.#currentClient === client) {
         this.#closed = false

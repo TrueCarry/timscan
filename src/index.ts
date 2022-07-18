@@ -18,7 +18,7 @@ async function main() {
         0,
       ])
     ).toString(),
-    Address.parse('EQCiB7Dp1BgBysXCM5Y-IJGkHbDL-ehSzRLxSsrfzk7fB0Vi').toString()
+    Address.parse('EQCiB7Dp1BgBysXCM5Y-IJGkHbDL-ehSzRLxSsrfzk7fB0Vi').toFriendly()
   )
   const configUrl =
     process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/testnet-global.config.json'
@@ -39,8 +39,9 @@ async function main() {
   // }
   engines.push(
     new LiteSingleEngine({
-      host: intToIP(-2018135749),
-      port: 53312,
+      host: `wss://ws.trcr.pw/?dest_host=${intToIP(-2018135749)}:${53312}`,
+      // host: intToIP(-2018135749),
+      // port: 53312,
       publicKey: Buffer.from('aF91CuUHuuOv9rm2W5+O/4h38M3sRm40DtSdRxQhmtQ=', 'base64'),
     })
   )
