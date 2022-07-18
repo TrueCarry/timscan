@@ -80,7 +80,7 @@ class ADNLClient extends EventEmitter {
     // this.decipher = crypto.createDecipheriv('aes-256-ctr', this.params.rxKey, this.params.rxNonce)
 
     if (type === 'tcp4') {
-      this.socket = new WebSocket(`ws://localhost:5999/?dest_host=${host}:${port}`) // ({ host, port })) // createConnection
+      this.socket = new WebSocket(`wss://ws.trcr.pw/?dest_host=${host}:${port}`) // ({ host, port })) // createConnection
       this.socket.onopen = this.onConnect.bind(this)
       // .on('ready', this.handshake.bind(this))
       this.socket.onclose = this.onClose.bind(this)
