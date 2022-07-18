@@ -109,7 +109,7 @@ export class LiteSingleEngine implements LiteEngine {
     }
   }
 
-  private connect() {
+  public connect() {
     // Configure new client
     const client = new ADNLClient(
       this.host,
@@ -121,6 +121,7 @@ export class LiteSingleEngine implements LiteEngine {
     )
     client.on('connect', () => {
       if (this.#currentClient === client) {
+        this.#closed = false
         this.onConencted()
       }
     })
@@ -195,10 +196,11 @@ export class LiteSingleEngine implements LiteEngine {
   private onClosed = () => {
     this.#currentClient = null
     this.#ready = false
-    setTimeout(() => {
-      if (!this.#closed) {
-        this.connect()
-      }
-    }, 1000)
+    this.#closed = true
+    // setTimeout(() => {
+    //   if (!this.#closed) {
+    //     this.connect()
+    //   }
+    // }, 1000)
   }
 }

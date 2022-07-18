@@ -123,7 +123,8 @@ export const getTransactions = async function (
   _address: string,
   lt: string,
   hash: Buffer,
-  limit: number
+  limit: number,
+  allowMore?: boolean
 ): Promise<PlainTransaction[]> {
   const db = new AppDb()
   //   const query = {
@@ -138,7 +139,7 @@ export const getTransactions = async function (
   const existing = await db.transactions
     .where('address')
     .equals(rawAddress)
-    .limit(limit)
+    .limit(allowMore ? 100 : limit)
     .and((tx) => {
       console.log('check lt', tx.lt)
       return new BN(tx.lt).lte(new BN(lt))

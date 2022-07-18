@@ -42,8 +42,8 @@ class ADNLPacket {
   public static parse(data: Buffer) {
     if (!ADNLPacket.containsFullPacket(data)) {
       console.log('not full packet')
-      return null
-      // throw new Error('Bad packet')
+      // return null
+      throw new Error('Bad packet')
     }
 
     console.log('full packet')

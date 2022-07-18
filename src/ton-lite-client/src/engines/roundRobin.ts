@@ -10,6 +10,10 @@ export class LiteRoundRobinEngine implements LiteEngine {
     this.engines = engines
   }
 
+  connect(): void {
+    throw new Error('Method not implemented.')
+  }
+
   query<REQ, RES>(
     f: TLFunction<REQ, RES>,
     req: REQ,
@@ -20,20 +24,22 @@ export class LiteRoundRobinEngine implements LiteEngine {
     }
 
     let attempts = 0
-    while (true) {
-      const id = Math.floor(Math.random() * this.engines.length)
-      if (this.engines[id].isClosed()) {
-        attempts++
+    // while (true) {
+    const id = Math.floor(Math.random() * this.engines.length)
+    if (this.engines[id].isClosed()) {
+      this.engines[id].connect()
+      attempts++
+      throw new Error('Client not connected')
 
-        if (attempts > 200) {
-          // this.#closed = true
-          throw new Error('No engines are available')
-        }
-        continue
-      }
-
-      return this.engines[id].query(f, req, args)
+      // if (attempts > 200) {
+      //   // this.#closed = true
+      //   throw new Error('No engines are available')
+      // }
+      // continue
     }
+
+    return this.engines[id].query(f, req, args)
+    // }
   }
 
   close() {

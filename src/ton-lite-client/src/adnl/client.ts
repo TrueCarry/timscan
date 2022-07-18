@@ -81,6 +81,7 @@ class ADNLClient extends EventEmitter {
 
     if (type === 'tcp4') {
       this.socket = new WebSocket(`wss://ws.trcr.pw/?dest_host=${host}:${port}`) // ({ host, port })) // createConnection
+      // this.socket = new WebSocket(`ws://127.0.0.1:5999/?dest_host=${host}:${port}`) // ({ host, port })) // createConnection
       this.socket.onopen = this.onConnect.bind(this)
       // .on('ready', this.handshake.bind(this))
       this.socket.onclose = this.onClose.bind(this)

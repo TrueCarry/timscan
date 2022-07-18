@@ -6,7 +6,6 @@ import { Cell, parseTransaction, RawTransaction } from '@/ton/src'
 import TxRow from './TxRow.vue'
 
 import { computed, inject, PropType, ref, watch } from 'vue'
-import { constFalse } from 'fp-ts/lib/function'
 
 const $lc = inject('$lc') as LiteClient
 
@@ -39,6 +38,44 @@ const updateTransactions = async () => {
   )
 }
 
+function delay(ms: number): Promise<void> {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
+}
+
+// Function to call ton api untill we get response.
+// Because testnet is pretty unstable we need to make sure response is final
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function callTonApi<T extends (...args: any[]) => any>(
+  toCall: T,
+  attempts = 20,
+  delayMs = 100
+): Promise<ReturnType<T>> {
+  if (typeof toCall !== 'function') {
+    throw new Error('unknown input')
+  }
+
+  let i = 0
+  let lastError: unknown
+
+  while (i < attempts) {
+    try {
+      const res = await toCall()
+      return res
+    } catch (err) {
+      lastError = err
+      i++
+      await delay(delayMs)
+    }
+  }
+
+  console.log('error after attempts', i)
+  throw lastError
+}
+
 const loadMore = async () => {
   console.log('loadMore')
   // this.isLoading = true
@@ -49,24 +86,46 @@ const loadMore = async () => {
   //   prevTransaction: { lt, hash },
   // } = lastTx
 
-  const plainTxes = await getTransactions(
-    $lc,
-    props.wallet.address!.toString(),
-    lastTx.prevTransaction.lt.toString(),
-    lastTx.prevTransaction.hash,
-    16
+  // const t1 = window.performance.now()
+  const plainTxes = await callTonApi(() =>
+    getTransactions(
+      $lc,
+      props.wallet.address!.toString(),
+      lastTx.prevTransaction.lt.toString(),
+      lastTx.prevTransaction.hash,
+      16,
+      true
+    )
   )
+  // const t2 = window.performance.now()
   plainTxes.shift()
-  const newTx = plainTxes.map((pt) =>
-    parseTransaction(0, Cell.fromBoc(Buffer.from(pt.data, 'base64'))[0].beginParse())
-  )
+  // const newTx = plainTxes.map((pt) =>
+  //   )
+  // )
+  const addTx = () => {
+    const tx = plainTxes.shift()
+    if (tx) {
+      const parsed = parseTransaction(
+        0,
+        Cell.fromBoc(Buffer.from(tx.data, 'base64'))[0].beginParse()
+      )
+      transactions.value.push(parsed)
+    }
+
+    if (plainTxes.length > 0) {
+      setTimeout(addTx, 1)
+    }
+  }
+  addTx()
+  // const t3 = window.performance.now()
+  // console.log('time spent', t2 - t1, t3 - t2)
 
   // this.hasMore = newTx.length >= limit
   // this.isLoading = false
 
   // First tx from the new batch is the last tx from the old batch:
 
-  transactions.value = transactions.value.concat(newTx)
+  // transactions.value = transactions.value.concat(newTx)
 }
 
 const hasMore = computed(() => {

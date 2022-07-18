@@ -8,4 +8,5 @@ export type LiteEngine = {
   ): Promise<RES>
   close(): void
   isClosed(): boolean
+  connect(): void
 }

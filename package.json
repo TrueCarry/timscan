@@ -7,12 +7,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "vite",
-    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=webpack.config.js",
-    "watch": "npm run development -- --watch",
-    "watch-poll": "npm run watch -- --watch-poll",
-    "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=webpack.config.js",
-    "prod_testnet": "TESTNET=1 npm run production",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
