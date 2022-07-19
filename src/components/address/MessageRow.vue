@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RawMessage, RawTransaction } from '@/ton/src'
 import BN from 'bn.js'
-import { computed, defineProps, PropType, ref } from 'vue'
+import { computed, PropType, ref } from 'vue'
 
 type SourceFrom = 'in' | 'out'
 
