@@ -15,4 +15,4 @@ const nftAbi: ContractAbi = {
   },
 }
 
-export default nftAbi
+export { nftAbi }

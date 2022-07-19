@@ -17,4 +17,4 @@ const walletAbi: ContractAbi = {
   },
 }
 
-export default walletAbi
+export { walletAbi }

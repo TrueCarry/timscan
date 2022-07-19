@@ -1,6 +1,6 @@
 import { ContractAbi } from '.'
 
-const walletAbi: ContractAbi = {
+const highloadWalletAbi: ContractAbi = {
   methods: {
     get_public_key: {
       input: [],
@@ -9,4 +9,4 @@ const walletAbi: ContractAbi = {
   },
 }
 
-export default walletAbi
+export { highloadWalletAbi }
