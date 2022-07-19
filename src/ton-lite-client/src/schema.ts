@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import {
+import type {
   TLWriteBuffer,
   TLReadBuffer,
   TLFlag,

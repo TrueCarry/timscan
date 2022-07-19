@@ -1,4 +1,4 @@
-import { TLFunction } from 'ton-tl'
+import type { TLFunction } from 'ton-tl'
 import { LiteEngine } from './engine'
 
 export class LiteRoundRobinEngine implements LiteEngine {

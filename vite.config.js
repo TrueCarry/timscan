@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import dotenv from 'dotenv'
@@ -16,7 +16,7 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  plugins: [vue(), vueJsx(), visualizer()],
+  plugins: [splitVendorChunkPlugin(), vue(), vueJsx(), visualizer()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

@@ -1,10 +1,10 @@
-import BN from 'bn.js'
-import ethUnit from 'ethjs-unit'
+// import BN from 'bn.js'
+// import ethUnit from 'ethjs-unit'
 
-export function toNano(src: number | string | BN) {
-  return ethUnit.toWei(src, 'gwei') as BN
-}
+// const decs = new BN('1000000000')
+// export function toNano(src: number | string | BN) {
+//   return new BN(src).mul(new BN('1000000000')) as BN
+// }
 
-export function fromNano(src: BN | number | string) {
-  return ethUnit.fromWei(src, 'gwei') as string
-}
+// export function fromNano(src: BN | number | string) {
+//   return new BN(src).div(src)}

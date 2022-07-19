@@ -1,4 +1,4 @@
-import { TLFunction } from 'ton-tl'
+import type { TLFunction } from 'ton-tl'
 
 export type LiteEngine = {
   query<REQ, RES>(

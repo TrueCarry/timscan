@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import { parseDict, Slice } from '../../../ton/src'
-import { TLReadBuffer } from 'ton-tl'
+import { TLReadBuffer } from 'ton-tl/dist/buffer/TLReadBuffer'
 
 // Source: https://github.com/ton-foundation/ton/blob/ae5c0720143e231c32c3d2034cfe4e533a16d969/crypto/block/mc-config.cpp#L1232
 export function parseShards(cs: Slice) {

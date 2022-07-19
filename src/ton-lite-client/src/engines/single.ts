@@ -1,6 +1,9 @@
 // import crypto from "crypto";
 // import crypto from 'isomorphic-webcrypto'
-import { TLFunction, TLReadBuffer, TLWriteBuffer } from 'ton-tl'
+// import { TLFunction, TLReadBuffer, TLWriteBuffer } from 'ton-tl'
+import type { TLFunction } from 'ton-tl'
+import { TLReadBuffer } from 'ton-tl/dist/buffer/TLReadBuffer'
+import { TLWriteBuffer } from 'ton-tl/dist/buffer/TLWriteBuffer'
 import { ADNLClient } from 'adnl'
 import { Codecs, Functions } from '../schema'
 import { LiteEngine } from './engine'
