@@ -70,14 +70,19 @@ const dataCell = computed(() => {
 
 const abi = ref<ContractAbi | null>(null)
 const updateAbi = async () => {
+  console.log('update abi')
   if (!codeCell.value) {
     return null
   }
 
   const contract = (props.code && abiMap[toRaw(codeCell.value).hash().toString('hex')]) || null
+  console.log('contract', contract)
+  if (contract) {
+    const data = await import(/* @vite-ignore */ contract)
 
-  abi.value = await contract
-  console.log('abi', abi)
+    abi.value = data.default
+    console.log('abi', abi)
+  }
 }
 // computed((): Promise<ContractAbi> | null => {
 watch([codeCell], updateAbi)
