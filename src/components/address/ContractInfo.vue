@@ -42,71 +42,7 @@ import { isProxy, PropType, toRaw, defineComponent, computed, ref, watch } from 
 import { LiteClient, LiteSingleEngine, LiteRoundRobinEngine } from '@/ton-lite-client/src/index'
 import axios from 'axios'
 import { Cell } from '@/ton/src'
-
-type method = Record<string, MethodAbi>
-
-interface ContractAbi {
-  methods: method
-}
-
-interface MethodAbi {
-  input: unknown[]
-  output: OutputArg[]
-}
-
-interface OutputArg {
-  name: string
-  type: string
-  length?: number
-}
-
-const abiNft: ContractAbi = {
-  methods: {
-    get_nft_data: {
-      input: [],
-      output: [
-        { name: 'init', type: 'int', length: 1 },
-        { name: 'index', type: 'uint', length: 64 },
-        { name: 'collection', type: 'address' },
-        { name: 'owner', type: 'address' },
-        { name: 'content', type: 'cell_string' },
-      ],
-    },
-  },
-}
-
-const abiWallet: ContractAbi = {
-  methods: {
-    seqno: {
-      input: [],
-      output: [{ name: 'seqno', type: 'int', length: 32 }],
-    },
-    get_subwallet_id: {
-      input: [],
-      output: [{ name: 'subwallet_id', type: 'int', length: 32 }],
-    },
-    get_public_key: {
-      input: [],
-      output: [{ name: 'public_key', type: 'int', length: 256 }],
-    },
-  },
-}
-
-const abiHighloadWallet: ContractAbi = {
-  methods: {
-    get_public_key: {
-      input: [],
-      output: [{ name: 'public_key', type: 'int', length: 256 }],
-    },
-  },
-}
-
-const abiMap: Record<string, ContractAbi> = {
-  '4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42': abiNft, // standard nft
-  '9892766765d3ea42809a417abbd7ff9ce681b145d05ae6b118a614b38c8ded15': abiNft, // standard editable nft
-  feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0: abiWallet,
-  '9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812': abiHighloadWallet,
-}
+import { abiMap, ContractAbi } from '@/abi'
 
 // export default defineComponent({
 const props = defineProps({
@@ -132,15 +68,22 @@ const dataCell = computed(() => {
   return props.data && Cell.fromBoc(Buffer.from(props.data, 'base64'))[0]
 })
 
-const abi = computed((): ContractAbi | null => {
+const abi = ref<ContractAbi | null>(null)
+const updateAbi = async () => {
   if (!codeCell.value) {
     return null
   }
 
-  const abi = (props.code && abiMap[toRaw(codeCell.value).hash().toString('hex')]) || null
+  const contract = (props.code && abiMap[toRaw(codeCell.value).hash().toString('hex')]) || null
+
+  abi.value = await contract
   console.log('abi', abi)
-  return abi
-})
+}
+// computed((): Promise<ContractAbi> | null => {
+watch([codeCell], updateAbi)
+updateAbi()
+
+// })
 
 const codeHash = computed(() => {
   return codeCell.value && codeCell.value.hash().toString('hex')
@@ -194,8 +137,10 @@ const updateData = async () => {
     return
   }
 
-  for (const method of Object.keys(abi.value.methods)) {
-    const info = abi.value.methods[method]
+  const contractAbi = await abi.value
+
+  for (const method of Object.keys(contractAbi.methods)) {
+    const info = contractAbi.methods[method]
     console.log('info abi', info)
     const res = await callMethod(method, info)
     if (res) {
@@ -209,7 +154,7 @@ const updateData = async () => {
   }
 }
 
-watch(codeCell, updateData)
+watch(abi, updateData)
 updateData()
 
 // })
