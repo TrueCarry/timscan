@@ -103,7 +103,10 @@
 
         <div class="card-row">
           <div class="card-row__name" v-text="$t('address.info.last_update')" />
-          <div class="card-row__value flex items-center cursor-pointer" @click="loadData(true)">
+          <div
+            class="card-row__value flex items-center cursor-pointer"
+            @click="loadData(true, false)"
+          >
             <ui-timeago :timestamp="wallet?.lastUpdated" />
             <span>
               <IconRefresh class="w-4 text-white fill-current ml-1" />
@@ -152,7 +155,7 @@
           <TransactionsList :wallet="wallet" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
-          <ContractInfo :code="code" :data="data"
+          <ContractInfo :code="$store.state.address.code" :data="$store.state.address.data"
         /></template>
 
         <!-- <mugen-scroll v-bind:handler="loadMore" v-bind:should-handle="shouldHandleScroll" style="display: flex;">
@@ -197,16 +200,10 @@
 
 <script lang="ts" setup>
 import QrCode from 'qrcode.vue'
-import TxRowSkeleton from './TxRowSkeleton.vue'
-import TxRow from './TxRow.vue'
-import { AccountState, getAddressInfo, getTransactions } from '~/api'
 // import MugenScroll from 'vue-mugen-scroll';
-import { checkAddress } from '~/nft'
-import { Address, Cell, RawTransaction, TonClient } from '@/ton/src'
-import { SmartContract } from '~/ton-contract-executor/src'
+import { RawTransaction } from '@/ton/src'
 import ContractInfo from './ContractInfo.vue'
-import { defineComponent, ref, computed, watch, inject } from 'vue'
-import { AccountPlainState } from '@/models/AccountState'
+import { ref, computed, watch, inject } from 'vue'
 import { useStore } from 'vuex'
 import { LiteClient } from '@/ton-lite-client/src'
 import TransactionsList from './TransactionsList.vue'
@@ -215,6 +212,8 @@ import IconRefresh from '@/assets/images/icon-refresh.svg?component'
 const $lc = inject('$lc') as LiteClient
 console.log('lc', $lc)
 
+const store = useStore()
+
 const props = defineProps({
   address: {
     type: String,
@@ -222,8 +221,10 @@ const props = defineProps({
   },
 })
 
+const wallet = computed(() => store.state.address.wallet)
+
 const contractTypeVisible = ref<boolean>(true)
-const wallet = ref<AccountPlainState | null>(null)
+// const wallet = ref<AccountPlainState | null>(null)
 const transactions = ref<RawTransaction[]>([])
 const lastActivity = ref<number | null>(null)
 const isLoading = ref<boolean>(true)
@@ -231,11 +232,8 @@ const hasMore = ref<boolean>(true)
 const emptyHistory = ref<boolean>(false)
 const qrModalVisible = ref<boolean>(false)
 const contractExtendedInfo = ref<unknown | undefined>(undefined)
-const code = ref<string | undefined>(undefined)
-const data = ref<string | undefined>(undefined)
-const selectedTab = ref<'transactions' | 'contract'>('transactions')
 
-const store = useStore()
+const selectedTab = ref<'transactions' | 'contract'>('transactions')
 
 const addressMeta = computed(() => {
   return store.getters.getAddressMeta(props.address)
@@ -250,102 +248,20 @@ const showPreloader = computed(() => {
 })
 
 const balance = computed(() => {
-  console.log('Balance change', wallet.value?.balance.coins)
-  return wallet.value && wallet.value.balance.coins
+  console.log('Balance change', wallet.value?.balance?.coins)
+  return wallet.value && wallet?.value?.balance?.coins
 })
 
-const reset = () => {
-  // this.wallet = null;
-  transactions.value = []
-  lastActivity.value = 0
-  qrModalVisible.value = false
-  contractExtendedInfo.value = undefined
-}
-
-const loadData = async (forceUpdate?: boolean) => {
-  reset()
-  // if (1 > 0 )return
-
-  const walletInfo = await getAddressInfo(props.address, forceUpdate)
-  wallet.value = walletInfo
-  // console.log('got wallet', wallet, wallet, address)
-  // if (1 > 0 )return
-
-  if (wallet.value?.state.type === 'uninit') {
-    return
-  } else if (wallet.value?.state.type === 'active') {
-    if (wallet.value.state?.code && wallet.value.state?.data) {
-      code.value = wallet.value.state?.code
-      // Cell.fromBoc(Buffer.from(this.wallet.state?.code, 'base64'))[0]
-      data.value = wallet.value.state?.data
-      // Cell.fromBoc(Buffer.from(this.wallet.state?.data, 'base64'))[0]
-    }
-    console.log('set code')
-    // this.code = this.wallet.state?.code as Cell
-    // this.data = this.wallet.state?.data as Cell
-  }
-
-  // contractTypeVisible.value = false // this.wallet.is_active;
-  emptyHistory.value = wallet.value.lastTx?.lt === '0'
-
-  // Don't make extra requests:
-  // if (!emptyHistory.value && wallet.value.lastTx) {
-  //   try {
-  //     transactions.value = await getTransactions(
-  //       $lc,
-  //       props.address,
-  //       wallet.value.lastTx.lt || '',
-  //       Buffer.from(wallet.value.lastTx.hash, 'base64'),
-  //       // Buffer.from(this.wallet.?lastTx.hash || '', 'base64') || Buffer.from([]),
-  //       20
-  //     )
-  //   } catch (e) {
-  //     console.log('tx error', e)
-  //   }
-  //   console.log('this.transactions', transactions)
-  // }
-
-  lastActivity.value = transactions.value[0]?.time || null
-  hasMore.value = transactions.value.length >= 20
-  isLoading.value = false
-
-  // if (this.wallet.wallet_type == 'Unknown') {
-  // checkAddress(this.address)
-  //   .then((nftInfo) => (this.contractExtendedInfo = nftInfo))
-  //   .then(() => {
-  //     console.log('got ext ifno', this.contractExtendedInfo)
-  //   })
-  //   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  //   .catch((e) => {})
-  // }
+const loadData = async (forceUpdate?: boolean, reset?: boolean) => {
+  store.dispatch('address/loadData', { address: props.address, forceUpdate, reset })
 }
 
 watch(
   () => props.address,
   () => {
-    loadData()
+    loadData(true, true)
   }
 )
 
-loadData()
-
-// async loadMore() {
-//   this.isLoading = true
-
-//   const limit = 50
-//   const lastTx = this.transactions[this.transactions.length - 1]
-//   const {
-//     prevTransaction: { lt, hash },
-//   } = lastTx
-
-//   const newTx = await getTransactions(this.$lc, this.address, lt.toString(), hash, limit)
-
-//   this.hasMore = newTx.length >= limit
-//   this.isLoading = false
-
-//   // First tx from the new batch is the last tx from the old batch:
-//   newTx.shift()
-
-//   this.transactions = this.transactions.concat(newTx)
-// },
+loadData(true, true)
 </script>

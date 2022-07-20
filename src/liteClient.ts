@@ -14,11 +14,12 @@ function getTempClient() {
   }
 
   const queue: queueItem[] = []
+  let localClient: LiteClient | undefined
 
   const createShim = (name: string) => {
     return (...args: unknown[]) => {
-      if (liteClient) {
-        return liteClient[name](...args)
+      if (localClient) {
+        return localClient[name](...args)
       }
 
       // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -62,11 +63,12 @@ function getTempClient() {
     tempWait[name] = createShim(name)
   }
 
-  const endWait = () => {
+  const endWait = (client: LiteClient) => {
+    localClient = client
     for (const item of queue) {
       // console.log('item work', item, lc)
-      if (liteClient && liteClient[item.method]) {
-        liteClient[item.method](...item.args)
+      if (client && client[item.method]) {
+        client[item.method](...item.args)
           .then(item.resolve)
           .catch(item.reject)
       }
@@ -106,7 +108,7 @@ async function initLiteClient() {
 
   liteClient = client
   initCalled = true
-  endWait()
+  endWait(client)
 
   setInterval(async () => {
     liteClient.getMasterchainInfo()
