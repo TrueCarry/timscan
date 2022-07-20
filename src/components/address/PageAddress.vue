@@ -152,7 +152,7 @@
         </nav>
 
         <template v-if="selectedTab === 'transactions' && wallet">
-          <TransactionsList :wallet="wallet" />
+          <TransactionsList :wallet="wallet" :wallet-address="wallet.address" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
           <ContractInfo :code="$store.state.address.code" :data="$store.state.address.data"

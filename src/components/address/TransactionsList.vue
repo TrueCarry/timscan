@@ -7,22 +7,21 @@ import { useStore } from 'vuex'
 
 const store = useStore()
 
-const props = defineProps({
-  wallet: {
-    type: Object as PropType<AccountPlainState>,
-    required: true,
-  },
-})
+const wallet = computed(() => store.state.address.wallet)
 
 const transactions = computed(() => store.state.address.transactions)
 watch(transactions, () => {
   console.log('transactions update', transactions)
 })
 
-const emptyHistory = computed(() => props.wallet.lastTx?.lt === '0')
+const emptyHistory = computed(() => wallet.value.lastTx?.lt === '0')
 
 const updateTransactions = async () => {
-  store.dispatch('address/loadTransactions')
+  console.log('transactions update')
+  store.dispatch('address/loadTransactions', {
+    reset: true,
+    append: false,
+  })
 }
 
 const loadMore = async () => {
@@ -47,7 +46,11 @@ const hasMore = computed(() => {
   return true
 })
 
-watch([emptyHistory, props.wallet.address], updateTransactions)
+watch(wallet, (newWal, oldWal) => {
+  if (newWal.address !== oldWal.address) {
+    updateTransactions()
+  }
+})
 updateTransactions()
 </script>
 
