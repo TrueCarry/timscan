@@ -26,7 +26,6 @@ const updateTransactions = async () => {
   }
 
   const plainTxes = await getTransactions(
-    $lc,
     props.wallet.address?.toString(),
     props.wallet.lastTx.lt || '',
     Buffer.from(props.wallet.lastTx.hash, 'base64'),
@@ -89,7 +88,6 @@ const loadMore = async () => {
   // const t1 = window.performance.now()
   const plainTxes = await callTonApi(() =>
     getTransactions(
-      $lc,
       props.wallet.address!.toString(),
       lastTx.prevTransaction.lt.toString(),
       lastTx.prevTransaction.hash,

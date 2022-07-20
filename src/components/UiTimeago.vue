@@ -1,38 +1,42 @@
 <template>
-    <span v-bind:datetime="timestamp" v-text="timeAgoText"/>
+  <span :datetime="timestamp" v-text="timeAgoText" />
 </template>
 
-<script>
-import { format, render, cancel } from 'timeago.js';
+<script setup lang="ts">
+import { ref, watchEffect } from 'vue'
+import { format } from 'timeago.js'
+import { useI18n } from 'vue-i18n'
 
-export default {
-    props: {
-        timestamp: {
-            required: true,
-            type: Number,
-        },
-    },
+const { locale } = useI18n()
 
-    computed: {
-        shouldAutoUpdate() {
-            return (Date.now() - this.timestamp) < 604800000; // 1000 * 60 * 60 * 24 * 7 = 7 days in milliseconds
-        },
+const props = defineProps({
+  timestamp: {
+    required: true,
+    type: Number,
+  },
+})
 
-        timeAgoText() {
-            return this.shouldAutoUpdate
-                ? undefined
-                : format(this.timestamp, this.$i18n.locale);
-        },
-    },
+const timeAgoText = ref(
+  format(props.timestamp, locale.value, {
+    minInterval: 5,
+  })
+)
 
-    mounted() {
-        this.shouldAutoUpdate && render(this.$el, this.$i18n.locale, {
-            minInterval: 10,
-        });
-    },
+watchEffect(async (onCleanup) => {
+  timeAgoText.value = format(props.timestamp, locale.value, {
+    minInterval: 5,
+  })
+  if (Date.now() - props.timestamp > 864000) {
+    return
+  }
 
-    beforeDestroy() {
-        this.shouldAutoUpdate && cancel(this.$el);
-    },
-};
+  const int = setInterval(() => {
+    timeAgoText.value = format(props.timestamp, locale.value, {
+      minInterval: 5,
+    })
+  }, 5000)
+  onCleanup(() => {
+    clearInterval(int)
+  })
+})
 </script>

@@ -2,7 +2,6 @@
 import axios from 'axios'
 import { LITE_API_ENDPOINT } from './config.js'
 import { base64ToHex, hexToAddress, dechex } from '~/utils.js'
-import { LiteClient } from '@/ton-lite-client/src'
 import {
   Address,
   Cell,
@@ -16,6 +15,7 @@ import AppDb from '~/db'
 import { AccountPlainState, AccountStateToPlain } from './models/AccountState.js'
 import { PlainTransaction } from './models/Transaction.js'
 import BN from 'bn.js'
+import lc from './liteClient.js'
 
 /**
  * @param  {String} address
@@ -53,23 +53,31 @@ export interface AccountState {
  * @return {Promise<Object>}
  */
 export const getAddressInfo = async function (
-  lc: LiteClient,
-  address: string
+  address: string,
+  forceUpdate?: boolean
 ): Promise<AccountPlainState> {
-  console.log('get Address Info', address)
+  console.log('getAddressInfo', address, forceUpdate)
+
   const db = new AppDb()
   const rawAddress = Address.parse(address).toString()
-  const existing = await db.accounts.where('address').equals(rawAddress).first()
 
-  console.log('got existing========', existing)
-  if (existing) {
-    return existing
+  if (!forceUpdate) {
+    const existing = await db.accounts.where('address').equals(rawAddress).first()
+
+    console.log('got existing========', existing)
+    if (existing) {
+      console.log('existing check')
+
+      if (existing.lastUpdated && Date.now() - existing.lastUpdated < 60 * 1000) {
+        return existing
+      }
+    }
   }
   console.log('get address info ====== ', address)
   let result: AccountState
 
+  const block = await lc.getMasterchainInfo()
   try {
-    const block = await lc.getMasterchainInfo()
     const response = await lc.getAccountState(Address.parse(address), block.last)
     console.log('got address=====', address)
     // const response = await axios.get(`${LITE_API_ENDPOINT}/getWalletInformation`, { params: { address }});
@@ -85,16 +93,17 @@ export const getAddressInfo = async function (
     throw error
   }
   console.log('got res=======', result)
-  const plain = AccountStateToPlain(result)
+  const plain = AccountStateToPlain(result, Date.now(), block.last.seqno)
 
   const putRes = await db.accounts.put(
-    plain,
+    plain
+
     // {
     //   address: rawAddress,
     //   raw: result.raw.toString(),
     //   ...AccountStateToPlain(result),
     // },
-    rawAddress
+    // rawAddress
   )
   console.log(putRes)
   return plain
@@ -119,7 +128,6 @@ export const getAddressInfo = async function (
  * @return {Promise<Array>}
  */
 export const getTransactions = async function (
-  lc: LiteClient,
   _address: string,
   lt: string,
   hash: Buffer,

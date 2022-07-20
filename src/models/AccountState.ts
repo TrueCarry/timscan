@@ -42,6 +42,9 @@ export interface AccountPlainState {
     hash: string
   } | null
   balance: CurrencyCollection
+
+  lastUpdated?: number
+  lastUpdatedSeqno?: number
   // raw: Buffer
   // proof: Buffer
   // block: tonNode_blockIdExt
@@ -49,7 +52,11 @@ export interface AccountPlainState {
   // shardProof: Buffer
 }
 
-export function AccountStateToPlain(account: AccountState): AccountPlainState {
+export function AccountStateToPlain(
+  account: AccountState,
+  lastUpdated?: number,
+  lastUpdatedSeqno?: number
+): AccountPlainState {
   // Resolve state
   let state: PlainAccountState
   let storage: PlainAccountStorage | null
@@ -114,6 +121,8 @@ export function AccountStateToPlain(account: AccountState): AccountPlainState {
         }
       : null,
 
+    lastUpdated,
+    lastUpdatedSeqno,
     // },
     // block: {
     //   workchain: mcInfo.id.workchain,

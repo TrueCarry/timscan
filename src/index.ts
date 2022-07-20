@@ -17,7 +17,7 @@ async function main() {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0,
       ])
-    ).toString(),
+    ).toFriendly({ urlSafe: true, bounceable: false }),
     Address.parse('EQCiB7Dp1BgBysXCM5Y-IJGkHbDL-ehSzRLxSsrfzk7fB0Vi').toFriendly()
   )
   const configUrl =

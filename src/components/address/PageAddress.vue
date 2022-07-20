@@ -83,15 +83,10 @@
           </div>
         </div>
 
-        <div v-if="contractTypeVisible" class="card-row">
+        <div class="card-row">
           <div class="card-row__name" v-text="$t('address.info.contract_type')" />
 
-          <div v-if="!contractExtendedInfo" class="card-row__value">
-            <!-- <span v-if="wallet.wallet_type" v-text="wallet.wallet_type"/> -->
-            <!-- <span v-else class="skeleton">wallet v123</span> -->
-          </div>
-
-          <div v-else class="card-row__value">
+          <div class="card-row__value">
             <!-- <router-link
                             v-if="contractExtendedInfo.type === 'collection'"
                             v-bind:to="{ name: 'nft', params: { address, skeletonHint: 'collection' }}"
@@ -103,6 +98,16 @@
                             v-text="'NFT Item'"/> -->
 
             <span>Unknown</span>
+          </div>
+        </div>
+
+        <div class="card-row">
+          <div class="card-row__name" v-text="$t('address.info.last_update')" />
+          <div class="card-row__value flex items-center cursor-pointer" @click="loadData(true)">
+            <ui-timeago :timestamp="wallet?.lastUpdated" />
+            <span>
+              <IconRefresh class="w-4 text-white fill-current ml-1" />
+            </span>
           </div>
         </div>
       </div>
@@ -205,6 +210,7 @@ import { AccountPlainState } from '@/models/AccountState'
 import { useStore } from 'vuex'
 import { LiteClient } from '@/ton-lite-client/src'
 import TransactionsList from './TransactionsList.vue'
+import IconRefresh from '@/assets/images/icon-refresh.svg?component'
 
 const $lc = inject('$lc') as LiteClient
 console.log('lc', $lc)
@@ -256,11 +262,11 @@ const reset = () => {
   contractExtendedInfo.value = undefined
 }
 
-const loadData = async () => {
+const loadData = async (forceUpdate?: boolean) => {
   reset()
   // if (1 > 0 )return
 
-  const walletInfo = await getAddressInfo($lc, props.address)
+  const walletInfo = await getAddressInfo(props.address, forceUpdate)
   wallet.value = walletInfo
   // console.log('got wallet', wallet, wallet, address)
   // if (1 > 0 )return

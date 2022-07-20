@@ -1,3 +1,5 @@
+/// <reference types="vite-svg-loader" />
+
 import { Store } from '@/store' // path to store file
 import { LiteClient } from '@/ton-lite-client/src'
 

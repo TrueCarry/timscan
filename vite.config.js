@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import nodePolyfills from 'rollup-plugin-node-polyfills'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { visualizer } from 'rollup-plugin-visualizer'
+import svgLoader from 'vite-svg-loader'
 
 dotenv.config()
 
@@ -16,7 +17,7 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  plugins: [splitVendorChunkPlugin(), vue(), vueJsx(), visualizer()],
+  plugins: [splitVendorChunkPlugin(), vue(), vueJsx(), svgLoader(), visualizer()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -30,9 +31,7 @@ export default defineConfig({
     include: ['bn.js'],
   },
   define: {
-    'process.env': {
-      
-    }
+    'process.env': {},
     // 'process.env': process.env,
   },
   rollupOptions: {
