@@ -16,12 +16,12 @@
             >
             <ui-copy-button
               show-button
-              class="card-main-address"
+              class="card-main-address flex items-center"
               :success-message="$t('address.info.copy_success')"
               :copy="address"
             >
               {{ address }}
-              <span class="card-main-qr-button" @click="qrModalVisible = true">
+              <span class="mx-1 p-0" @click="qrModalVisible = true">
                 <svg
                   v-pre
                   class="card-main-qr-button__icon"
