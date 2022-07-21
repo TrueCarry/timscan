@@ -46,6 +46,10 @@ const mutations = {
   addTransaction(state, value) {
     state.transactions.push(value)
   },
+
+  prependTransaction(state, value) {
+    state.transactions.unshift(value)
+  },
 }
 const getters = {
   doubleCount(state) {
@@ -89,7 +93,12 @@ const actions = {
 
   async loadTransactions(
     { state, commit },
-    { reset, append, allowMore }: { reset?: boolean; append?: boolean; allowMore?: boolean } = {}
+    {
+      reset,
+      append,
+      allowMore,
+      checkForNew,
+    }: { reset?: boolean; append?: boolean; allowMore?: boolean; checkForNew?: boolean } = {}
   ) {
     if (reset) {
       commit('setTransactions', [])
@@ -101,6 +110,7 @@ const actions = {
     if (!append) {
       lt = state.wallet.lastTx.lt || ''
       hash = Buffer.from(state.wallet.lastTx.hash, 'base64')
+      checkForNew = true
     } else {
       const lastTx = state.transactions[state.transactions.length - 1]
       lt = lastTx.prevTransaction.lt.toString()
@@ -110,9 +120,11 @@ const actions = {
     const limit = 50
     // const lastTx = transactions.value[transactions.value.length - 1]
     const plainTxes = await callTonApi(() =>
-      getTransactions(state.wallet.address?.toString(), lt, hash, 16, allowMore)
+      getTransactions(state.wallet.address?.toString(), lt, hash, 16, allowMore, checkForNew)
     )
-    plainTxes.shift()
+    if (append) {
+      plainTxes.shift()
+    }
     const newTxes: RawTransaction[] = []
     const addTx = () => {
       const tx = plainTxes.shift()
@@ -121,6 +133,7 @@ const actions = {
           0,
           Cell.fromBoc(Buffer.from(tx.data, 'base64'))[0].beginParse()
         )
+
         commit('addTransaction', parsed)
         // newTxes.push(parsed)
         // commit('setTransactions', [...newTxes])
@@ -131,6 +144,37 @@ const actions = {
       }
     }
     addTx()
+  },
+
+  async refreshTransactions({ state, commit }) {
+    const lt = state.wallet.lastTx.lt || ''
+    const hash = Buffer.from(state.wallet.lastTx.hash, 'base64')
+
+    const limit = 50
+    // const lastTx = transactions.value[transactions.value.length - 1]
+    const plainTxes = await callTonApi(() =>
+      getTransactions(state.wallet.address?.toString(), lt, hash, 16, false, false)
+    )
+
+    if (state.transactions && state.transactions.length > 0) {
+      const startTx = state.transactions[0].lt.toString()
+      const newTx = plainTxes[0].lt
+
+      if (startTx !== newTx) {
+        for (const tx of plainTxes.reverse()) {
+          if (state.transactions.find((sttx) => sttx.lt.toString() === tx.lt)) {
+            continue
+          }
+
+          const parsed = parseTransaction(
+            0,
+            Cell.fromBoc(Buffer.from(tx.data, 'base64'))[0].beginParse()
+          )
+
+          commit('prependTransaction', parsed)
+        }
+      }
+    }
   },
 }
 

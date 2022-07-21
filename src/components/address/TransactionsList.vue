@@ -49,6 +49,8 @@ const hasMore = computed(() => {
 watch(wallet, (newWal, oldWal) => {
   if (newWal.address !== oldWal.address) {
     updateTransactions()
+  } else {
+    store.dispatch('address/refreshTransactions')
   }
 })
 updateTransactions()

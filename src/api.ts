@@ -73,13 +73,11 @@ export const getAddressInfo = async function (
       }
     }
   }
-  console.log('get address info ====== ', address)
   let result: AccountState
 
   const block = await lc.getMasterchainInfo()
   try {
     const response = await lc.getAccountState(Address.parse(address), block.last)
-    console.log('got address=====', address)
     // const response = await axios.get(`${LITE_API_ENDPOINT}/getWalletInformation`, { params: { address }});
     result = response as unknown as AccountState
   } catch (error) {
@@ -92,7 +90,6 @@ export const getAddressInfo = async function (
     console.error(error)
     throw error
   }
-  console.log('got res=======', result)
   const plain = AccountStateToPlain(result, Date.now(), block.last.seqno)
 
   const putRes = await db.accounts.put(
@@ -132,41 +129,14 @@ export const getTransactions = async function (
   lt: string,
   hash: Buffer,
   limit: number,
-  allowMore?: boolean
+  allowMore?: boolean,
+  checkForNew?: boolean
 ): Promise<PlainTransaction[]> {
   const db = new AppDb()
-  //   const query = {
-  //     address,
-  //     lt,
-  //     limit,
-  //     hash: base64ToHex(hash),
-  //     api_key: 'd852b54d062f631565761042cccea87fa6337c41eb19b075e6c7fb88898a3992',
-  //   }
-  console.log('get txes', lt, hash)
   const rawAddress = Address.parse(_address).toString()
-  const existing = await db.transactions
-    .where('address')
-    .equals(rawAddress)
-    .limit(allowMore ? 100 : limit)
-    .and((tx) => {
-      console.log('check lt', tx.lt)
-      return new BN(tx.lt).lte(new BN(lt))
-    })
-    .reverse()
-    .sortBy('lt')
-  // .toArray()
-
-  console.log('existing transactions', existing)
-  if (existing && existing.length > 0) {
-    if (existing.length >= limit) {
-      return existing
-    }
-
-    const last = existing[existing.length - 1]
-    const tx = parseTransaction(0, Cell.fromBoc(Buffer.from(last.data, 'base64'))[0].beginParse())
-    if (tx.prevTransaction.lt.toNumber() === 0) {
-      return existing
-    }
+  const existing = await getExistingTransactions(db, rawAddress, lt, hash, limit, allowMore)
+  if (existing) {
+    return existing
   }
 
   console.log('limit transactions', limit)
@@ -194,66 +164,78 @@ export const getTransactions = async function (
       lt: tx.lt.toString(),
       hash: ltToHash.get(tx.lt.toString())!.toString('hex'),
       data: cell[i].toBoc().toString('base64'),
+      prevLt: tx.prevTransaction.lt.toString(),
+      prevHash: tx.prevTransaction.hash.toString('hex'),
     })
   })
 
   await db.transactions.bulkPut(txes)
 
-  // for (const tx of txes) {
-  // await db.transactions.add(tx).catch((e) => {
-  //   if (
-  //     e.message ===
-  //     'Key already exists in the object store.\n ConstraintError: Key already exists in the object store.'
-  //   ) {
-  //     return
-  //   }
-
-  //   throw e
-  // })
-  // }
-
   return txes
-  // const isService = !tx.inMessage && tx.outMessagesCount < 1
-  // //   !tx.in_msg && tx.out_msgs.length < 1
+}
 
-  // const sourceAddress = tx.inMessage?.info.src || tx.outMessages[0]?.info.src
-  // const destAddress = tx.outMessages[0]?.info.src || tx.inMessage?.info.dest
+async function getExistingTransactions(
+  db: AppDb,
+  rawAddress: string,
+  lt: string,
+  hash: Buffer,
+  limit: number,
+  allowMore?: boolean
+): Promise<PlainTransaction[] | null> {
+  const existing = await db.transactions
+    .where('address')
+    .equals(rawAddress)
+    .limit(allowMore ? 100 : limit)
+    .and((tx) => {
+      // console.log('check lt', tx.lt)
+      return new BN(tx.lt).lte(new BN(lt))
+    })
+    .reverse()
+    .sortBy('lt')
+  // .toArray()
 
-  // const isOut = sourceAddress && address.equals(sourceAddress)
-  // const from = isOut ? address : sourceAddress
-  // const to = isOut ? destAddress : address
+  console.log(
+    'existing transactions',
+    existing,
+    existing.map((tx) => tx.lt)
+  )
 
-  // const transactionId = Object.freeze({
-  //   lt: tx.lt,
-  //   hash: tx.lt,
-  // })
+  if (!existing || !existing.length) {
+    return null
+  }
 
-  // const msgObject = isOut ? tx.outMessages[0] : tx.inMessage
-  // const bodyParse = msgObject?.body.beginParse()
-  // const message =
-  //   bodyParse &&
-  //   bodyParse.remaining > 0 &&
-  //   bodyParse.remaining % 8 === 0 &&
-  //   bodyParse.readRemainingBytes().toString('utf-8')
-  // const amount = msgObject?.info.type === 'internal' && msgObject.info.value
+  if (existing[0].lt !== lt) {
+    console.log('existing lt not same', existing[0].lt, lt)
+    return null
+  } else {
+    console.log('lt same', existing[0].lt, lt)
+  }
 
-  // const message = msgObject?.msg_data?.['@type'] == 'msg.dataText' ? msgObject?.message : null
-  // const amount = msgObject?.value
-  // const amount = msgObject?
+  // check that list is linked
+  // if not linked - do not return
+  if (existing.length > 1) {
+    for (let i = existing.length - 1; i > 0; i--) {
+      const curr = existing[i]
+      const next = existing[i - 1]
 
-  // return Object.freeze({
-  // ...tx,
-  // isService,
-  // isOut,
-  // message,
-  // transactionId,
-  // amount: amount || 0,
-  // to: to || address,
-  // from: from || address,
-  // timestamp: parseInt(tx.time + '000'),
-  // fee: tx.fees.coins.toNumber(),
-  //   })
-  // })
+      if (curr.lt !== next.prevLt) {
+        console.log('lt not match', curr.lt, next.prevLt)
+        return null
+      }
+    }
+  }
+
+  if (existing.length >= limit) {
+    return existing
+  }
+
+  const last = existing[existing.length - 1]
+  const tx = parseTransaction(0, Cell.fromBoc(Buffer.from(last.data, 'base64'))[0].beginParse())
+  if (tx.prevTransaction.lt.toNumber() === 0) {
+    return existing
+  }
+
+  return null
 }
 
 /**

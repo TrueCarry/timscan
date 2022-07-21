@@ -14,6 +14,10 @@ import i18n from '~/i18n'
 import './sass/app.scss'
 import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from '@/ton-lite-client/src/index'
 import liteClient, { initLiteClient } from './liteClient'
+import AppDb from './db'
+
+const db = new AppDb()
+db.open()
 
 // Vue.use(VueClipboard);
 

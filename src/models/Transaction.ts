@@ -33,4 +33,7 @@ export interface PlainTransaction {
   lt: string // bigint
   hash: string // base64
   data: string // base64
+
+  prevLt: string
+  prevHash: string
 }

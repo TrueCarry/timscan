@@ -17,6 +17,11 @@ class AppDb extends Dexie {
       accounts: 'address',
       transactions: '[address+lt],hash',
     })
+
+    // added last tx prev lt and last tx prev hash
+    this.version(9).upgrade((tx) => {
+      return tx.table('transactions').clear()
+    })
   }
 }
 
