@@ -1,9 +1,7 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import dotenv from 'dotenv'
-// import builtins from 'rollup-plugin-node-builtins';
-import nodePolyfills from 'rollup-plugin-node-polyfills'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { visualizer } from 'rollup-plugin-visualizer'
 import svgLoader from 'vite-svg-loader'
@@ -17,7 +15,13 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  plugins: [splitVendorChunkPlugin(), vue(), vueJsx(), svgLoader(), visualizer()],
+  plugins: [
+    // splitVendorChunkPlugin(),
+    vue(),
+    vueJsx(),
+    svgLoader(),
+    visualizer(),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
