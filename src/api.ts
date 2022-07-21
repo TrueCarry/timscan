@@ -77,6 +77,7 @@ export const getAddressInfo = async function (
 
   const block = await lc.getMasterchainInfo()
   try {
+    console.log('get account state', Address.parse(address), block.last)
     const response = await lc.getAccountState(Address.parse(address), block.last)
     // const response = await axios.get(`${LITE_API_ENDPOINT}/getWalletInformation`, { params: { address }});
     result = response as unknown as AccountState
@@ -87,7 +88,6 @@ export const getAddressInfo = async function (
 
     // See ya in Sentry!
     console.log('error', error)
-    console.error(error)
     throw error
   }
   const plain = AccountStateToPlain(result, Date.now(), block.last.seqno)
