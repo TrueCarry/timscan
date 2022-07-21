@@ -259,9 +259,9 @@ const loadData = async (forceUpdate?: boolean, reset?: boolean) => {
 watch(
   () => props.address,
   () => {
-    loadData(true, true)
+    loadData(false, true)
   }
 )
 
-loadData(true, true)
+loadData(false, true)
 </script>
