@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type {
-  TLWriteBuffer,
-  TLReadBuffer,
   TLFlag,
   TLInt,
   TLString,
@@ -15,6 +13,8 @@ import type {
   TLFunction,
 } from 'ton-tl'
 
+import { TLReadBuffer } from 'ton-tl/dist/buffer/TLReadBuffer'
+import { TLWriteBuffer } from 'ton-tl/dist/buffer/TLWriteBuffer'
 //
 // Constructors
 //
