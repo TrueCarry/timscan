@@ -24,9 +24,15 @@ const dateTime = computed(() => new Date(props.tx.time * 1000))
 const text = computed(() => {
   if (props.message) {
     const raw = toRaw(props.message)
-    const body = raw.body.beginParse().readRemainingBytes()
-    if (body.length > 4 && body.subarray(0, 4).equals(Buffer.from([0, 0, 0, 0]))) {
-      return new TextDecoder().decode(body.subarray(4))
+    const slice = raw.body.beginParse()
+    if (slice.remaining < 32) {
+      return null
+    }
+
+    const uint = slice.readUint(32).toNumber()
+
+    if (uint === 0 && slice.remaining > 0) {
+      return new TextDecoder().decode(slice.readRemainingBytes())
     }
   }
 
