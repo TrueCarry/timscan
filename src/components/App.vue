@@ -1,4 +1,10 @@
 <template>
+  <div
+    v-if="IS_TESTNET"
+    style="text-align: center; padding: 14px; background: #960b0b; color: #fff; font-weight: 500"
+  >
+    ⚠️ Attention! This is a testnet version ⚠️
+  </div>
   <section>
     <header class="header" :class="{ 'header--mobile-search-visible': searchVisible }">
       <div class="header__container container flex items-center">
@@ -96,6 +102,7 @@
 import { ref, onMounted, nextTick, toRaw } from 'vue'
 import { matchAddress } from '../search'
 import { useRouter, useRoute } from 'vue-router'
+import { IS_TESTNET } from '@/config'
 
 const router = useRouter()
 const route = useRoute()
@@ -129,6 +136,9 @@ async function doSearch() {
 
   // reset();
 }
+
+// const testnet = import.meta.env.TESTNET
+// console.log('meta', import.meta.env)
 
 // function reset() {
 //     this.searchValue = '';

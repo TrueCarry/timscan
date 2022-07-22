@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { CONFIG_URL } from '@/config'
 import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from './ton-lite-client/src'
 
 const { tmpClient, endWait } = getTempClient()
@@ -85,8 +86,9 @@ async function initLiteClient() {
   if (initCalled) {
     return
   }
-  const configUrl =
-    process.env.TONCONFIG_URL || 'https://ton-blockchain.github.io/testnet-global.config.json'
+  const configUrl = CONFIG_URL
+  // process.env.TONCONFIG_URL ||
+  // 'https://ton-blockchain.github.io/testnet-global.config.json'
 
   const { data } = await axios(configUrl)
 

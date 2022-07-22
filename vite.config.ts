@@ -35,13 +35,8 @@ export default defineConfig({
     include: ['bn.js'],
   },
   define: {
-    'process.env': {},
+    // 'process.env': {},
     // 'process.env': process.env,
   },
-  rollupOptions: {
-    // plugins: [
-    //   visualizer()
-    //   // nodePolyfills({crypto: true})
-    // ],
-  },
+  // rollupOptions: {},
 })
