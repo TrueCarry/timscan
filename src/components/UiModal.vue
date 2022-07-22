@@ -1,83 +1,87 @@
-<template>
-    <transition name="v-transition-modal">
-        <div class="modal-wrap" v-if="isOpen || keepMarkup">
-            <transition name="v-transition-modal">
-                <div class="modal" tabindex="-1" role="dialog"
-                    v-show="isOpen || !keepMarkup"
-                    v-bind:class="modalClass"
-                    v-on:click="handleModalClick"
-                    v-on:keydown="handleModalKeydown">
-                    <button class="modal__close" type="button" v-if="!hideCloseButton">
-                        <span class="modal__close-icon">Close</span>
-                    </button>
-                    <div class="modal__wrap">
-                        <div class="modal__container" ref="modalContainer" v-bind:class="modalContainerClass">
-                            <slot/>
-                        </div>
-                    </div>
-                </div>
-            </transition>
-        </div>
-    </transition>
-</template>
+<script setup lang="ts">
+import { ref } from 'vue'
 
-<script>
-export default {
-    props: {
-        isOpen: {
-            type: Boolean,
-            default: false,
-        },
-        hideCloseButton: {
-            type: Boolean,
-            default: false,
-        },
-        modalClass: {
-            type: String,
-            default: '',
-        },
-        modalContainerClass: {
-            type: String,
-            default: '',
-        },
-        keepMarkup: {
-            type: Boolean,
-            default: false,
-        },
-    },
+const props = defineProps({
+  isOpen: {
+    type: Boolean,
+    default: false,
+  },
+  hideCloseButton: {
+    type: Boolean,
+    default: false,
+  },
+  modalClass: {
+    type: String,
+    default: '',
+  },
+  modalContainerClass: {
+    type: String,
+    default: '',
+  },
+  keepMarkup: {
+    type: Boolean,
+    default: false,
+  },
+})
 
-    data() {
-        return {
-            //
-        };
-    },
+const emit = defineEmits(['update:isOpen', 'modal-close'])
 
-    methods: {
-        closeModal() {
-            this.$emit('update:isOpen', false);
-            this.$emit('modal-close');
-        },
+const modalContainer = ref<HTMLElement | null>(null)
 
-        handleModalClick(e) {
-            if (this.hideCloseButton) {
-                return;
-            }
+function closeModal() {
+  emit('update:isOpen', false)
+  emit('modal-close')
+}
 
-            if (this.$refs.modalContainer && e.target !== this.$refs.modalContainer && !this.$refs.modalContainer.contains(e.target)) {
-                this.closeModal();
-            }
-        },
+function handleModalClick(e) {
+  if (props.hideCloseButton) {
+    return
+  }
 
-        handleModalKeydown(e) {
-            if (this.hideCloseButton) {
-                return;
-            }
+  if (
+    modalContainer.value &&
+    e.target !== modalContainer.value &&
+    !modalContainer.value.contains(e.target)
+  ) {
+    closeModal()
+  }
+}
 
-            if (e.code === 'Escape' || e.keyCode === 27) {
-                e.preventDefault();
-                this.closeModal();
-            }
-        },
-    },
-};
+function handleModalKeydown(e) {
+  if (props.hideCloseButton) {
+    return
+  }
+
+  if (e.code === 'Escape' || e.keyCode === 27) {
+    e.preventDefault()
+    closeModal()
+  }
+}
 </script>
+
+<template>
+  <transition name="v-transition-modal">
+    <div v-if="isOpen || keepMarkup" class="modal-wrap">
+      <transition name="v-transition-modal">
+        <div
+          v-show="isOpen || !keepMarkup"
+          class="modal"
+          tabindex="-1"
+          role="dialog"
+          :class="modalClass"
+          @click="handleModalClick"
+          @keydown="handleModalKeydown"
+        >
+          <button v-if="!hideCloseButton" class="modal__close" type="button">
+            <span class="modal__close-icon">Close</span>
+          </button>
+          <div class="modal__wrap">
+            <div ref="modalContainer" class="modal__container" :class="modalContainerClass">
+              <slot />
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </transition>
+</template>

@@ -96,25 +96,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, toRaw } from 'vue'
+import { ref, nextTick } from 'vue'
 import { matchAddress } from '../search'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { IS_TESTNET } from '@/config'
 
 const router = useRouter()
-const route = useRoute()
 
 const search = ref<HTMLInputElement | null>(null)
 const searchVisible = ref<boolean>(false)
 const searchValue = ref<string>('')
 const addressLoading = ref<boolean>(false)
-
-// onMounted(() => {
-//     console.log('route', toRaw(route.path))
-//     if (route.path === '/') {
-//   search.value?.focus()
-//     }
-// })
 
 async function doSearch() {
   addressLoading.value = true
@@ -131,84 +123,18 @@ async function doSearch() {
     params: { address: match },
   })
 
-  // reset();
+  reset()
 }
 
-// const testnet = import.meta.env.TESTNET
-// console.log('meta', import.meta.env)
+function reset() {
+  searchValue.value = ''
+  searchVisible.value = false
+  search.value?.blur()
+}
 
-// function reset() {
-//     this.searchValue = '';
-//     this.searchVisible = false;
-//     this.$refs.search.blur();
-// },
-
-// function handleBlur() {
-//     if (!this.searchValue || this.searchValue.length == 0) {
-//         this.searchVisible = false;
-//     }
-// },
+function handleBlur() {
+  if (!searchValue.value || searchValue.value.length === 0) {
+    searchVisible.value = false
+  }
+}
 </script>
-
-<!-- <script>
-
-import {defineComponent} from 'vue';
-import { matchAddress } from '~/search';
-import ToastContainer from './UiToastContainer.vue';
-
-// export default defineComponent({
-//     data() {
-//         return {
-//             searchVisible: false,
-//             searchValue: '',
-//             addressLoading: false,
-//         };
-//     },
-
-//     $refs: {
-//         search: HTMLInputElement
-//     },
-
-//     watch: {
-//         searchVisible(isVisible) {
-//             if (isVisible) {
-//                 this.$nextTick(() => this.$refs.search.focus());
-//             }
-//         },
-//     },
-
-//     methods: {
-//         async search() {
-//             this.addressLoading = true;
-//             const match = await matchAddress(this.searchValue);
-//             this.addressLoading = false;
-
-//             if (! match) {
-//                 // Иначе сначала показывается алерт, а потом останавливается спиннер:
-//                 return this.$nextTick(() => alert('Invalid address format'));
-//             }
-
-//             this.$router.push({
-//                 name: 'address',
-//                 params: { address: match },
-//             });
-
-//             this.reset();
-//         },
-
-//         reset() {
-//             this.searchValue = '';
-//             this.searchVisible = false;
-//             this.$refs.search.blur();
-//         },
-
-//         handleBlur() {
-//             if (!this.searchValue || this.searchValue.length == 0) {
-//                 this.searchVisible = false;
-//             }
-//         },
-//     },
-
-//     components: { ToastContainer },
-// })
-</script> -->

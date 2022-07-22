@@ -1,3 +1,50 @@
+<script setup lang="ts">
+import { nextTick, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { matchAddress } from '~/search'
+
+const router = useRouter()
+
+const search = ref<HTMLInputElement | null>(null)
+const searchVisible = ref<boolean>(false)
+const searchValue = ref<string>('')
+const addressLoading = ref<boolean>(false)
+
+onMounted(() => {
+  search.value?.focus()
+})
+
+async function doSearch() {
+  addressLoading.value = true
+  const match = await matchAddress(searchValue.value)
+  addressLoading.value = false
+
+  if (!match) {
+    // Иначе сначала показывается алерт, а потом останавливается спиннер:
+    return nextTick(() => alert('Invalid address format'))
+  }
+
+  router.push({
+    name: 'address',
+    params: { address: match },
+  })
+
+  reset()
+}
+
+function reset() {
+  searchValue.value = ''
+  searchVisible.value = false
+  search.value?.blur()
+}
+
+function handleBlur() {
+  if (!searchValue.value || searchValue.value.length === 0) {
+    searchVisible.value = false
+  }
+}
+</script>
+
 <template>
   <section class="indexpage-container">
     <svg
@@ -28,7 +75,7 @@
         spellcheck="false"
         autocomplete="off"
         :placeholder="$t('indexpage.search_placeholder')"
-        @keyup.enter="search()"
+        @keyup.enter="doSearch()"
         @keyup.esc="reset()"
       />
 
@@ -62,46 +109,3 @@
     </div>
   </section>
 </template>
-
-<script>
-import { defineComponent } from 'vue'
-import { matchAddress } from '~/search'
-
-export default defineComponent({
-  data() {
-    return {
-      searchValue: '',
-      addressLoading: false,
-    }
-  },
-
-  mounted() {
-    this.$nextTick(() => this.$refs.search.focus())
-  },
-
-  methods: {
-    async search() {
-      this.addressLoading = true
-      const match = await matchAddress(this.searchValue)
-      this.addressLoading = false
-
-      if (!match) {
-        // Otherwise alert is shown before the spinner is hidden:
-        return this.$nextTick(() => alert('Invalid address format'))
-      }
-
-      this.$router.push({
-        name: 'address',
-        params: { address: match },
-      })
-
-      this.reset()
-    },
-
-    reset() {
-      this.$refs.search.blur()
-      this.searchValue = ''
-    },
-  },
-})
-</script>

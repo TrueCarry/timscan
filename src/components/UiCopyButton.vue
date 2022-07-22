@@ -1,3 +1,49 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const props = defineProps({
+  showButton: {
+    type: Boolean,
+    default: true,
+  },
+  successMessage: {
+    type: String,
+    default: 'Copied!',
+  },
+  copy: {
+    type: String,
+    required: true,
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+})
+
+const successVisible = ref<boolean>(false)
+
+function addressCopied() {
+  // this.$bus.$emit('showToast', props.successMessage)
+  successVisible.value = true
+  setTimeout(() => (successVisible.value = false), 1800)
+}
+
+//   data() {
+//     return {
+//       successVisible: false,
+//     }
+//   },
+
+//   methods: {
+//     addressCopied() {
+//       // this.$bus.$emit('showToast', this.successMessage);
+//       // this.successVisible = true;
+//       // setTimeout(() => this.successVisible = false, 1800);
+//     },
+//   },
+// }
+</script>
+
 <template>
   <span class="ui-copy flex items-center gap-1">
     <slot />
@@ -45,39 +91,3 @@
     </span>
   </span>
 </template>
-
-<script>
-export default {
-  props: {
-    showButton: {
-      type: Boolean,
-      default: true,
-    },
-    successMessage: {
-      type: String,
-      default: 'Copied!',
-    },
-    copy: {
-      type: String,
-      required: true,
-    },
-    text: {
-      type: String,
-    },
-  },
-
-  data() {
-    return {
-      successVisible: false,
-    }
-  },
-
-  methods: {
-    addressCopied() {
-      // this.$bus.$emit('showToast', this.successMessage);
-      // this.successVisible = true;
-      // setTimeout(() => this.successVisible = false, 1800);
-    },
-  },
-}
-</script>

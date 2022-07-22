@@ -1,32 +1,36 @@
-<template>
-    <div class="toast-container">
-        <div class="toast" v-bind:class="{ visible }" v-text="message"/>
-    </div>
-</template>
+<script setup lang="ts">
+import { ref } from 'vue'
 
-<script>
-let timerHandle = undefined;
+// const timerHandle = undefined
 
-export default {
-    data() {
-        return {
-            message: undefined,
-            visible: false,
-        };
-    },
+const message = ref('')
+const visible = ref(false)
 
-    created() {
-        // this.$bus.$on('showToast', (message) => {
-        //     this.message = message;
-        //     this.visible = true;
+// export default {
+//   data() {
+//     return {
+//       message: undefined,
+//       visible: false,
+//     }
+//   },
 
-        //     clearTimeout(timerHandle);
-        //     timerHandle = setTimeout(() => this.visible = false, 2000);
-        // });
-    },
+//   created() {
+//     // this.$bus.$on('showToast', (message) => {
+//     //     this.message = message;
+//     //     this.visible = true;
+//     //     clearTimeout(timerHandle);
+//     //     timerHandle = setTimeout(() => this.visible = false, 2000);
+//     // });
+//   },
 
-    beforeDestroy() {
-        // this.$bus.$off('showToast');
-    },
-}
+//   beforeUnmount() {
+//     // this.$bus.$off('showToast');
+//   },
+// }
 </script>
+
+<template>
+  <div class="toast-container">
+    <div class="toast" :class="{ visible }" v-text="message" />
+  </div>
+</template>

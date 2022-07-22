@@ -1,7 +1,3 @@
-<template>
-  <span :datetime="timestamp" v-text="timeAgoText" />
-</template>
-
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
 import { format } from 'timeago.js'
@@ -40,3 +36,7 @@ watchEffect(async (onCleanup) => {
   })
 })
 </script>
+
+<template>
+  <span :datetime="timestamp" v-text="timeAgoText" />
+</template>
