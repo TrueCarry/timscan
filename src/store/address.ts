@@ -134,7 +134,7 @@ const actions = {
           Cell.fromBoc(Buffer.from(tx.data, 'base64'))[0].beginParse()
         )
 
-        commit('addTransaction', parsed)
+        commit('addTransaction', { ...parsed, hash: tx.hash })
         // newTxes.push(parsed)
         // commit('setTransactions', [...newTxes])
       }
@@ -171,7 +171,7 @@ const actions = {
             Cell.fromBoc(Buffer.from(tx.data, 'base64'))[0].beginParse()
           )
 
-          commit('prependTransaction', parsed)
+          commit('prependTransaction', { ...parsed, hash: tx.hash })
         }
       }
     }

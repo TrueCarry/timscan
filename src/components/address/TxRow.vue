@@ -50,42 +50,6 @@ const messages = computed(() => {
   </tbody>
 </template>
 
-<!-- <tr v-show="isVisible" class="tx-table-row-details">
-            <td colspan="10">
-                <div class="tx-table-inner-container">
-                    <div class="tx-table-inner">
-                        <div class="tx-table-inner__header" v-text="$t('tx.timestamp')"/>
-                        {{dateTime.toLocaleString()}}
-                    </div>
-
-                    <div class="tx-table-inner">
-                        <div class="tx-table-inner__header" v-text="$t('tx.hash')"/>
-
-                        <ui-copy-button show-button v-bind:copy="txHash" v-bind:successMessage="$t('tx.hash_copy_success')">
-                            {{txHash}}
-                        </ui-copy-button>
-                    </div>
-
-                    <div class="tx-table-inner">
-                        <div class="tx-table-inner__header" v-text="$t('tx.lt')"/>
-
-                        <ui-copy-button show-button v-bind:copy="txLt" v-bind:successMessage="$t('tx.lt_copy_success')">
-                            {{txLt}}
-                        </ui-copy-button>
-                    </div>
-
-                    <div class="tx-table-inner">
-                        <div class="tx-table-inner__header" v-text="$t('tx.fee')"/>
-                        {{$ton(fee)}} TON
-                    </div>
-
-                    <div v-if="message" class="tx-table-inner">
-                        <div class="tx-table-inner__header" v-text="$t('tx.message')"/>
-                        {{message}}
-                    </div>
-                </div>
-            </td>
-        </tr> -->
 <!-- </tbody> -->
 
 <!-- <script lang="ts">

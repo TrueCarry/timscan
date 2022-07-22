@@ -2,6 +2,7 @@
 import { RawMessage, RawTransaction } from '@/ton/src'
 import BN from 'bn.js'
 import { computed, PropType, ref } from 'vue'
+import MessageRowDetails from './MessageRowDetails.vue'
 
 type SourceFrom = 'in' | 'out'
 
@@ -48,7 +49,7 @@ const amount = computed(() => {
   return new BN(0)
 })
 
-const isVisible = ref(true)
+const isVisible = ref(false)
 </script>
 
 <template>
@@ -106,7 +107,7 @@ const isVisible = ref(true)
       </div>
     </td>
     <td>
-      <div class="tx-table__cell">
+      <div class="tx-table__cell" @click="isVisible = !isVisible">
         <svg
           class="tx-table-expand-caret"
           xmlns="http://www.w3.org/2000/svg"
@@ -124,4 +125,5 @@ const isVisible = ref(true)
       </div>
     </td>
   </tr>
+  <MessageRowDetails v-if="isVisible" :is-visible="isVisible" :tx="tx" :message="message" />
 </template>
