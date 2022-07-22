@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useClipboard } from '@vueuse/core'
 
 const props = defineProps({
   showButton: {
@@ -14,43 +15,19 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  text: {
-    type: String,
-    required: true,
-  },
 })
 
-const successVisible = ref<boolean>(false)
-
-function addressCopied() {
-  // this.$bus.$emit('showToast', props.successMessage)
-  successVisible.value = true
-  setTimeout(() => (successVisible.value = false), 1800)
-}
-
-//   data() {
-//     return {
-//       successVisible: false,
-//     }
-//   },
-
-//   methods: {
-//     addressCopied() {
-//       // this.$bus.$emit('showToast', this.successMessage);
-//       // this.successVisible = true;
-//       // setTimeout(() => this.successVisible = false, 1800);
-//     },
-//   },
-// }
+// const successVisible = ref<boolean>(false)
+const { copy, copied } = useClipboard({ source: props.copy })
 </script>
 
 <template>
-  <span class="ui-copy flex items-center gap-1">
+  <span class="ui-copy flex items-center gap-1" @click="copy()">
     <slot />
 
     <span v-if="showButton">
       <svg
-        v-show="!successVisible"
+        v-show="!copied"
         class="ui-copy__icon"
         viewBox="0 0 14 14"
         width="14"
@@ -75,7 +52,7 @@ function addressCopied() {
       </svg>
 
       <svg
-        v-show="successVisible"
+        v-show="copied"
         class="ui-copy__icon"
         viewBox="0 0 16 16"
         width="14"
@@ -86,6 +63,7 @@ function addressCopied() {
           v-pre
           fill-rule="evenodd"
           d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
+          fill="currentColor"
         ></path>
       </svg>
     </span>

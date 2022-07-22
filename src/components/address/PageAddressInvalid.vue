@@ -1,3 +1,34 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { matchAddress } from '~/search'
+
+const props = defineProps({
+  address: {
+    type: String,
+    required: true,
+  },
+})
+
+const router = useRouter()
+
+const isInvalid = ref(false)
+
+onMounted(async () => {
+  const match = await matchAddress(props.address)
+
+  if (!match) {
+    isInvalid.value = true
+    return
+  }
+
+  router.replace({
+    name: 'address',
+    params: { address: match },
+  })
+})
+</script>
+
 <template>
   <section>
     <section v-if="isInvalid">
@@ -5,35 +36,3 @@
     </section>
   </section>
 </template>
-
-<script>
-import { matchAddress } from '~/search'
-
-export default {
-  props: {
-    address: {
-      type: String,
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      isInvalid: false,
-    }
-  },
-
-  async created() {
-    const match = await matchAddress(this.address)
-
-    if (!match) {
-      return (this.isInvalid = true)
-    }
-
-    this.$router.replace({
-      name: 'address',
-      params: { address: match },
-    })
-  },
-}
-</script>
