@@ -1,14 +1,11 @@
 <template>
-  <div
-    v-if="IS_TESTNET"
-    style="text-align: center; padding: 14px; background: #960b0b; color: #fff; font-weight: 500"
-  >
-    ⚠️ Attention! This is a testnet version ⚠️
-  </div>
   <section>
     <header class="header" :class="{ 'header--mobile-search-visible': searchVisible }">
       <div class="header__container container flex items-center">
-        <router-link :to="{ name: 'index' }" class="flex">
+        <router-link
+          :to="{ name: 'index' }"
+          class="flex items-center h-[38px] text-white hover:no-underline"
+        >
           <svg
             class="header__logo"
             viewBox="0 0 64 64"
@@ -24,9 +21,9 @@
               d="M31.932 43.822c-1.234.024-2.896-1.649-2.896-2.333 0-.685 1.948-.888 3.037-.888 1.09 0 2.897.116 2.897.888 0 .771-1.804 2.309-3.038 2.333ZM23.985 37.338c1.785.695 3.59.315 4.03-.85.44-1.165-.65-2.674-2.435-3.37-1.784-.695-3.305-.775-3.746.39-.44 1.165.367 3.134 2.151 3.83ZM39.96 37.137c-1.687.815-3.525.516-3.965-.65-.44-1.164.65-2.673 2.434-3.369 1.785-.695 3.127-.775 3.567.39.44 1.165-.349 2.813-2.036 3.629Z"
               fill="currentColor"
             />
-
-            <!-- </g> -->
           </svg>
+
+          <span v-if="IS_TESTNET" class="h-[18px]">TESTNET</span>
         </router-link>
 
         <div class="header-search-mobile" @click="searchVisible = true">
