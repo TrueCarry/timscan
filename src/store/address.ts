@@ -1,5 +1,5 @@
 import { getAddressInfo, getTransactions } from '@/api'
-import { parseTransaction, Cell, RawTransaction } from '@/ton/src'
+import { parseTransaction, Cell } from '@/ton/src'
 import { callTonApi } from '@/utils/callTonApi'
 
 const state = () => ({
@@ -125,7 +125,7 @@ const actions = {
     if (append) {
       plainTxes.shift()
     }
-    const newTxes: RawTransaction[] = []
+
     const addTx = () => {
       const tx = plainTxes.shift()
       if (tx) {

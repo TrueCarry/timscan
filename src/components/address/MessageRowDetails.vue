@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { RawTransaction, RawMessage } from '@/ton/src'
-import { computed, PropType, toRaw } from 'vue'
+import { Transaction } from '@/models/Transaction'
+import { RawMessage } from '@/ton/src'
 
-type TxType = RawTransaction & { hash: string }
+import { computed, PropType, toRaw } from 'vue'
 
 const props = defineProps({
   tx: {
-    type: Object as PropType<TxType>,
+    type: Object as PropType<Transaction>,
     required: true,
     // default: () => undefined
   },

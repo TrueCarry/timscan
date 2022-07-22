@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { RawMessage, RawTransaction } from '@/ton/src'
+import { Transaction } from '@/models/Transaction'
+
 import BN from 'bn.js'
 import { computed, PropType, ref } from 'vue'
 
@@ -7,7 +8,7 @@ type SourceFrom = 'in' | 'out'
 
 const props = defineProps({
   tx: {
-    type: Object as PropType<RawTransaction>,
+    type: Object as PropType<Transaction>,
     required: true,
     // default: () => undefined
   },

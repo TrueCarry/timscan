@@ -201,13 +201,14 @@
 <script lang="ts" setup>
 import QrCode from 'qrcode.vue'
 // import MugenScroll from 'vue-mugen-scroll';
-import { RawTransaction } from '@/ton/src'
+
 import ContractInfo from './ContractInfo.vue'
 import { ref, computed, watch, inject } from 'vue'
 import { useStore } from 'vuex'
 import { LiteClient } from '@/ton-lite-client/src'
 import TransactionsList from './TransactionsList.vue'
 import IconRefresh from '@/assets/images/icon-refresh.svg?component'
+import { Transaction } from '@/models/Transaction'
 
 const $lc = inject('$lc') as LiteClient
 console.log('lc', $lc)
@@ -225,7 +226,7 @@ const wallet = computed(() => store.state.address.wallet)
 
 const contractTypeVisible = ref<boolean>(true)
 // const wallet = ref<AccountPlainState | null>(null)
-const transactions = ref<RawTransaction[]>([])
+const transactions = ref<Transaction[]>([])
 const lastActivity = ref<number | null>(null)
 const isLoading = ref<boolean>(true)
 const hasMore = ref<boolean>(true)

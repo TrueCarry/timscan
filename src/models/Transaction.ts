@@ -1,13 +1,4 @@
-import {
-  RawAccountStatus,
-  RawCurrencyCollection,
-  RawHashUpdate,
-  RawTransactionDescription,
-  RawMessage,
-  Address,
-} from '@/ton/src'
-import BN from 'bn.js'
-import { CurrencyCollection } from './AccountState'
+import { RawTransaction } from '@/ton/src'
 
 // export type PlainTransaction = {
 //   address: Address
@@ -37,3 +28,5 @@ export interface PlainTransaction {
   prevLt: string
   prevHash: string
 }
+
+export type Transaction = RawTransaction & { hash: string }
