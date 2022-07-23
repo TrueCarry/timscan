@@ -6,4 +6,5 @@
     "source.fixAll": true
   },
   "editor.formatOnSave": false,
+  "css.customData": ["./css-data.json"]
 }

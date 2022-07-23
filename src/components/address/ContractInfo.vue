@@ -42,7 +42,7 @@ import { isProxy, PropType, toRaw, defineComponent, computed, ref, watch } from 
 import { LiteClient, LiteSingleEngine, LiteRoundRobinEngine } from '@/ton-lite-client/src/index'
 import axios from 'axios'
 import { Cell } from '@/ton/src'
-import { abiMap, ContractAbi } from '@/abi'
+import { abiMap, ContractAbi, MethodAbi, OutputResult } from '@/abi'
 
 // export default defineComponent({
 const props = defineProps({
@@ -69,8 +69,13 @@ const dataCell = computed(() => {
 })
 
 const abi = computed(() => {
-  const contract = (props.code && abiMap[toRaw(codeCell.value).hash().toString('hex')]) || null
-  return contract
+  if (!codeCell.value) {
+    return null
+  }
+
+  const hash = toRaw(codeCell.value).hash().toString('hex')
+
+  return abiMap[hash]
 })
 
 // })
@@ -79,7 +84,7 @@ const codeHash = computed(() => {
   return codeCell.value && codeCell.value.hash().toString('hex')
 })
 
-const callMethod = async (name, info) => {
+const callMethod = async (name: string, info: MethodAbi) => {
   try {
     // console.log(1, this.code.target, this.data)
     if (!codeCell.value || !dataCell.value) {
@@ -100,7 +105,7 @@ const callMethod = async (name, info) => {
       return null
     }
 
-    const values: any[] = []
+    const values: OutputResult[] = []
     // console.log(res.results], res)
     for (let i = 0; i < info.output.length; i++) {
       console.log(i)

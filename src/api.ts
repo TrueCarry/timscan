@@ -159,10 +159,17 @@ export const getTransactions = async function (
   //   } = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query })
 
   const txes = transactions.map((tx, i): PlainTransaction => {
+    const lt = tx.lt.toString()
+    const hash = ltToHash.get(lt)
+
+    if (!hash) {
+      throw new Error('Tx hash not found')
+    }
+
     return Object.freeze({
       address: address.toString(),
-      lt: tx.lt.toString(),
-      hash: ltToHash.get(tx.lt.toString())!.toString('hex'),
+      lt,
+      hash: hash.toString('hex'),
       data: cell[i].toBoc().toString('base64'),
       prevLt: tx.prevTransaction.lt.toString(),
       prevHash: tx.prevTransaction.hash.toString('hex'),

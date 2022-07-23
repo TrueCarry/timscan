@@ -744,6 +744,7 @@ export type RawAccountState =
 export function parseAccountState(cs: Slice): RawAccountState {
   if (cs.readBit()) {
     return { type: 'active', state: parseStateInit(cs) }
+    // eslint-disable-next-line no-dupe-else-if
   } else if (cs.readBit()) {
     return { type: 'frozen', stateHash: cs.readBuffer(32) }
   } else {

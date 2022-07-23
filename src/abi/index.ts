@@ -1,6 +1,7 @@
 import { nftAbi } from './nft'
 import { walletAbi } from './wallet'
 import { highloadWalletAbi } from './highloadWallet'
+import { NormalizedStackEntry } from '@/ton-contract-executor/src'
 
 export interface ContractAbi {
   methods: Record<string, MethodAbi>
@@ -15,6 +16,10 @@ export interface OutputArg {
   name: string
   type: string
   length?: number
+}
+
+export interface OutputResult extends OutputArg {
+  value: NormalizedStackEntry
 }
 
 export const abiMap: Record<string, ContractAbi> = {
