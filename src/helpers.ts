@@ -10,7 +10,14 @@ const currencyFormatter = new Intl.NumberFormat('en', {
   minimumFractionDigits: 0,
 })
 
-export const formatTons = function formatNanoTonsLimitNumberLength(value, round = true) {
+export const formatTons = function formatNanoTonsLimitNumberLength(
+  value: number | null | undefined,
+  round = true
+) {
+  if (!value) {
+    return 0
+  }
+
   return feeFormatter.format(value / MULTIPLIER)
 }
 

@@ -38,7 +38,8 @@ const router = createRouter({
     },
     {
       name: 'tx',
-      path: '/tx/:lt([\\d]+)::hash([^:]+)::address(.{48})',
+      // path: '/tx/:lt([\\d]+)::hash([^:]+)::address(.{48})',
+      path: '/tx/:lt(\\d+):_(:):hash([^:]+):_(:):address(.{48})',
       component: PageTx,
       meta: { title: 'TON Explorer :: Transaction' },
       props: true,

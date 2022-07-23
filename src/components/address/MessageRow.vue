@@ -50,13 +50,23 @@ const amount = computed(() => {
   return new BN(0)
 })
 
+const routerUrl = computed(() => {
+  return `/tx/${props.tx.lt.toString()}:${fromBase64(
+    Buffer.from(props.tx.hash, 'hex').toString('base64')
+  )}:${props.tx.address.toFriendly({ urlSafe: true, bounceable: true })}`
+})
+
+function fromBase64(base64: string): string {
+  return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+}
+
 const isVisible = ref(false)
 </script>
 
 <template>
   <tr v-if="!isExternal">
     <td>
-      <a class="tx-table-cell-icon">
+      <router-link class="tx-table-cell-icon" :to="routerUrl">
         <svg v-pre xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
           <path
             d="M7.665 9.301c-.155-.067-.338-.206-.549-.417a2.6 2.6 0 0 1 0-3.677l1.768-1.768a2.6 2.6 0 0 1 3.677 3.677l-1.167 1.167m-3.06-1.584c.156.067.339.206.55.417a2.6 2.6 0 0 1 0 3.677l-1.768 1.768A2.6 2.6 0 1 1 3.44 8.884l1.167-1.167"
@@ -65,7 +75,7 @@ const isVisible = ref(false)
             stroke-width="1.3"
           />
         </svg>
-      </a>
+      </router-link>
     </td>
     <td>
       <div class="tx-table__cell">

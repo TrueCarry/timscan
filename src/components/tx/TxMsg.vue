@@ -1,59 +1,99 @@
 <template>
-    <section style="overflow-x: auto; width: 100%; scrollbar-width: none">
-        <table style="width: 100%;">
-            <tr>
-                <td>Source</td>
-                <td>
-                    <ui-address v-if="source" v-bind:address="source"/>
-                    <span v-else>empty</span>
-                </td>
-            </tr>
-            <tr>
-                <td>Destination</td>
-                <td>
-                    <ui-address v-if="destination" v-bind:address="destination"/>
-                    <span v-else>empty</span>
-                </td>
-            </tr>
-            <tr>
-                <td>Value</td>
-                <td>{{$ton(value, false)}} TON</td>
-            </tr>
-            <tr>
-                <td>Forward fee</td>
-                <td>{{$fee(fwd_fee)}} TON</td>
-            </tr>
-            <tr>
-                <td>IHR fee</td>
-                <td>{{$fee(ihr_fee)}} TON</td>
-            </tr>
-            <tr>
-                <td>Creation LT</td>
-                <td>{{created_lt}}</td>
-            </tr>
-            <tr>
-                <td>Body hash</td>
-                <td>{{body_hash}}</td>
-            </tr>
-            <tr>
-                <td>Message</td>
-                <td>{{message || 'empty'}}</td>
-            </tr>
-        </table>
-    </section>
+  <section style="overflow-x: auto; width: 100%; scrollbar-width: none">
+    <table style="width: 100%">
+      <tr>
+        <td>Source</td>
+        <td>
+          <ui-address v-if="source" :address="source" />
+          <span v-else>empty</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Destination</td>
+        <td>
+          <ui-address v-if="destination" :address="destination" />
+          <span v-else>empty</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Value</td>
+        <td>{{ $ton(amounts?.value?.coins.toNumber(), false) }} TON</td>
+      </tr>
+      <tr v-if="amounts?.fwdFee">
+        <td>Forward fee</td>
+        <td>{{ $ton(amounts?.fwdFee?.toNumber()) }} TON</td>
+      </tr>
+      <tr v-if="amounts?.ihrFee">
+        <td>IHR fee</td>
+        <td>{{ $ton(amounts?.ihrFee?.toNumber()) }} TON</td>
+      </tr>
+      <tr v-if="amounts?.importFee">
+        <td>Import fee</td>
+        <td>{{ $ton(amounts?.importFee?.toNumber()) }} TON</td>
+      </tr>
+      <tr>
+        <td>Creation LT</td>
+        <td>{{ createdLt }}</td>
+      </tr>
+      <tr>
+        <td>Created At</td>
+        <td>{{ new Date(createdAt * 1000) }}</td>
+      </tr>
+      <tr>
+        <td>Body hash</td>
+        <td>{{ bodyHash }}</td>
+      </tr>
+    </table>
+  </section>
 </template>
 
-<script>
-export default {
-    props: {
-        source: String,
-        destination: String,
-        value: String,
-        fwd_fee: String,
-        ihr_fee: String,
-        created_lt: String,
-        body_hash: String,
-        message: String,
-    },
-};
+<script setup lang="ts">
+import { Transaction } from '@/models/Transaction'
+import { RawMessage } from '@/ton/src'
+import { computed, PropType, toRaw } from 'vue'
+
+const props = defineProps({
+  tx: {
+    type: Object as PropType<Transaction>,
+    required: true,
+  },
+  message: {
+    type: Object as PropType<RawMessage>,
+    required: true,
+  },
+})
+
+const source = computed(() => {
+  return props.message.info.src?.toFriendly({ bounceable: true, urlSafe: true })
+})
+const destination = computed(() => {
+  return props.message.info.dest?.toFriendly({ bounceable: true, urlSafe: true })
+})
+const amounts = computed(() => {
+  switch (props.message.info.type) {
+    case 'external-in':
+      return {
+        importFee: props.message.info.importFee,
+      }
+    case 'external-out':
+      return null
+    case 'internal':
+      return {
+        value: props.message.info.value,
+        ihrFee: props.message.info.ihrFee,
+        fwdFee: props.message.info.fwdFee,
+      }
+    default:
+      return null
+  }
+})
+const createdLt = computed(() => {
+  return props.message.info.type === 'external-in' ? 0 : props.message.info.createdLt
+})
+const createdAt = computed(() => {
+  return props.message.info.type === 'external-in' ? 0 : props.message.info.createdAt
+})
+const bodyHash = computed(() => {
+  return props.message.body && toRaw(props.message.body).hash().toString('hex')
+})
 </script>

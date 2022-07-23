@@ -245,33 +245,30 @@ async function getExistingTransactions(
  * @param  {Number} options.to_lt
  * @return {Promise<Object>}
  */
-export const getTransaction = async function ({ address, lt, hash, to_lt }) {
-  const query = { address, lt, to_lt, limit: 1, hash: base64ToHex(hash) }
+export const getTransaction = async function ({ address, lt, hash }) {
+  const db = new AppDb()
+  const rawAddress = Address.parse(address).toString()
 
-  const {
-    data: { result },
-  } = await axios.get(`${LITE_API_ENDPOINT}/getTransactions`, { params: query })
+  const existing = await db.transactions
+    .where('address')
+    .equals(rawAddress)
+    .limit(1)
+    .reverse()
+    .and((tx) => {
+      // console.log('check lt', tx.lt)
+      return new BN(tx.lt).lte(new BN(lt))
+    })
+    .first()
 
-  return Object.freeze(result.find((tx) => tx.transaction_id?.hash === hash))
-}
+  if (!existing) {
+    return null
+  }
 
-/**
- * @param  {Number} options.workchain
- * @param  {Number} options.shard
- * @param  {Number} options.seqno
- * @return {Promise<Object>}
- */
-export const getBlockHeader = async function ({ workchain, shard, seqno }) {
-  const query = { workchain, shard, seqno }
+  if (lt !== existing.lt) {
+    return null
+  }
 
-  const {
-    data: { result },
-  } = await axios.get(`${LITE_API_ENDPOINT}/getBlockHeader`, { params: query })
-
-  // Convert shard decimal id to hex:
-  result.prev_blocks.forEach((block) => (block.shard = dechex(block.shard)))
-
-  return Object.freeze(result)
+  return existing
 }
 
 /**

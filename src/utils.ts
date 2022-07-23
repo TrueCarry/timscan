@@ -1,13 +1,5 @@
 export const base64ToHex = function (str) {
-  const raw = atob(str)
-  let result = ''
-
-  for (let i = 0; i < raw.length; i++) {
-    const hex = raw.charCodeAt(i).toString(16)
-    result += hex.length === 2 ? hex : '0' + hex
-  }
-
-  return result
+  return Buffer.from(str, 'base64').toString('hex')
 }
 
 export const hexToBytes = function (hex) {
