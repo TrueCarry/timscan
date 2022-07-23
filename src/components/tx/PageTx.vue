@@ -3,7 +3,8 @@
     <section v-if="isError">
       <div class="alert" v-text="$t('error.invalid_tx')" />
     </section>
-    <div v-else class="card">
+
+    <div v-else-if="tx" class="card">
       <div class="card-row">
         <div class="card-row__name" v-text="$t('tx.address')" />
         <div class="card-row__value">
@@ -106,11 +107,11 @@ const props = defineProps({
   },
 })
 
-const tx = ref<Transaction | null>(null)
+const tx = ref<Transaction>()
 const isError = ref<boolean>(false)
 
 async function loadData() {
-  //   this.isLoading = true
+  // this.isLoading = true
   //   this.isError = false
 
   const apiTx = await getTransaction({
@@ -131,68 +132,7 @@ async function loadData() {
   } else {
     isError.value = true
   }
-
-  //   this.fee = tx.fee
-  //   this.timestamp = new Date(parseInt(tx.utime + '000')).toLocaleString()
-  //   this.in_msg = tx.in_msg ? Object.freeze(tx.in_msg) : undefined
-  //   this.out_msgs = tx.out_msgs.map(Object.freeze)
-
-  // .catch((e) => {
-  //   this.isError = true
-  //   console.error(e)
-  // })
-  // .then(() => {
-  //   this.isLoading = false
-  // })
 }
 
 loadData()
-
-// export default {
-//   components: {
-//     TxMsg,
-//   },
-//   props: {
-//     lt: String,
-//     hash: String,
-//     address: String,
-//   },
-
-//   data() {
-//     return {
-//       fee: undefined,
-//       timestamp: undefined,
-//       in_msg: undefined,
-//       isLoading: true,
-//       isError: false,
-//       out_msgs: [],
-//     }
-//   },
-
-//   created() {
-//     this.loadData()
-//   },
-
-//   methods: {
-//     loadData() {
-//       this.isLoading = true
-//       this.isError = false
-
-//       getTransaction(this.$props)
-//         .then((tx) => {
-//           this.fee = tx.fee
-//           this.timestamp = new Date(parseInt(tx.utime + '000')).toLocaleString()
-//           this.in_msg = tx.in_msg ? Object.freeze(tx.in_msg) : undefined
-//           this.out_msgs = tx.out_msgs.map(Object.freeze)
-//         })
-//         .catch((e) => {
-//           this.isError = true
-//           console.error(e)
-//         })
-//         .then(() => {
-//           this.isLoading = false
-//         })
-//     },
-//   },
-// }
 </script>
