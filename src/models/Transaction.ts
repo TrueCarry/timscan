@@ -1,4 +1,5 @@
 import { RawTransaction } from '@/ton/src'
+import { RawTransactionDescriptionGeneric } from '@/ton/src/block/parse'
 
 // export type PlainTransaction = {
 //   address: Address
@@ -29,4 +30,10 @@ export interface PlainTransaction {
   prevHash: string
 }
 
-export type Transaction = RawTransaction & { hash: string }
+export type Transaction = RawTransaction & {
+  hash: string
+}
+
+export type TransactionGeneric = Transaction & {
+  description: RawTransactionDescriptionGeneric
+}

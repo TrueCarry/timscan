@@ -511,17 +511,7 @@ export function parseBouncePhase(slice: Slice): RawBouncePhase {
 //   aborted:Bool destroyed:Bool
 //   = TransactionDescr;
 export type RawTransactionDescription =
-  | {
-      type: 'generic'
-      creditFirst: boolean
-      storagePhase: RawStoragePhase | null
-      creditPhase: RawCreditPhase | null
-      computePhase: RawComputePhase
-      actionPhase: RawActionPhase | null
-      bouncePhase: RawBouncePhase | null
-      aborted: boolean
-      destroyed: boolean
-    }
+  | RawTransactionDescriptionGeneric
   | {
       type: 'storage'
       storagePhase: RawStoragePhase
@@ -535,6 +525,19 @@ export type RawTransactionDescription =
       aborted: boolean
       destroyed: boolean
     }
+
+export type RawTransactionDescriptionGeneric = {
+  type: 'generic'
+  creditFirst: boolean
+  storagePhase: RawStoragePhase | null
+  creditPhase: RawCreditPhase | null
+  computePhase: RawComputePhase
+  actionPhase: RawActionPhase | null
+  bouncePhase: RawBouncePhase | null
+  aborted: boolean
+  destroyed: boolean
+}
+
 export function parseTransactionDescription(slice: Slice): RawTransactionDescription {
   const type = slice.readUintNumber(4)
   if (type === 0x00) {
