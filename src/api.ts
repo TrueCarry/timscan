@@ -17,6 +17,8 @@ import { PlainTransaction } from './models/Transaction.js'
 import BN from 'bn.js'
 import lc from './liteClient.js'
 
+const db = new AppDb()
+
 /**
  * @param  {String} address
  * @return {Promise<Object>}
@@ -58,7 +60,6 @@ export const getAddressInfo = async function (
 ): Promise<AccountPlainState> {
   console.log('getAddressInfo', address, forceUpdate)
 
-  const db = new AppDb()
   const rawAddress = Address.parse(address).toString()
 
   if (!forceUpdate) {
@@ -132,9 +133,8 @@ export const getTransactions = async function (
   allowMore?: boolean,
   checkForNew?: boolean
 ): Promise<PlainTransaction[]> {
-  const db = new AppDb()
   const rawAddress = Address.parse(_address).toString()
-  const existing = await getExistingTransactions(db, rawAddress, lt, hash, limit, allowMore)
+  const existing = await getExistingTransactions(rawAddress, lt, hash, limit, allowMore)
   if (existing) {
     return existing
   }
@@ -182,7 +182,6 @@ export const getTransactions = async function (
 }
 
 async function getExistingTransactions(
-  db: AppDb,
   rawAddress: string,
   lt: string,
   hash: Buffer,
@@ -252,10 +251,52 @@ async function getExistingTransactions(
  * @param  {Number} options.to_lt
  * @return {Promise<Object>}
  */
-export const getTransaction = async function ({ address, lt, hash }) {
-  const db = new AppDb()
-  const rawAddress = Address.parse(address).toString()
+export const getTransaction = async function ({
+  address,
+  lt,
+  hash,
+}: {
+  address: string
+  lt: string
+  hash: Buffer
+}) {
+  try {
+    const parsedAddress = Address.parse(address)
+    const rawAddress = parsedAddress.toString()
 
+    const existing = await getExistingTransaction(rawAddress, lt)
+    console.log('exisintg???', existing)
+    if (existing) {
+      return existing
+    }
+
+    console.log('await', 11, lt, hash)
+    const result = await lc.getAccountTransactions(parsedAddress, lt, hash, 1)
+    console.log('result', result)
+
+    const parsedTx = parseTransaction(0, Cell.fromBoc(result.transactions)[0].beginParse())
+    const tx = Object.freeze({
+      address: address.toString(),
+      lt,
+      hash: hash.toString('hex'),
+      data: Cell.fromBoc(result.transactions)[0].toBoc().toString('base64'),
+      prevLt: parsedTx.prevTransaction.lt.toString(),
+      prevHash: parsedTx.prevTransaction.hash.toString('hex'),
+    })
+
+    await db.transactions.put(tx)
+
+    return tx
+  } catch (e) {
+    console.log('[getTransaction] Error', e)
+    throw e
+  }
+}
+
+async function getExistingTransaction(
+  rawAddress: string,
+  lt: string
+): Promise<PlainTransaction | null> {
   const existing = await db.transactions
     .where('address')
     .equals(rawAddress)

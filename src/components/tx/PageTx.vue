@@ -64,7 +64,7 @@ async function loadData() {
 
   const apiTx = await getTransaction({
     address: props.address,
-    hash: props.hash,
+    hash: Buffer.from(props.hash, 'base64'),
     lt: props.lt,
   }).catch((e) => {
     isError.value = true

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
-import { Transaction } from '@/models/Transaction'
+import { Transaction, TransactionGeneric } from '@/models/Transaction'
 import StoragePhase from './Phases/StoragePhase.vue'
 import ActionPhase from './Phases/ActionPhase.vue'
 import ComputePhase from './Phases/ComputePhase.vue'
@@ -23,8 +23,9 @@ const props = defineProps({
     </div>
 
     <StoragePhase :tx="tx" />
-    <BouncePhase v-if="tx.description.type === 'generic'" :tx="tx" />
-    <ComputePhase v-if="tx.description.type === 'generic'" :tx="tx" />
-    <ActionPhase v-if="tx.description.type === 'generic'" :tx="tx" />
+
+    <BouncePhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
+    <ComputePhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
+    <ActionPhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
   </div>
 </template>
