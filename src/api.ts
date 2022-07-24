@@ -263,9 +263,11 @@ export const getTransaction = async function ({ address, lt, hash }) {
     .reverse()
     .and((tx) => {
       // console.log('check lt', tx.lt)
-      return new BN(tx.lt).lte(new BN(lt))
+      return new BN(tx.lt).eq(new BN(lt))
     })
     .first()
+
+  console.log('got existing tx', existing, rawAddress, lt, existing?.lt)
 
   if (!existing) {
     return null

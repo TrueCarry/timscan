@@ -31,6 +31,18 @@
         <td>Import fee</td>
         <td>{{ $ton(amounts?.importFee?.toNumber()) }} TON</td>
       </tr>
+
+      <template v-if="message.info.type === 'internal'">
+        <tr>
+          <td>Bounce</td>
+          <td>{{ message.info.bounce }}</td>
+        </tr>
+        <tr>
+          <td>Bounced</td>
+          <td>{{ message.info.bounced }}</td>
+        </tr>
+      </template>
+
       <tr>
         <td>Creation LT</td>
         <td>{{ createdLt }}</td>

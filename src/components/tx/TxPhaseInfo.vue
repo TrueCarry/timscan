@@ -4,6 +4,7 @@ import { Transaction } from '@/models/Transaction'
 import StoragePhase from './Phases/StoragePhase.vue'
 import ActionPhase from './Phases/ActionPhase.vue'
 import ComputePhase from './Phases/ComputePhase.vue'
+import BouncePhase from './Phases/BouncePhase.vue'
 
 const props = defineProps({
   tx: {
@@ -22,6 +23,7 @@ const props = defineProps({
     </div>
 
     <StoragePhase :tx="tx" />
+    <BouncePhase v-if="tx.description.type === 'generic'" :tx="tx" />
     <ComputePhase v-if="tx.description.type === 'generic'" :tx="tx" />
     <ActionPhase v-if="tx.description.type === 'generic'" :tx="tx" />
   </div>
