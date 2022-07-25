@@ -2,13 +2,14 @@ import { nftAbi } from './nft'
 import { walletAbi } from './wallet'
 import { highloadWalletAbi } from './highloadWallet'
 import { NormalizedStackEntry } from '@/ton-contract-executor/src'
+import { nftCollectionAbi } from './nftCollectionEditable'
 
 export interface ContractAbi {
   methods: Record<string, MethodAbi>
 }
 
 export interface MethodAbi {
-  input: unknown[]
+  input: OutputArg[]
   output: OutputArg[]
 }
 
@@ -16,6 +17,7 @@ export interface OutputArg {
   name: string
   type: string
   length?: number
+  content?: OutputArg[]
 }
 
 export interface OutputResult extends OutputArg {
@@ -27,4 +29,5 @@ export const abiMap: Record<string, ContractAbi> = {
   '9892766765d3ea42809a417abbd7ff9ce681b145d05ae6b118a614b38c8ded15': nftAbi, // standard nft
   feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0: walletAbi,
   '9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812': highloadWalletAbi,
+  '64bb2d4661b5f2dc1a83bf5cbbe09e92ac0b460a1b879a5519386fca4c348bca': nftCollectionAbi,
 }

@@ -9,13 +9,15 @@ import {
   RawAccountStorage,
   RawCurrencyCollection,
   RawStorageInfo,
+  RawTransactionDescription,
 } from '@/ton/src'
 import { tonNode_blockIdExt } from '@/ton-lite-client/src/schema'
 import AppDb from '~/db'
 import { AccountPlainState, AccountStateToPlain } from './models/AccountState.js'
-import { PlainTransaction } from './models/Transaction.js'
+import { PlainTransaction, Transaction, TransactionGeneric } from './models/Transaction.js'
 import BN from 'bn.js'
 import lc from './liteClient.js'
+import { RawTransactionDescriptionGeneric } from './ton/src/block/parse.js'
 
 const db = new AppDb()
 
@@ -242,6 +244,26 @@ async function getExistingTransactions(
   }
 
   return null
+}
+
+function txInput(tx: Transaction) {
+  if (tx.description.type === 'generic') {
+    console.log(tx.description)
+    genericDescription(tx.description)
+    // txGenericInput({
+    //   ...tx,
+    //   description: tx.description,
+    // })
+    // tx as TransactionGeneric)
+  }
+}
+
+function txGenericInput(tx: TransactionGeneric) {
+  console.log('generic')
+}
+
+function genericDescription(d: RawTransactionDescriptionGeneric) {
+  console.log('ok')
 }
 
 /**

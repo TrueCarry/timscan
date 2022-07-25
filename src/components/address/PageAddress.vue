@@ -156,8 +156,12 @@
           <TransactionsList :wallet="wallet" :wallet-address="wallet.address" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
-          <ContractInfo :code="$store.state.address.code" :data="$store.state.address.data"
-        /></template>
+          <ContractInfo
+            :code="$store.state.address.code"
+            :data="$store.state.address.data"
+            :address="parsedAddress"
+          />
+        </template>
 
         <!-- <mugen-scroll v-bind:handler="loadMore" v-bind:should-handle="shouldHandleScroll" style="display: flex;">
                     <div v-on:click="loadMore" class="tx-table-loader-button" v-show="showPreloader">
@@ -212,6 +216,7 @@ import { LiteClient } from '@/ton-lite-client/src'
 import TransactionsList from './TransactionsList.vue'
 import IconRefresh from '@/assets/images/icon-refresh.svg?component'
 import { Transaction } from '@/models/Transaction'
+import { Address } from '@/ton/src'
 
 const $lc = inject('$lc') as LiteClient
 console.log('lc', $lc)
@@ -236,6 +241,8 @@ const hasMore = ref<boolean>(true)
 const emptyHistory = ref<boolean>(false)
 const qrModalVisible = ref<boolean>(false)
 const contractExtendedInfo = ref<unknown | undefined>(undefined)
+
+const parsedAddress = computed(() => Address.parse(props.address))
 
 const selectedTab = ref<'transactions' | 'contract'>('transactions')
 
