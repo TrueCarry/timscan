@@ -1,3 +1,4 @@
+import { abiMap } from '@/abi'
 import { getAddressInfo, getTransactions } from '@/api'
 import { parseTransaction, Cell } from '@/ton/src'
 import { callTonApi } from '@/utils/callTonApi'
@@ -8,6 +9,7 @@ const state = () => ({
   wallet: undefined,
   code: '',
   data: '',
+  abi: undefined,
 })
 
 const mutations = {
@@ -22,6 +24,7 @@ const mutations = {
     state.wallet = undefined
     state.code = ''
     state.data = ''
+    state.abi = undefined
     // state.lastActivity = 0
     // state.qrModalVisible = false
     // state.contractExtendedInfo = undefined
@@ -31,12 +34,19 @@ const mutations = {
     state.wallet = value
   },
 
-  setCode(state, value) {
-    state.code = value
-  },
+  setCodeData(state, { code, data }) {
+    state.code = code
+    state.data = data
 
-  setData(state, value) {
-    state.data = value
+    if (code && data) {
+      const codeCell = Cell.fromBoc(Buffer.from(code, 'base64'))[0]
+      const hash = codeCell.hash().toString('hex')
+
+      const abi = abiMap[hash]
+      state.abi = abi
+    } else {
+      state.abi = undefined
+    }
   },
 
   setTransactions(state, value) {
@@ -77,8 +87,10 @@ const actions = {
       // continue
     } else if (walletInfo?.state.type === 'active') {
       if (walletInfo.state?.code && walletInfo.state?.data) {
-        commit('setCode', walletInfo.state?.code)
-        commit('setData', walletInfo.state?.data)
+        commit('setCodeData', {
+          code: walletInfo.state?.code,
+          data: walletInfo.state?.data,
+        })
         // code.value = walletInfo.state?.code
         // data.value = walletInfo.state?.data
       }

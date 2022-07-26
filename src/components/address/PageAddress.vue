@@ -55,9 +55,9 @@
         <div class="card-row">
           <div class="card-row__name" v-text="$t('address.info.last_activity')" />
           <div class="card-row__value">
-            <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span>
-            <span v-else-if="!lastActivity" v-text="$t('address.info.no_activity')" />
-            <ui-timeago v-else :timestamp="lastActivity" />
+            <!-- <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span> -->
+            <span v-if="!lastTxTime" v-text="$t('address.info.no_activity')" />
+            <ui-timeago v-else :timestamp="lastTxTime * 1000" />
           </div>
         </div>
 
@@ -98,7 +98,7 @@
                             v-bind:to="{ name: 'nft', params: { address, skeletonHint: 'item' }}"
                             v-text="'NFT Item'"/> -->
 
-            <span>Unknown</span>
+            <span>{{ $store.state.address.abi?.name || 'Unknown' }}</span>
           </div>
         </div>
 
@@ -230,12 +230,14 @@ const props = defineProps({
   },
 })
 
+const lastTxTime = computed(() => store.state.address.transactions[0]?.time)
+
 const wallet = computed(() => store.state.address.wallet)
 
 const contractTypeVisible = ref<boolean>(true)
 // const wallet = ref<AccountPlainState | null>(null)
 const transactions = ref<Transaction[]>([])
-const lastActivity = ref<number | null>(null)
+// const lastActivity = ref<number | null>(null)
 const isLoading = ref<boolean>(true)
 const hasMore = ref<boolean>(true)
 const emptyHistory = ref<boolean>(false)

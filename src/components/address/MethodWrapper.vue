@@ -134,7 +134,7 @@ async function callMethod(name: string, info: MethodAbi) {
             <input
               type="text"
               class="text-black"
-              @input="(event) => (inputs[i] = event.target.value)"
+              @input="(event) => (inputs[i] = (event.target as HTMLInputElement).value)"
             />
           </div>
           <!-- <div class="card-row__value"><value-wrapper :info="output" /></div> -->
