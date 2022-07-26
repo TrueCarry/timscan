@@ -9,11 +9,11 @@
         <div class="card-row">
           <div class="card-row__name" v-text="$t('address.info.address')" />
           <div class="card-row__value flex items-center cursor-pointer">
-            <span
+            <!-- <span
               v-if="addressMeta.isScam"
               class="card-main-address-badge card-main-address-badge--scam"
               >SCAM</span
-            >
+            > -->
             <ui-copy-button
               show-button
               class="card-main-address flex items-center"
@@ -42,7 +42,7 @@
           <div class="card-row__name" v-text="$t('address.info.balance')" />
           <div v-if="balance" class="card-row__value">
             {{ $ton(parseInt(balance)) }}
-            <span title="TON" v-text="addressMeta.tonIcon || 'TON'" />
+            <span title="TON" v-text="'TON'" />
             <!-- <span v-if="$store.state.exchangeRate" style="color: #717579">
                             ≈ ${{$fiat(wallet.balance * $store.state.exchangeRate)}}
                         </span> -->
@@ -98,7 +98,7 @@
                             v-bind:to="{ name: 'nft', params: { address, skeletonHint: 'item' }}"
                             v-text="'NFT Item'"/> -->
 
-            <span>{{ $store.state.address.abi?.name || 'Unknown' }}</span>
+            <span>{{ addressStore.abi?.name || 'Unknown' }}</span>
           </div>
         </div>
 
@@ -156,11 +156,7 @@
           <TransactionsList :wallet="wallet" :wallet-address="wallet.address" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
-          <ContractInfo
-            :code="$store.state.address.code"
-            :data="$store.state.address.data"
-            :address="parsedAddress"
-          />
+          <ContractInfo />
         </template>
 
         <!-- <mugen-scroll v-bind:handler="loadMore" v-bind:should-handle="shouldHandleScroll" style="display: flex;">
@@ -217,11 +213,14 @@ import TransactionsList from './TransactionsList.vue'
 import IconRefresh from '@/assets/images/icon-refresh.svg?component'
 import { Transaction } from '@/models/Transaction'
 import { Address } from '@/ton/src'
+import { useAddressStore } from '@/stores/address'
+
+const addressStore = useAddressStore()
 
 const $lc = inject('$lc') as LiteClient
 console.log('lc', $lc)
 
-const store = useStore()
+// const store = useStore()
 
 const props = defineProps({
   address: {
@@ -230,9 +229,9 @@ const props = defineProps({
   },
 })
 
-const lastTxTime = computed(() => store.state.address.transactions[0]?.time)
+const lastTxTime = computed(() => addressStore.transactions[0]?.time)
 
-const wallet = computed(() => store.state.address.wallet)
+const wallet = computed(() => addressStore.wallet)
 
 const contractTypeVisible = ref<boolean>(true)
 // const wallet = ref<AccountPlainState | null>(null)
@@ -249,7 +248,7 @@ const parsedAddress = computed(() => Address.parse(props.address))
 const selectedTab = ref<'transactions' | 'contract'>('transactions')
 
 const addressMeta = computed(() => {
-  return store.getters.getAddressMeta(props.address)
+  return {} // store.getters.getAddressMeta(props.address)
 })
 
 const shouldHandleScroll = computed(() => {
@@ -266,7 +265,7 @@ const balance = computed(() => {
 })
 
 const loadData = async (forceUpdate?: boolean, reset?: boolean) => {
-  store.dispatch('address/loadData', { address: props.address, forceUpdate, reset })
+  addressStore.loadData({ address: props.address, forceUpdate, reset })
 }
 
 watch(

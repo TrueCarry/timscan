@@ -36,6 +36,7 @@
     "isomorphic-webcrypto": "^2.3.8",
     "isomorphic-ws": "^5.0.0",
     "noble-ed25519": "^1.2.6",
+    "pinia": "^2.0.17",
     "qrcode.vue": "^3.3.3",
     "randombytes": "^2.1.0",
     "rollup-plugin-analyzer": "^4.0.0",

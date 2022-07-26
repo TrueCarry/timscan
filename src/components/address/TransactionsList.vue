@@ -3,29 +3,31 @@ import { AccountPlainState } from '@/models/AccountState'
 import TxRow from './TxRow.vue'
 
 import { computed, PropType, watch } from 'vue'
-import { useStore } from 'vuex'
+import { useAddressStore } from '@/stores/address'
+// import { useStore } from 'vuex'
 
-const store = useStore()
+// const store = useStore()
+const addressStore = useAddressStore()
 
-const wallet = computed(() => store.state.address.wallet)
+const wallet = computed(() => addressStore.wallet)
 
-const transactions = computed(() => store.state.address.transactions)
+const transactions = computed(() => addressStore.transactions)
 watch(transactions, () => {
   console.log('transactions update', transactions)
 })
 
-const emptyHistory = computed(() => wallet.value.lastTx?.lt === '0')
+const emptyHistory = computed(() => wallet.value?.lastTx?.lt === '0')
 
 const updateTransactions = async () => {
   console.log('transactions update')
-  store.dispatch('address/loadTransactions', {
+  addressStore.loadTransactions({
     reset: true,
     append: false,
   })
 }
 
 const loadMore = async () => {
-  store.dispatch('address/loadTransactions', {
+  addressStore.loadTransactions({
     reset: false,
     append: true,
     allowMore: true,
@@ -47,10 +49,10 @@ const hasMore = computed(() => {
 })
 
 watch(wallet, (newWal, oldWal) => {
-  if (newWal.address !== oldWal.address) {
+  if (newWal?.address !== oldWal?.address) {
     updateTransactions()
   } else {
-    store.dispatch('address/refreshTransactions')
+    addressStore.refreshTransactions()
   }
 })
 updateTransactions()
@@ -94,7 +96,7 @@ updateTransactions()
         <tx-row-skeleton v-for="i in 8" :key="`tx_skeleton_${i}`" />
       </tbody> -->
 
-      <TxRow v-for="tx in transactions" :key="tx.lt.toString()" :tx="tx" />
+      <TxRow v-for="tx in transactions" :key="tx.lt.toString()" :tx="(tx as any)" />
     </table>
 
     <div v-if="hasMore" class="mugen-scroll">

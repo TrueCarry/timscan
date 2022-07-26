@@ -1,14 +1,14 @@
 import { createStore } from 'vuex'
-import { addressModule } from './address'
+// import { addressModule } from './address'
 // import Vue from 'vue';
 // import { ADDRBOOK_LOCATION, COINGECKO_ENDPOINT } from '~/config.js'
 
 // Vue.use(Vuex);
 
 export default createStore({
-  modules: {
-    address: addressModule,
-  },
+  // modules: {
+  //   address: addressModule,
+  // },
 
   state: {
     addrbook: {},

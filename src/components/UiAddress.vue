@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useStore } from 'vuex'
+import { computed } from 'vue'
+// import { useStore } from 'vuex'
 
 const props = defineProps({
   address: {
@@ -12,8 +13,9 @@ const props = defineProps({
   },
 })
 
-const store = useStore()
-const name = store.getters.getAddressName(props.address)
+// const store = useStore()
+const name = computed(() => props.address)
+// store.getters.getAddressName(props.address)
 </script>
 
 <template>
