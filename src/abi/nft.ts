@@ -1,6 +1,7 @@
 import { ContractAbi } from '.'
 
 const nftAbi: ContractAbi = {
+  name: 'Standard Tonweb NFT',
   methods: {
     get_nft_data: {
       input: [],

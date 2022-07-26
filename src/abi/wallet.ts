@@ -1,6 +1,7 @@
 import { ContractAbi } from '.'
 
 const walletAbi: ContractAbi = {
+  name: 'Wallet V3R2',
   methods: {
     seqno: {
       input: [],

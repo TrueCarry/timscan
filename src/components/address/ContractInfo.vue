@@ -1,6 +1,11 @@
 <template>
   <div class="card">
     <div class="card-row">
+      <div class="card-row__name">Name</div>
+      <div class="card-row__value">{{ abi?.name || 'Unknown' }}</div>
+    </div>
+
+    <div class="card-row">
       <div class="card-row__name">Code</div>
       <div class="card-row__value">{{ code }}</div>
     </div>

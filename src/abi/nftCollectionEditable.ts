@@ -1,6 +1,7 @@
 import { ContractAbi } from '.'
 
 const nftCollectionAbi: ContractAbi = {
+  name: 'Standard Tonweb Editable Nft Collection',
   methods: {
     // get_collection_data: {
     //   input: [],
