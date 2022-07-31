@@ -1,7 +1,7 @@
 import { ContractAbi } from '.'
 
-const nftCollectionAbi: ContractAbi = {
-  name: 'Standard Tonweb Editable Nft Collection',
+const dnsCollectionAbi: ContractAbi = {
+  name: 'DNS Nft Collection',
   methods: {
     get_nft_content: {
       input: [
@@ -45,7 +45,44 @@ const nftCollectionAbi: ContractAbi = {
         },
       ],
     },
+
+    dnsresolve: {
+      input: [
+        {
+          name: 'subdomain',
+          type: 'cell_slice',
+          content: [
+            {
+              name: 'terminator',
+              type: 'int',
+              length: 8,
+            },
+            {
+              name: 'domain',
+              type: 'slice',
+            },
+            {
+              name: 'terminator',
+              type: 'int',
+              length: 8,
+            },
+          ],
+        },
+        { name: 'category', type: 'int' },
+      ],
+      output: [
+        { name: 'index', type: 'int' },
+        {
+          name: 'content',
+          type: 'cell',
+          content: [
+            { name: 'index', type: 'uint', length: 16 },
+            { name: 'content', type: 'address' },
+          ],
+        },
+      ],
+    },
   },
 }
 
-export { nftCollectionAbi }
+export { dnsCollectionAbi }

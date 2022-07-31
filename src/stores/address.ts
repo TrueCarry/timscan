@@ -27,7 +27,7 @@ export const useAddressStore = defineStore('address', {
 
   actions: {
     reset() {
-      this.transactions = []
+      // this.transactions = []
       this.wallet = undefined
       this.code = ''
       this.data = ''

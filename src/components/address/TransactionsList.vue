@@ -4,6 +4,8 @@ import TxRow from './TxRow.vue'
 
 import { computed, PropType, watch } from 'vue'
 import { useAddressStore } from '@/stores/address'
+import { Address } from '@/ton/src'
+import { address } from '@/ton/src/traits/trait_address'
 // import { useStore } from 'vuex'
 
 // const store = useStore()
@@ -19,11 +21,18 @@ watch(transactions, () => {
 const emptyHistory = computed(() => wallet.value?.lastTx?.lt === '0')
 
 const updateTransactions = async () => {
-  console.log('transactions update')
-  addressStore.loadTransactions({
-    reset: true,
-    append: false,
-  })
+  const refresh =
+    addressStore.transactions.length > 0 &&
+    addressStore.transactions[0].address.equals(Address.parse(wallet.value?.address || ''))
+
+  if (refresh) {
+    addressStore.refreshTransactions()
+  } else {
+    addressStore.loadTransactions({
+      reset: true,
+      append: false,
+    })
+  }
 }
 
 const loadMore = async () => {
