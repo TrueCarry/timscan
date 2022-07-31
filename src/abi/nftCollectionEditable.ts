@@ -26,7 +26,25 @@ const nftCollectionAbi: ContractAbi = {
     get_nft_content: {
       input: [
         { name: 'index', type: 'int' },
-        { name: 'individual_nft_content', type: 'cell_string' },
+        {
+          name: 'individual_nft_content',
+          type: 'cell',
+          content: [
+            { name: 'offchain', type: 'int', length: 8 },
+            {
+              name: 'contentCell',
+              type: 'cell',
+              content: [
+                {
+                  name: 'contentSlice',
+                  type: 'slice',
+                  // content: [{ name: 'url', type: 'slice' }],
+                },
+              ],
+            },
+          ],
+        },
+        // { name: 'individual_nft_content', type: 'cell_string' },
       ],
       output: [
         {
@@ -34,8 +52,56 @@ const nftCollectionAbi: ContractAbi = {
           type: 'cell',
           content: [
             { name: 'index', type: 'int', length: 8 },
-            { name: 'content', type: 'cell_string' },
-            { name: 'content', type: 'ref' },
+            { name: 'content', type: 'slice' },
+            {
+              name: 'content',
+              type: 'cell',
+              content: [
+                {
+                  name: 'contentSlice',
+                  type: 'slice',
+                  // content: [{ name: 'url', type: 'slice' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    dnsresolve: {
+      input: [
+        {
+          name: 'subdomain',
+          type: 'cell_slice',
+          content: [
+            {
+              name: 'terminator',
+              type: 'int',
+              length: 8,
+            },
+            {
+              name: 'domain',
+              type: 'slice',
+            },
+            {
+              name: 'terminator',
+              type: 'int',
+              length: 8,
+            },
+          ],
+        },
+        { name: 'category', type: 'int' },
+      ],
+      output: [
+        { name: 'index', type: 'int' },
+        // { name: 'content', type: 'cell_string' },
+        {
+          name: 'content',
+          type: 'cell',
+          content: [
+            { name: 'index', type: 'uint', length: 16 },
+            { name: 'content', type: 'address' },
           ],
         },
       ],

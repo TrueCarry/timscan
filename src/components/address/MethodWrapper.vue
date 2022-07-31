@@ -5,6 +5,7 @@ import { Address, Cell } from '@/ton/src'
 import BN from 'bn.js'
 import { watch, computed, PropType, ref, toRaw, reactive } from 'vue'
 import ValueWrapper from './ValueWrapper'
+import InputWrapper from './InputWrapper.vue'
 
 const props = defineProps({
   name: {
@@ -62,31 +63,47 @@ async function callMethod(name: string, info: MethodAbi) {
     let i = 0
     for (const input of props.abi.input) {
       const value = inputs[i] || 0
-      switch (input.type) {
-        case 'int': {
-          args.push({
-            type: 'int',
-            value: value.toString(),
-          })
-          break
-        }
-        case 'cell_string': {
-          const cell = new Cell()
-          const ref = new Cell()
-          ref.bits.writeBuffer(Buffer.from(new TextEncoder().encode(value)))
-          // cell.refs.push(ref)
-          // cell.refs.push(ref)
-          args.push({
-            type: 'cell',
-            value: ref.toBoc({ idx: false }).toString('base64'),
-          })
-          break
-        }
-        default:
-          break
-      }
+      args.push({
+        type: input.type,
+        value: value.toString(),
+      })
+      // switch (input.type) {
+      //   case 'int': {
+      //     args.push({
+      //       type: 'int',
+      //       value: value.toString(),
+      //     })
+      //     break
+      //   }
+      //   // case 'cell_string': {
+      //   //   const cell = new Cell()
+      //   //   const ref = new Cell()
+      //   //   ref.bits.writeBuffer(Buffer.from(new TextEncoder().encode(value)))
+      //   //   cell.refs.push(ref)
+      //   //   cell.refs.push(ref)
+      //   //   args.push({
+      //   //     type: 'cell',
+      //   //     value: ref.toBoc({ idx: false }).toString('base64'),
+      //   //   })
+      //   //   break
+      //   // }
+      //   case 'slice': {
+      //     // const domain = domainToBytes(value)
+      //     const cell = new Cell()
+      //     cell.bits.writeBuffer(Buffer.from([...new TextEncoder().encode(value)]))
+      //     args.push({
+      //       type: 'cell_slice',
+      //       value: cell.toBoc({ idx: false }).toString('base64'),
+      //     })
+      //     break
+      //   }
+      //   default:
+      //     break
+      // }
       i++
     }
+
+    console.log('args', args)
     const res = await wallet.invokeGetMethod(name, args)
 
     if (res.type !== 'success') {
@@ -120,6 +137,58 @@ async function callMethod(name: string, info: MethodAbi) {
     return null
   }
 }
+
+/**
+ * Verify and convert domain
+ * @param domain    {string}
+ * @return {Uint8Array}
+ */
+function domainToBytes(domain: string) {
+  if (!domain || !domain.length) {
+    throw new Error('empty domain')
+  }
+  if (domain === '.') {
+    return new Uint8Array([0])
+  }
+
+  domain = domain.toLowerCase()
+
+  for (let i = 0; i < domain.length; i++) {
+    if (domain.charCodeAt(i) <= 32) {
+      throw new Error('bytes in range 0..32 are not allowed in domain names')
+    }
+  }
+
+  for (let i = 0; i < domain.length; i++) {
+    const s = domain.substring(i, i + 1)
+    for (let c = 127; c <= 159; c++) {
+      // another control codes range
+      if (s === String.fromCharCode(c)) {
+        throw new Error('bytes in range 127..159 are not allowed in domain names')
+      }
+    }
+  }
+
+  const arr = domain.split('.')
+
+  arr.forEach((part) => {
+    if (!part.length) {
+      throw new Error('domain name cannot have an empty component')
+    }
+  })
+
+  let rawDomain = arr.reverse().join('\0') + '\0'
+  if (rawDomain.length < 126) {
+    rawDomain = '\0' + rawDomain
+  }
+
+  console.log(
+    'domain encode',
+    new TextEncoder().encode(domain),
+    new TextEncoder().encode(rawDomain)
+  )
+  return new TextEncoder().encode(rawDomain)
+}
 </script>
 
 <template>
@@ -127,19 +196,7 @@ async function callMethod(name: string, info: MethodAbi) {
     <div class="card-row__name !w-60">{{ name }}</div>
 
     <div class="card-row__value">
-      <div v-for="(output, i) in abi.input" :key="i" class="card-row">
-        <template v-if="output">
-          <div class="card-row__name">{{ output.name }}</div>
-          <div class="card-row__value">
-            <input
-              type="text"
-              class="text-black"
-              @input="(event) => (inputs[i] = (event.target as HTMLInputElement).value)"
-            />
-          </div>
-          <!-- <div class="card-row__value"><value-wrapper :info="output" /></div> -->
-        </template>
-      </div>
+      <InputWrapper v-for="(input, i) in abi.input" :key="i" v-model="inputs[i]" :input="input" />
     </div>
 
     <div class="card-row__value">

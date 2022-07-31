@@ -2,6 +2,7 @@ import BN from 'bn.js'
 import { Cell, Slice } from '@/ton/src'
 import { defineComponent, toRaw } from 'vue'
 import { OutputArg } from '@/abi'
+import ValueCellWrapper from './ValueCellWrapper'
 
 export default defineComponent({
   name: 'ValueWrapper',
@@ -56,28 +57,46 @@ function doRender({
       return <div>{data.toString()}</div>
     }
     case 'cell': {
-      if (!info.value) {
-        return <></>
-      }
-      const slice = (toRaw(info.value) as Cell).beginParse()
+      return <ValueCellWrapper info={info} />
+      // if (!info.value) {
+      //   return <></>
+      // }
+      // const slice = (toRaw(info.value) as Cell).beginParse()
 
-      return (
-        <>
-          {info.content?.map((out) => {
-            switch (out.type) {
-              case 'int': {
-                return <>Int: {slice.readInt(out.length || slice.remaining).toString()} </>
-              }
-              case 'ref': {
-                return <>Ref: {slice.readRef().readRemainingBytes().toString()}</>
-              }
-              default: {
-                return <>Default: {JSON.stringify(slice.readRemainingBytes().toString())}</>
-              }
-            }
-          })}
-        </>
-      )
+      // return (
+      //   <>
+      //     {info.content?.map((out) => {
+      //       switch (out.type) {
+      //         case 'int': {
+      //           return <>Int: {slice.readInt(out.length || slice.remaining).toString()} </>
+      //         }
+      //         case 'uint': {
+      //           return <>UInt: {slice.readUint(out.length || slice.remaining).toString()} </>
+      //         }
+      //         case 'ref': {
+      //           return <>Ref: {slice.readRef().readRemainingBytes().toString()}</>
+      //         }
+      //         case 'address': {
+      //           return (
+      //             <>
+      //               Address: {slice.readAddress()?.toFriendly({ bounceable: true, urlSafe: true })}{' '}
+      //             </>
+      //           )
+      //         }
+      //         case 'slice': {
+      //           return <>Slice: {slice.readRemainingBytes().toString()}</>
+      //         }
+      //         default: {
+      //           return (
+      //             <>
+      //               Default({out.type}): {JSON.stringify(slice.readRemainingBytes().toString())}
+      //             </>
+      //           )
+      //         }
+      //       }
+      //     })}
+      //   </>
+      // )
       // return doRender({ info: {
       //   name: info.name,
       //   type:

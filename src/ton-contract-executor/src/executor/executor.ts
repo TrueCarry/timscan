@@ -1,5 +1,6 @@
 import { Address, Cell, Slice } from '@/ton/src'
 import { crc16 } from '../utils/crc16'
+// eslint-disable-next-line camelcase
 import { vm_exec } from '../vm-exec/vmExec'
 // import {randomBytes} from "crypto";
 // import randomBytes from 'randombytes'

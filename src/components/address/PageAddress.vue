@@ -121,7 +121,7 @@
           <div
             class="card-title-tab"
             :class="selectedTab === 'transactions' && 'card-title-tab--active'"
-            @click="selectedTab = 'transactions'"
+            @click="selectTab('transactions')"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -137,7 +137,7 @@
           <div
             class="card-title-tab"
             :class="selectedTab === 'contract' && 'card-title-tab--active'"
-            @click="selectedTab = 'contract'"
+            @click="selectTab('contract')"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -243,9 +243,11 @@ const emptyHistory = ref<boolean>(false)
 const qrModalVisible = ref<boolean>(false)
 const contractExtendedInfo = ref<unknown | undefined>(undefined)
 
-const parsedAddress = computed(() => Address.parse(props.address))
+// const parsedAddress = computed(() => Address.parse(props.address))
 
-const selectedTab = ref<'transactions' | 'contract'>('transactions')
+const selectedTab = ref<'transactions' | 'contract'>(
+  window.location.hash.slice(1) === 'contract' ? 'contract' : 'transactions'
+)
 
 const addressMeta = computed(() => {
   return {} // store.getters.getAddressMeta(props.address)
@@ -276,4 +278,9 @@ watch(
 )
 
 loadData(false, true)
+
+const selectTab = (tab: 'transactions' | 'contract') => {
+  selectedTab.value = tab
+  window.location.hash = tab
+}
 </script>
