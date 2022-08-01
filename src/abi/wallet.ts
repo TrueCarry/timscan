@@ -5,15 +5,15 @@ const walletAbi: ContractAbi = {
   methods: {
     seqno: {
       input: [],
-      output: [{ name: 'seqno', type: 'int', length: 32 }],
+      output: [{ name: 'seqno', type: 'int' }],
     },
     get_subwallet_id: {
       input: [],
-      output: [{ name: 'subwallet_id', type: 'int', length: 32 }],
+      output: [{ name: 'subwallet_id', type: 'int' }],
     },
     get_public_key: {
       input: [],
-      output: [{ name: 'public_key', type: 'int', length: 256 }],
+      output: [{ name: 'public_key', type: 'int' }],
     },
   },
 }

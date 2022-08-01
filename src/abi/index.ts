@@ -7,6 +7,7 @@ import { nftSaleAbi } from './nftSale'
 import { nftEditableAbi } from './nftEditable'
 import { dnsCollectionAbi } from './dnsCollection'
 import { dnsItemAbi } from './dnsItem'
+import { getgemsAuctionAbi } from './getgemsAuction'
 
 export interface ContractAbi {
   name?: string
@@ -51,4 +52,5 @@ export const abiMap: Record<string, ContractAbi> = {
   '5de43c9ca08a0d7e5e21b998508150a8062dfc6b21e10efe8eb68838ee9eaf68': nftSaleAbi,
   eec5bbc25065628799468860d8fd48031585f649c32fa382c888ba48831625a3: dnsCollectionAbi, // dns collection
   '8b5ffc9ebfd39064d8d5f56e4659c826bb7593923f5ca48728be4d60af6f51f9': dnsItemAbi,
+  fc00a29dd0205bcdcc0d3ffb9ca38cc3c8c159ec60d8aa543240a92f10592d40: getgemsAuctionAbi,
 }
