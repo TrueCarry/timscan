@@ -10,7 +10,11 @@ const nftEditableAbi: ContractAbi = {
         { name: 'index', type: 'int' },
         { name: 'collection', type: 'address' },
         { name: 'owner', type: 'address' },
-        { name: 'content', type: 'cell_string' },
+        {
+          name: 'content',
+          type: 'cell',
+          content: [{ name: 'contentUri', type: 'slice' }],
+        },
       ],
     },
     get_editor: {

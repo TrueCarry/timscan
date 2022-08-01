@@ -1,7 +1,7 @@
 import { ContractAbi } from '.'
 
-const nftAbi: ContractAbi = {
-  name: 'Standard Tonweb NFT',
+const dnsItemAbi: ContractAbi = {
+  name: 'DNS NFT',
   methods: {
     get_nft_data: {
       input: [],
@@ -23,4 +23,4 @@ const nftAbi: ContractAbi = {
   },
 }
 
-export { nftAbi }
+export { dnsItemAbi }

@@ -67,39 +67,6 @@ async function callMethod(name: string, info: MethodAbi) {
         type: input.type,
         value: value.toString(),
       })
-      // switch (input.type) {
-      //   case 'int': {
-      //     args.push({
-      //       type: 'int',
-      //       value: value.toString(),
-      //     })
-      //     break
-      //   }
-      //   // case 'cell_string': {
-      //   //   const cell = new Cell()
-      //   //   const ref = new Cell()
-      //   //   ref.bits.writeBuffer(Buffer.from(new TextEncoder().encode(value)))
-      //   //   cell.refs.push(ref)
-      //   //   cell.refs.push(ref)
-      //   //   args.push({
-      //   //     type: 'cell',
-      //   //     value: ref.toBoc({ idx: false }).toString('base64'),
-      //   //   })
-      //   //   break
-      //   // }
-      //   case 'slice': {
-      //     // const domain = domainToBytes(value)
-      //     const cell = new Cell()
-      //     cell.bits.writeBuffer(Buffer.from([...new TextEncoder().encode(value)]))
-      //     args.push({
-      //       type: 'cell_slice',
-      //       value: cell.toBoc({ idx: false }).toString('base64'),
-      //     })
-      //     break
-      //   }
-      //   default:
-      //     break
-      // }
       i++
     }
 
