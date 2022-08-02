@@ -13,10 +13,7 @@ const nftAbi: ContractAbi = {
         {
           name: 'content',
           type: 'cell',
-          content: [
-            { name: 'index', type: 'int', length: 8 },
-            { name: 'contentUri', type: 'slice' },
-          ],
+          content: [{ name: 'contentUri', type: 'slice' }],
         },
       ],
     },

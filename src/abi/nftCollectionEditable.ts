@@ -3,6 +3,27 @@ import { ContractAbi } from '.'
 const nftCollectionAbi: ContractAbi = {
   name: 'Standard Tonweb Editable Nft Collection',
   methods: {
+    get_collection_data: {
+      input: [],
+      output: [
+        { name: 'next_item_index', type: 'int' },
+        {
+          name: 'content',
+          type: 'cell',
+          content: [
+            {
+              name: 'content',
+              type: 'slice',
+            },
+          ],
+        },
+        {
+          name: 'owner_address',
+          type: 'address',
+        },
+      ],
+    },
+
     get_nft_content: {
       input: [
         { name: 'index', type: 'int' },
@@ -10,16 +31,9 @@ const nftCollectionAbi: ContractAbi = {
           name: 'individual_nft_content',
           type: 'cell',
           content: [
-            { name: 'offchain', type: 'int', length: 8 },
             {
-              name: 'contentCell',
-              type: 'cell',
-              content: [
-                {
-                  name: 'contentSlice',
-                  type: 'slice',
-                },
-              ],
+              name: 'contentSlice',
+              type: 'slice',
             },
           ],
         },
