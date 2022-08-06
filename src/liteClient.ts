@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { CONFIG_URL } from '@/config'
-import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from './ton-lite-client/src'
+import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client'
 
 const { tmpClient, endWait } = getTempClient()
 let liteClient: LiteClient = tmpClient
@@ -114,8 +114,9 @@ async function initLiteClient() {
   endWait(client)
 
   setInterval(async () => {
-    liteClient.getMasterchainInfo()
-  }, 30000)
+    const info = await liteClient.getMasterchainInfo()
+    console.log('info', info)
+  }, 1000)
 }
 
 function intToIP(int: number) {

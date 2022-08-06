@@ -41,6 +41,7 @@ const defaultPluralization = function defaultRuleForLatinLanguages(value, choice
 
 export default createI18n({
   locale: 'en',
+  legacy: false,
   messages: { ru, en },
 
   pluralizationRules: {

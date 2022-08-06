@@ -1,4 +1,3 @@
-// import { tonNode_blockIdExt } from '@/ton-lite-client/src/schema'
 // import { RawAccountStorage, RawCurrencyCollection, RawStateInit, RawStorageInfo } from '@/ton/src'
 import { AccountState } from '../api'
 

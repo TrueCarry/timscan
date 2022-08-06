@@ -1,10 +1,5 @@
 import axios from 'axios'
-import {
-  LiteEngine,
-  LiteSingleEngine,
-  LiteRoundRobinEngine,
-  LiteClient,
-} from './ton-lite-client/src'
+import { LiteEngine, LiteSingleEngine, LiteRoundRobinEngine, LiteClient } from 'ton-lite-client'
 import { Address } from './ton/src'
 import fs from 'fs'
 
