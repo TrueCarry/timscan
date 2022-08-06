@@ -4,11 +4,11 @@
             <div class="alert" v-text="$t('error.invalid_address')"/>
         </section> -->
 
-    <section>
-      <div class="card">
-        <div class="card-row">
-          <div class="card-row__name" v-text="$t('address.info.address')" />
-          <div class="card-row__value flex items-center cursor-pointer">
+    <section class="container bg-foreground mx-auto mt-4 shadow rounded p-4">
+      <div class="flex flex-col">
+        <div class="flex border-b border-gray-400 py-2">
+          <div class="flex w-32" v-text="$t('address.info.address')" />
+          <div class="flex items-center cursor-pointer">
             <!-- <span
               v-if="addressMeta.isScam"
               class="card-main-address-badge card-main-address-badge--scam"
@@ -38,56 +38,56 @@
           </div>
         </div>
 
-        <div class="card-row">
-          <div class="card-row__name" v-text="$t('address.info.balance')" />
-          <div v-if="balance" class="card-row__value">
+        <div class="flex border-b border-gray-400 py-2">
+          <div class="flex w-32" v-text="$t('address.info.balance')" />
+          <div v-if="balance" class="flex">
             {{ $ton(parseInt(balance)) }}
             <span title="TON" v-text="'TON'" />
             <!-- <span v-if="$store.state.exchangeRate" style="color: #717579">
                             ≈ ${{$fiat(wallet.balance * $store.state.exchangeRate)}}
                         </span> -->
           </div>
-          <div v-else class="card-row__value">
+          <div v-else class="flex">
             <span class="skeleton">00000 TON ≈ 00000 USD</span>
           </div>
         </div>
 
-        <div class="card-row">
-          <div class="card-row__name" v-text="$t('address.info.last_activity')" />
-          <div class="card-row__value">
+        <div class="flex border-b border-gray-400 py-2">
+          <div class="flex w-32" v-text="$t('address.info.last_activity')" />
+          <div class="flex">
             <!-- <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span> -->
             <span v-if="!lastTxTime" v-text="$t('address.info.no_activity')" />
             <ui-timeago v-else :timestamp="lastTxTime * 1000" />
           </div>
         </div>
 
-        <div class="card-row">
-          <div class="card-row__name" v-text="$t('address.info.state')" />
-          <div class="card-row__value">
+        <div class="flex border-b border-gray-400 py-2">
+          <div class="flex w-32" v-text="$t('address.info.state')" />
+          <div class="flex">
             <span
               v-if="wallet?.state?.type === 'frozen'"
-              class="card-row-wallet-activity card-row-wallet-activity--frozen"
+              class="flex-wallet-activity flex-wallet-activity--frozen"
               v-text="$t('address.info.type_frozen')"
             />
 
             <span
               v-else-if="wallet?.state.type === 'active'"
-              class="card-row-wallet-activity card-row-wallet-activity--active"
+              class="flex-wallet-activity flex-wallet-activity--active"
               v-text="$t('address.info.type_active')"
             />
 
             <span
               v-else
-              class="card-row-wallet-activity card-row-wallet-activity--passive"
+              class="flex-wallet-activity flex-wallet-activity--passive"
               v-text="$t('address.info.type_inactive')"
             />
           </div>
         </div>
 
-        <div class="card-row">
-          <div class="card-row__name" v-text="$t('address.info.contract_type')" />
+        <div class="flex border-b border-gray-400 py-2">
+          <div class="flex w-32" v-text="$t('address.info.contract_type')" />
 
-          <div class="card-row__value">
+          <div class="flex">
             <!-- <router-link
                             v-if="contractExtendedInfo.type === 'collection'"
                             v-bind:to="{ name: 'nft', params: { address, skeletonHint: 'collection' }}"
@@ -102,12 +102,9 @@
           </div>
         </div>
 
-        <div class="card-row">
-          <div class="card-row__name" v-text="$t('address.info.last_update')" />
-          <div
-            class="card-row__value flex items-center cursor-pointer"
-            @click="loadData(true, false)"
-          >
+        <div class="flex border-b border-gray-400 py-2">
+          <div class="flex w-32" v-text="$t('address.info.last_update')" />
+          <div class="flex items-center cursor-pointer" @click="loadData(true, false)">
             <ui-timeago :timestamp="wallet?.lastUpdated" />
             <span>
               <IconRefresh class="w-4 text-white fill-current ml-1" />
@@ -116,44 +113,29 @@
         </div>
       </div>
 
-      <div class="card card--tabbed">
-        <nav class="card-title-tabs">
+      <div class="flex flex-col mt-4">
+        <nav class="flex">
           <div
-            class="card-title-tab"
-            :class="selectedTab === 'transactions' && 'card-title-tab--active'"
+            class="flex border-b-2 p-2 cursor-pointer"
+            :class="selectedTab === 'transactions' && 'border-b-highlight'"
             @click="selectTab('transactions')"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              class="card-title-tab__icon"
-            >
-              <path
-                d="M4 13c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 4c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0-8c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zm0 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zM7 8c0 .55.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1zm-3 5c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 4c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0-8c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zm0 4h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zM7 8c0 .55.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1z"
-              ></path>
-            </svg>
+            <IconTransactions class="w-6 h-6" />
             Transactions
           </div>
           <div
-            class="card-title-tab"
-            :class="selectedTab === 'contract' && 'card-title-tab--active'"
+            class="flex border-b-2 p-2 cursor-pointer"
+            :class="selectedTab === 'contract' && 'border-b-highlight'"
             @click="selectTab('contract')"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              class="card-title-tab__icon"
-            >
-              <path
-                d="M4 7v2c0 .55-.45 1-1 1H2v4h1c.55 0 1 .45 1 1v2c0 1.65 1.35 3 3 3h3v-2H7c-.55 0-1-.45-1-1v-2c0-1.3-.84-2.42-2-2.83v-.34C5.16 11.42 6 10.3 6 9V7c0-.55.45-1 1-1h3V4H7C5.35 4 4 5.35 4 7zM21 10c-.55 0-1-.45-1-1V7c0-1.65-1.35-3-3-3h-3v2h3c.55 0 1 .45 1 1v2c0 1.3.84 2.42 2 2.83v.34c-1.16.41-2 1.52-2 2.83v2c0 .55-.45 1-1 1h-3v2h3c1.65 0 3-1.35 3-3v-2c0-.55.45-1 1-1h1v-4h-1z"
-              ></path>
-            </svg>
+            <IconContract class="w-6 h-6" />
+
             Contract
           </div>
         </nav>
 
         <template v-if="selectedTab === 'transactions' && wallet">
-          <TransactionsList :wallet="wallet" :wallet-address="wallet.address" />
+          <TransactionsList :wallet="wallet" :wallet-address="wallet.address" class="mt-8 w-full" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
           <ContractInfo />
@@ -213,6 +195,9 @@ import IconRefresh from '@/assets/images/icon-refresh.svg?component'
 import { Transaction } from '@/models/Transaction'
 import { Address } from '@/ton/src'
 import { useAddressStore } from '@/stores/address'
+
+import IconContract from '@/assets/images/icon-contract.svg'
+import IconTransactions from '@/assets/images/icon-transactions.svg'
 
 const addressStore = useAddressStore()
 

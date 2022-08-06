@@ -52,7 +52,7 @@ console.log('text', text)
 <template>
   <tr class="tx-table-row-details">
     <td colspan="10">
-      <div class="tx-table-inner-container">
+      <div class="flex gap-4">
         <div class="tx-table-inner">
           <div class="tx-table-inner__header" v-text="$t('tx.timestamp')" />
           {{ dateTime.toLocaleString() }}

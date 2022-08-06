@@ -159,18 +159,24 @@ function domainToBytes(domain: string) {
 </script>
 
 <template>
-  <div class="card-row">
-    <div class="card-row__name !w-60">{{ name }}</div>
+  <div class="flex">
+    <div class="flex-col w-1/6">
+      <div class="text-secondary">Name</div>
+      <div>{{ name }}</div>
+    </div>
 
-    <div class="card-row__value">
+    <div class="flex flex-col w-2/6">
+      <div class="text-secondary">Inputs</div>
       <InputWrapper v-for="(input, i) in abi.input" :key="i" v-model="inputs[i]" :input="input" />
     </div>
 
-    <div class="card-row__value">
-      <div v-for="(output, i) in result" :key="i" class="card-row">
+    <div class="flex flex-col w-3/6">
+      <div class="text-secondary">Outputs</div>
+
+      <div v-for="(output, i) in result" :key="i" class="flex-col py-2">
         <template v-if="output">
-          <div class="card-row__name">{{ output.name }}</div>
-          <div class="card-row__value"><value-wrapper :info="output" /></div>
+          <div class="text-secondary">{{ output.name }}</div>
+          <div class="card-row__value"><ValueWrapper :info="output" /></div>
         </template>
       </div>
     </div>

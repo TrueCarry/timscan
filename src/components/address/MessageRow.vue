@@ -4,6 +4,8 @@ import { Transaction } from '@/models/Transaction'
 import BN from 'bn.js'
 import { computed, PropType, ref } from 'vue'
 import MessageRowDetails from './MessageRowDetails.vue'
+import IconCaret from '@/assets/images/icon-caret.svg'
+import IconLink from '@/assets/images/icon-link.svg'
 
 type SourceFrom = 'in' | 'out'
 
@@ -64,17 +66,10 @@ const isVisible = ref(false)
 </script>
 
 <template>
-  <tr v-if="!isExternal">
+  <tr class="h-12">
     <td>
       <router-link class="tx-table-cell-icon" :to="routerUrl">
-        <svg v-pre xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M7.665 9.301c-.155-.067-.338-.206-.549-.417a2.6 2.6 0 0 1 0-3.677l1.768-1.768a2.6 2.6 0 0 1 3.677 3.677l-1.167 1.167m-3.06-1.584c.156.067.339.206.55.417a2.6 2.6 0 0 1 0 3.677l-1.768 1.768A2.6 2.6 0 1 1 3.44 8.884l1.167-1.167"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-width="1.3"
-          />
-        </svg>
+        <IconLink class="w-4 h-4" />
       </router-link>
     </td>
     <td>
@@ -83,7 +78,7 @@ const isVisible = ref(false)
       </div>
     </td>
     <td>
-      <div class="tx-table__cell tx-table__cell--align-right">
+      <div v-if="!isExternal" class="tx-table__cell tx-table__cell--align-right">
         <span v-if="!from">hidden</span>
         <ui-address
           v-else
@@ -94,72 +89,6 @@ const isVisible = ref(false)
     </td>
     <td>
       <div class="tx-table__cell" style="padding: 0">
-        <span v-if="isExternal" class="tx-table__badge tx-table__badge--service">OUT</span>
-        <span v-else-if="isOut" class="tx-table__badge tx-table__badge--out">OUT</span>
-        <span v-else class="tx-table__badge tx-table__badge--in">IN</span>
-      </div>
-    </td>
-    <td>
-      <div v-if="to" class="tx-table__cell">
-        <ui-address
-          :address="to.toFriendly({ urlSafe: true, bounceable: true })"
-          :disabled="!isOut"
-        />
-      </div>
-    </td>
-    <td>
-      <div
-        class="tx-table__cell tx-table__cell--align-right"
-        style="position: relative; padding-right: 26px"
-      >
-        {{ $ton(amount.toNumber()) }} TON
-
-        <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
-      </div>
-    </td>
-    <td>
-      <div class="tx-table__cell" @click="isVisible = !isVisible">
-        <svg
-          class="tx-table-expand-caret"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          :class="{ 'tx-table-expand-caret--expanded': isVisible }"
-        >
-          <path
-            stroke="currentColor"
-            stroke-width="1.3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m1.5 4.75 5.5 5.5 5.5-5.5"
-          />
-        </svg>
-      </div>
-    </td>
-  </tr>
-  <tr v-else>
-    <td>
-      <router-link class="tx-table-cell-icon" :to="routerUrl">
-        <svg v-pre xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M7.665 9.301c-.155-.067-.338-.206-.549-.417a2.6 2.6 0 0 1 0-3.677l1.768-1.768a2.6 2.6 0 0 1 3.677 3.677l-1.167 1.167m-3.06-1.584c.156.067.339.206.55.417a2.6 2.6 0 0 1 0 3.677l-1.768 1.768A2.6 2.6 0 1 1 3.44 8.884l1.167-1.167"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-width="1.3"
-          />
-        </svg>
-      </router-link>
-    </td>
-    <td>
-      <div class="tx-table__cell">
-        <ui-timeago :timestamp="tx.time * 1000" />
-      </div>
-    </td>
-    <td>
-      <div class="tx-table__cell tx-table__cell--align-right"></div>
-    </td>
-    <td>
-      <div class="tx-table__cell" style="padding: 0">
-        <!-- <span v-if="isExternal" class="tx-table__badge tx-table__badge--service">IN</span> -->
         <span
           v-if="isOut"
           class="tx-table__badge tx-table__badge--out"
@@ -182,23 +111,24 @@ const isVisible = ref(false)
         />
       </div>
     </td>
-    <td></td>
     <td>
-      <div class="tx-table__cell" @click="isVisible = !isVisible">
-        <svg
-          class="tx-table-expand-caret"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          :class="{ 'tx-table-expand-caret--expanded': isVisible }"
-        >
-          <path
-            stroke="currentColor"
-            stroke-width="1.3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m1.5 4.75 5.5 5.5 5.5-5.5"
-          />
-        </svg>
+      <div
+        v-if="amount"
+        class="tx-table__cell tx-table__cell--align-right"
+        style="position: relative; padding-right: 26px"
+      >
+        {{ $ton(amount.toNumber()) }} TON
+
+        <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
+      </div>
+    </td>
+    <td>
+      <div
+        class="flex items-center justify-center w-4 h-4 origin-center"
+        :class="{ 'rotate-180': isVisible }"
+        @click="isVisible = !isVisible"
+      >
+        <IconCaret class="h-[12px] w-[13px] m-0" />
       </div>
     </td>
   </tr>

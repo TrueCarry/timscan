@@ -1,27 +1,27 @@
 <template>
-  <div class="card">
-    <div class="card-row">
-      <div class="card-row__name">Name</div>
-      <div class="card-row__value">{{ addressStore.abi?.name || 'Unknown' }}</div>
+  <div class="flex flex-col">
+    <div class="flex border-b border-gray-400 py-2">
+      <div class="flex w-32">Name</div>
+      <div class="">{{ addressStore.abi?.name || 'Unknown' }}</div>
     </div>
 
-    <div class="card-row">
-      <div class="card-row__name">Code</div>
-      <div class="card-row__value">{{ addressStore.code }}</div>
+    <div class="flex border-b border-gray-400 py-2">
+      <div class="flex shrink-0 w-32">Code</div>
+      <div class="break-words text-xs break-all">{{ addressStore.code }}</div>
     </div>
 
-    <div class="card-row">
-      <div class="card-row__name">Code Hash</div>
+    <div class="flex border-b border-gray-400 py-2">
+      <div class="flex w-32">Code Hash</div>
       <div class="card-row__value">{{ codeHash }}</div>
     </div>
 
-    <div class="card-row">
-      <div class="card-row__name">Data</div>
-      <div class="card-row__value">{{ addressStore.data }}</div>
+    <div class="flex border-b border-gray-400 py-2">
+      <div class="flex shrink-0 w-32">Data</div>
+      <div class="break-words text-xs break-all">{{ addressStore.data }}</div>
     </div>
 
     <template v-if="addressStore.abi && codeCell && dataCell">
-      <div class="card-row">Methods:</div>
+      <div class="mt-4">Methods:</div>
 
       <MethodWrapper
         v-for="(info, method) in (addressStore.abi.methods as {})"

@@ -71,7 +71,7 @@ updateTransactions()
   <div v-if="emptyHistory" class="tx-history-empty-panel" v-text="$t('address.tx_table.empty')" />
 
   <div v-else class="tx-history-wrap">
-    <table class="tx-table">
+    <table class="w-full">
       <thead>
         <tr>
           <th v-pre width="40" />

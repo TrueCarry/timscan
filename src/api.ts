@@ -11,7 +11,7 @@ import {
   RawStorageInfo,
   RawTransactionDescription,
 } from '@/ton/src'
-import { tonNode_blockIdExt } from 'ton-lite-client/src/schema'
+import { tonNode_blockIdExt } from 'ton-lite-client/dist/schema'
 import AppDb from '~/db'
 import { AccountPlainState, AccountStateToPlain } from './models/AccountState.js'
 import { PlainTransaction, Transaction, TransactionGeneric } from './models/Transaction.js'

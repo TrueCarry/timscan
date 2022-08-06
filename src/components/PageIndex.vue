@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import { matchAddress } from '~/search'
+import Logo from '@/assets/images/logo.svg'
 
 const router = useRouter()
+const toast = useToast()
 
 const search = ref<HTMLInputElement | null>(null)
 const searchVisible = ref<boolean>(false)
@@ -21,7 +24,7 @@ async function doSearch() {
 
   if (!match) {
     // Иначе сначала показывается алерт, а потом останавливается спиннер:
-    return nextTick(() => alert('Invalid address format'))
+    return nextTick(() => toast('Invalid address format'))
   }
 
   router.push({
@@ -46,31 +49,14 @@ function handleBlur() {
 </script>
 
 <template>
-  <section class="indexpage-container">
-    <svg
-      v-pre
-      class="indexpage-logo"
-      viewBox="0 0 64 64"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-    >
-      <path
-        stroke="currentColor"
-        stroke-width="1"
-        d="M46.54 19.143c.608.424.92 2.325.605 6.494a42.027 42.027 0 0 1-.606 4.514c1.411 2.459 1.8 5.247 1.167 8.366-.561 2.761-2.398 5.341-5.345 7.805C39.413 48.787 35.995 51 31.969 51c-4.027 0-8.154-2.323-10.66-4.678-2.507-2.354-4.084-4.575-4.813-7.047-.883-2.997-.587-6.038.886-9.124-.313-1.654-.51-3.158-.59-4.514-.296-4.994-.106-5.965.59-6.494.947-.72 3.961 1.13 9.042 5.547 2.327-.421 4.186-.631 5.576-.631 1.39 0 3.228.21 5.513.63 5.114-4.326 8.123-6.175 9.026-5.546Z"
-      />
-      <path
-        fill="currentColor"
-        d="M31.932 43.822c-1.234.024-2.896-1.649-2.896-2.333 0-.685 1.948-.888 3.037-.888 1.09 0 2.897.116 2.897.888 0 .771-1.804 2.309-3.038 2.333ZM23.985 37.338c1.785.695 3.59.315 4.03-.85.44-1.165-.65-2.674-2.435-3.37-1.784-.695-3.305-.775-3.746.39-.44 1.165.367 3.134 2.151 3.83ZM39.96 37.137c-1.687.815-3.525.516-3.965-.65-.44-1.164.65-2.673 2.434-3.369 1.785-.695 3.127-.775 3.567.39.44 1.165-.349 2.813-2.036 3.629Z"
-      />
-    </svg>
-
-    <div class="indexpage-search">
+  <section class="container mx-auto items-center justify-center flex flex-col pt-32">
+    <Logo class="w-32 h-32" />
+    <div class="mt-8">
       <input
         ref="search"
         v-model.trim="searchValue"
         type="search"
-        class="indexpage-search__input"
+        class="shadow bg-white h-10 px-2 rounded w-96 outline-none"
         enterkeyhint="search"
         spellcheck="false"
         autocomplete="off"
@@ -79,9 +65,9 @@ function handleBlur() {
         @keyup.esc="reset()"
       />
 
-      <svg
+      <!-- <svg
         v-show="addressLoading"
-        class="indexpage-search__loader"
+        class="w-4 h-4"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 18 18"
@@ -105,7 +91,7 @@ function handleBlur() {
             keyTimes="0;1"
           />
         </circle>
-      </svg>
+      </svg> -->
     </div>
   </section>
 </template>

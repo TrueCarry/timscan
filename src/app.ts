@@ -17,6 +17,9 @@ import './sass/app.scss'
 import liteClient, { initLiteClient } from './liteClient'
 import AppDb from './db'
 
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+
 const db = new AppDb()
 db.open()
 
@@ -49,6 +52,9 @@ const app = createApp(App)
 app.use(pinia)
 app.use(i18n)
 app.use(router)
+app.use(Toast, {
+  timeout: 3000,
+})
 
 // app.use(store)
 // app.use(VueClipboard)

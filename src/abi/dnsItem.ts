@@ -3,6 +3,16 @@ import { ContractAbi } from '.'
 const dnsItemAbi: ContractAbi = {
   name: 'DNS NFT',
   methods: {
+    get_domain: {
+      input: [],
+      output: [
+        {
+          name: 'content',
+          type: 'cell',
+          content: [{ name: 'contentUri', type: 'slice' }],
+        },
+      ],
+    },
     get_nft_data: {
       input: [],
       output: [
