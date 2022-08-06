@@ -22,6 +22,8 @@ class AppDb extends Dexie {
     this.version(9).upgrade((tx) => {
       return tx.table('transactions').clear()
     })
+
+    this.version(10).stores({})
   }
 }
 
