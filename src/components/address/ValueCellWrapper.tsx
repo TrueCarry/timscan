@@ -41,35 +41,47 @@ function ValueCellWrapper({
       info.value instanceof Cell ? (toRaw(info.value) as Cell).beginParse() : (info.value as Slice)
 
     return (
-      <>
+      <div flex="flex flex-col">
         {info.content?.map((out) => {
           switch (out.type) {
             case 'int': {
               return (
-                <>
-                  {out.name}({out.type}): {slice.readInt(out.length || slice.remaining).toString()}{' '}
-                </>
+                <div class="flex flex-col">
+                  <div className="text-secondary">
+                    {out.name}({out.type})
+                  </div>
+                  <div> {slice.readInt(out.length || slice.remaining).toString()} </div>
+                </div>
               )
             }
             case 'uint': {
               return (
-                <>
-                  {out.name}({out.type}): {slice.readUint(out.length || slice.remaining).toString()}{' '}
-                </>
+                <div class="flex flex-col">
+                  <div className="text-secondary">
+                    {out.name}({out.type})
+                  </div>
+                  <div>{slice.readUint(out.length || slice.remaining).toString()} </div>
+                </div>
               )
             }
             case 'cell': {
               return (
-                <>
-                  {out.name}({out.type}): (
-                  <ValueCellWrapper
-                    info={{
-                      ...toRaw(out),
-                      value: slice.readRef(),
-                    }}
-                  />
-                  )
-                </>
+                <div class="flex flex-col">
+                  <div className="text-secondary">
+                    {out.name}({out.type})
+                  </div>
+                  <div>
+                    (
+                    <ValueCellWrapper
+                      info={{
+                        ...toRaw(out),
+                        value: slice.readRef(),
+                      }}
+                      class="ml-4"
+                    />
+                    )
+                  </div>
+                </div>
               )
             }
             // case 'ref': {
@@ -81,29 +93,35 @@ function ValueCellWrapper({
             // }
             case 'address': {
               return (
-                <>
-                  {out.name}({out.type}):{' '}
-                  {slice.readAddress()?.toFriendly({ bounceable: true, urlSafe: true })}{' '}
-                </>
+                <div class="flex flex-col">
+                  <div className="text-secondary">
+                    {out.name}({out.type})
+                  </div>
+                  <div>{slice.readAddress()?.toFriendly({ bounceable: true, urlSafe: true })}</div>
+                </div>
               )
             }
             case 'slice': {
               return (
-                <>
-                  {out.name}({out.type}): {slice.readRemainingBytes().toString()}
-                </>
+                <div class="flex flex-col">
+                  <div className="text-secondary">
+                    {out.name}({out.type})
+                  </div>
+                  <div>{slice.readRemainingBytes().toString()}</div>
+                </div>
               )
             }
             default: {
               return (
-                <>
-                  Default({out.type}): {JSON.stringify(slice.readRemainingBytes().toString())}
-                </>
+                <div class="flex flex-col">
+                  <div className="text-secondary">Default({out.type})</div>
+                  <div>{JSON.stringify(slice.readRemainingBytes().toString())}</div>
+                </div>
               )
             }
           }
         })}
-      </>
+      </div>
     )
   } catch (e) {
     console.log('parse error', e)

@@ -98,7 +98,7 @@ async function initLiteClient() {
     const pubkey = encodeURIComponent(ls.id.key)
     engines.push(
       new LiteSingleEngine({
-        host: `wss://ws.trcr.pw/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
+        host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
         // host: `ws://127.0.0.1:5999/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
         publicKey: Buffer.from(ls.id.key, 'base64'),
       })

@@ -68,9 +68,13 @@ updateTransactions()
 </script>
 
 <template>
-  <div v-if="emptyHistory" class="tx-history-empty-panel" v-text="$t('address.tx_table.empty')" />
+  <div
+    v-if="emptyHistory"
+    class="bg-foreground shadow rounded p-4"
+    v-text="$t('address.tx_table.empty')"
+  />
 
-  <div v-else class="tx-history-wrap">
+  <div v-else class="bg-foreground shadow rounded p-4">
     <table class="w-full">
       <thead>
         <tr>

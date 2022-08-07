@@ -39,9 +39,12 @@ function reset() {
 
 <template>
   <header class="h-16 bg-gray-500">
-    <div class="container mx-auto flex items-center">
-      <router-link :to="{ name: 'index' }" class="flex items-center text-white hover:no-underline">
-        <Logo class="w-16 h-16" />
+    <div class="container mx-auto flex items-center h-16">
+      <router-link
+        :to="{ name: 'index' }"
+        class="flex items-center text-white hover:no-underline mr-4"
+      >
+        <Logo class="w-12 h-12" />
 
         <span v-if="IS_TESTNET" class="h-[18px]">TESTNET</span>
       </router-link>

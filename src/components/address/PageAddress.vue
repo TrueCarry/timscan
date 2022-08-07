@@ -4,11 +4,11 @@
             <div class="alert" v-text="$t('error.invalid_address')"/>
         </section> -->
 
-    <section class="container bg-foreground mx-auto mt-4 shadow rounded p-4">
-      <div class="flex flex-col">
-        <div class="flex border-b border-gray-400 py-2">
-          <div class="flex w-32" v-text="$t('address.info.address')" />
-          <div class="flex items-center cursor-pointer">
+    <section class="container mx-auto mt-4 gap-4 flex">
+      <div class="flex flex-col bg-foreground shadow rounded p-4 h-min w-1/3 sticky top-4">
+        <div class="flex flex-col border-b border-gray-400 py-2">
+          <div class="flex text-secondary" v-text="$t('address.info.address')" />
+          <div class="flex items-center cursor-pointer text-xs">
             <!-- <span
               v-if="addressMeta.isScam"
               class="card-main-address-badge card-main-address-badge--scam"
@@ -38,8 +38,8 @@
           </div>
         </div>
 
-        <div class="flex border-b border-gray-400 py-2">
-          <div class="flex w-32" v-text="$t('address.info.balance')" />
+        <div class="flex flex-col border-b border-gray-400 py-2">
+          <div class="flex text-secondary" v-text="$t('address.info.balance')" />
           <div v-if="balance" class="flex">
             {{ $ton(parseInt(balance)) }}
             <span title="TON" v-text="'TON'" />
@@ -52,8 +52,8 @@
           </div>
         </div>
 
-        <div class="flex border-b border-gray-400 py-2">
-          <div class="flex w-32" v-text="$t('address.info.last_activity')" />
+        <div class="flex flex-col border-b border-gray-400 py-2">
+          <div class="flex text-secondary" v-text="$t('address.info.last_activity')" />
           <div class="flex">
             <!-- <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span> -->
             <span v-if="!lastTxTime" v-text="$t('address.info.no_activity')" />
@@ -61,8 +61,8 @@
           </div>
         </div>
 
-        <div class="flex border-b border-gray-400 py-2">
-          <div class="flex w-32" v-text="$t('address.info.state')" />
+        <div class="flex flex-col border-b border-gray-400 py-2">
+          <div class="flex text-secondary" v-text="$t('address.info.state')" />
           <div class="flex">
             <span
               v-if="wallet?.state?.type === 'frozen'"
@@ -84,8 +84,8 @@
           </div>
         </div>
 
-        <div class="flex border-b border-gray-400 py-2">
-          <div class="flex w-32" v-text="$t('address.info.contract_type')" />
+        <div class="flex flex-col border-b border-gray-400 py-2">
+          <div class="flex text-secondary" v-text="$t('address.info.contract_type')" />
 
           <div class="flex">
             <!-- <router-link
@@ -102,8 +102,8 @@
           </div>
         </div>
 
-        <div class="flex border-b border-gray-400 py-2">
-          <div class="flex w-32" v-text="$t('address.info.last_update')" />
+        <div class="flex flex-col py-2">
+          <div class="flex text-secondary" v-text="$t('address.info.last_update')" />
           <div class="flex items-center cursor-pointer" @click="loadData(true, false)">
             <ui-timeago :timestamp="wallet?.lastUpdated" />
             <span>
@@ -113,32 +113,32 @@
         </div>
       </div>
 
-      <div class="flex flex-col mt-4">
-        <nav class="flex">
+      <div class="flex flex-col mb-8 w-2/3">
+        <nav class="flex bg-foreground shadow rounded p-4 gap-4">
           <div
-            class="flex border-b-2 p-2 cursor-pointer"
-            :class="selectedTab === 'transactions' && 'border-b-highlight'"
+            class="flex cursor-pointer gap-2 p-2 rounded"
+            :class="selectedTab === 'transactions' && 'bg-accent'"
             @click="selectTab('transactions')"
           >
             <IconTransactions class="w-6 h-6" />
             Transactions
           </div>
           <div
-            class="flex border-b-2 p-2 cursor-pointer"
-            :class="selectedTab === 'contract' && 'border-b-highlight'"
+            class="flex cursor-pointer gap-2 p-2 rounded"
+            :class="selectedTab === 'contract' && 'bg-accent'"
             @click="selectTab('contract')"
           >
-            <IconContract class="w-6 h-6" />
+            <IconContract class="w-6 h-6 text-red-50" />
 
             Contract
           </div>
         </nav>
 
         <template v-if="selectedTab === 'transactions' && wallet">
-          <TransactionsList :wallet="wallet" :wallet-address="wallet.address" class="mt-8 w-full" />
+          <TransactionsList :wallet="wallet" :wallet-address="wallet.address" class="mt-4 w-full" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
-          <ContractInfo />
+          <ContractInfo class="" />
         </template>
 
         <!-- <mugen-scroll v-bind:handler="loadMore" v-bind:should-handle="shouldHandleScroll" style="display: flex;">

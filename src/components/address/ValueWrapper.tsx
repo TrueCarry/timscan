@@ -37,18 +37,22 @@ function doRender({
     case 'uint': {
       const boolean = (info.value as BN).toString()
 
-      return <div>{boolean}</div>
+      return <div class="flex overflow-hidden break-words break-all">{boolean}</div>
     }
     case 'address': {
       const address = (info.value as Slice).readAddress()
       console.log('val', info)
-      return <div>Address: {address?.toFriendly({ bounceable: true, urlSafe: true })}</div>
+      return (
+        <div class="flex overflow-hidden break-words break-all">
+          Address: {address?.toFriendly({ bounceable: true, urlSafe: true })}
+        </div>
+      )
     }
     case 'cell': {
-      return <ValueCellWrapper info={info} />
+      return <ValueCellWrapper info={info} class="ml-4" />
     }
     default: {
-      return <div>Default</div>
+      return <div class="flex overflow-hidden break-words break-all">Unknown Default</div>
     }
   }
 }

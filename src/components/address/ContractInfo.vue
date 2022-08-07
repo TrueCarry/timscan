@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col bg-foreground shadow rounded p-4 mt-4">
     <div class="flex border-b border-gray-400 py-2">
       <div class="flex w-32">Name</div>
       <div class="">{{ addressStore.abi?.name || 'Unknown' }}</div>
@@ -7,7 +7,11 @@
 
     <div class="flex border-b border-gray-400 py-2">
       <div class="flex shrink-0 w-32">Code</div>
-      <div class="break-words text-xs break-all">{{ addressStore.code }}</div>
+      <textarea
+        class="outline-none break-words p-2 rounded break-all w-full bg-secondary"
+        rows="3"
+        :value="addressStore.code"
+      />
     </div>
 
     <div class="flex border-b border-gray-400 py-2">
@@ -15,25 +19,39 @@
       <div class="card-row__value">{{ codeHash }}</div>
     </div>
 
-    <div class="flex border-b border-gray-400 py-2">
+    <div class="flex py-2">
       <div class="flex shrink-0 w-32">Data</div>
-      <div class="break-words text-xs break-all">{{ addressStore.data }}</div>
+      <textarea
+        class="outline-none break-words w-full p-2 rounded break-all bg-secondary"
+        rows="3"
+        :value="addressStore.data"
+      />
     </div>
 
-    <template v-if="addressStore.abi && codeCell && dataCell">
-      <div class="mt-4">Methods:</div>
-
-      <MethodWrapper
-        v-for="(info, method) in (addressStore.abi.methods as {})"
-        :key="method"
-        :name="method"
-        :abi="info"
-        :code-cell="codeCell"
-        :data-cell="dataCell"
-        :address="Address.parse(addressStore.wallet?.address || '')"
+    <div class="flex py-2">
+      <div class="flex shrink-0 w-32">ABI</div>
+      <textarea
+        class="outline-none break-words w-full p-2 rounded break-all bg-secondary"
+        rows="3"
+        :value="JSON.stringify(addressStore.abi, null, 2)"
       />
-    </template>
+    </div>
   </div>
+
+  <template v-if="addressStore.abi && codeCell && dataCell">
+    <!-- <div class="mt-4">Methods:</div> -->
+
+    <MethodWrapper
+      v-for="(info, method) in (addressStore.abi.methods as {})"
+      :key="method"
+      class="bg-foreground shadow rounded p-4 mt-4"
+      :name="method"
+      :abi="info"
+      :code-cell="codeCell"
+      :data-cell="dataCell"
+      :address="Address.parse(addressStore.wallet?.address || '')"
+    />
+  </template>
 </template>
 
 <script lang="ts" setup>
