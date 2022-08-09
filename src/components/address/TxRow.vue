@@ -39,13 +39,13 @@ const messages = computed(() => {
 
 <template>
   <template v-if="tx.outMessagesCount < 10">
-    <tbody v-for="(message, i) in tx.outMessages" :key="i" :class="i > 0 && 'sub-list'">
-      <MessageRow :tx="tx" :message="message" :source="'out'" />
-    </tbody>
+    <template v-for="(message, i) in tx.outMessages" :key="i">
+      <MessageRow :tx="tx" :message="message" :source="'out'" :class="i === -1 && 'border-b'" />
+    </template>
   </template>
   <MultiOutputRow v-else :tx="tx" />
 
-  <tbody v-if="tx.inMessage" :class="messages.length > 1 && 'sub-list'">
-    <MessageRow :tx="tx" :message="tx.inMessage" :source="'in'" />
-  </tbody>
+  <template v-if="tx.inMessage">
+    <MessageRow :tx="tx" :message="tx.inMessage" :source="'in'" :class="'border-b'" />
+  </template>
 </template>

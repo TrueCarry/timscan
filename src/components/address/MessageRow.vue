@@ -3,8 +3,6 @@ import { RawMessage } from '@/ton/src'
 import { Transaction } from '@/models/Transaction'
 import BN from 'bn.js'
 import { computed, PropType, ref } from 'vue'
-import MessageRowDetails from './MessageRowDetails.vue'
-import IconCaret from '@/assets/images/icon-caret.svg'
 import IconLink from '@/assets/images/icon-link.svg'
 
 type SourceFrom = 'in' | 'out'
@@ -73,64 +71,54 @@ const isVisible = ref(false)
       </router-link>
     </td>
     <td>
-      <div class="tx-table__cell">
-        <ui-timeago :timestamp="tx.time * 1000" />
+      <div class="mx-4">
+        <ui-timeago :timestamp="tx.time * 1000" class="whitespace-nowrap" />
       </div>
     </td>
     <td>
-      <div v-if="!isExternal" class="tx-table__cell tx-table__cell--align-right">
+      <div v-if="!isExternal" class="mx-4">
         <span v-if="!from">hidden</span>
         <ui-address
           v-else
           :address="from.toFriendly({ urlSafe: true, bounceable: true })"
           :disabled="isOut"
+          class=""
         />
       </div>
     </td>
     <td>
-      <div class="tx-table__cell" style="padding: 0">
-        <span
+      <div class="mx-4" style="padding: 0">
+        <div
           v-if="isOut"
-          class="tx-table__badge tx-table__badge--out"
+          class="p-1 bg-accent rounded-lg text-xs font-bold w-10 text-center text-background"
           :class="isExternal && 'tx-table__badge--service'"
-          >OUT</span
         >
-        <span
+          OUT
+        </div>
+        <div
           v-else
-          class="tx-table__badge tx-table__badge--in"
+          class="p-1 bg-green-200 rounded-lg text-xs font-bold w-10 text-center text-background"
           :class="isExternal && 'tx-table__badge--service'"
-          >IN</span
         >
+          IN
+        </div>
       </div>
     </td>
     <td>
-      <div v-if="to" class="tx-table__cell">
+      <div v-if="to" class="mx-4">
         <ui-address
           :address="to.toFriendly({ urlSafe: true, bounceable: true })"
           :disabled="!isOut"
+          class=""
         />
       </div>
     </td>
     <td>
-      <div
-        v-if="amount"
-        class="tx-table__cell tx-table__cell--align-right"
-        style="position: relative; padding-right: 26px"
-      >
+      <div v-if="amount" class="whitespace-nowrap mx-4">
         {{ $ton(amount.toNumber()) }} TON
 
         <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
       </div>
     </td>
-    <td>
-      <div
-        class="flex items-center justify-center w-4 h-4 origin-center"
-        :class="{ 'rotate-180': isVisible }"
-        @click="isVisible = !isVisible"
-      >
-        <IconCaret class="h-[12px] w-[13px] m-0" />
-      </div>
-    </td>
   </tr>
-  <MessageRowDetails v-if="isVisible" :is-visible="isVisible" :tx="tx" :message="message" />
 </template>

@@ -4,8 +4,8 @@
             <div class="alert" v-text="$t('error.invalid_address')"/>
         </section> -->
 
-    <section class="container mx-auto mt-4 gap-4 flex">
-      <div class="flex flex-col bg-foreground shadow rounded p-4 h-min w-1/3 sticky top-4">
+    <section class="mx-4 mt-4 gap-4 flex flex-col lg:container lg:mx-auto lg:flex-row">
+      <div class="flex flex-col bg-foreground shadow rounded p-4 h-min lg:w-1/3 lg:sticky top-4">
         <div class="flex flex-col border-b border-gray-400 py-2">
           <div class="flex text-secondary" v-text="$t('address.info.address')" />
           <div class="flex items-center cursor-pointer text-xs">
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col mb-8 w-2/3">
+      <div class="flex flex-col mb-8 lg:w-2/3">
         <nav class="flex bg-foreground shadow rounded p-4 gap-4">
           <div
             class="flex cursor-pointer gap-2 p-2 rounded"
@@ -135,7 +135,7 @@
         </nav>
 
         <template v-if="selectedTab === 'transactions' && wallet">
-          <TransactionsList :wallet="wallet" :wallet-address="wallet.address" class="mt-4 w-full" />
+          <TransactionsList :wallet="wallet" :wallet-address="wallet.address" class="mt-4" />
         </template>
         <template v-else-if="selectedTab === 'contract'">
           <ContractInfo class="" />
