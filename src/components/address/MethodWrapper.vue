@@ -46,7 +46,13 @@ async function updateResult() {
   const res = await callMethod(props.name, props.abi)
   console.log('got res', res)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  result.value = res as any
+  if (res) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: Type instantiation is excessively deep and possibly infinite.
+    result.value = res
+  } else {
+    result.value = null
+  }
 }
 
 async function callMethod(name: string, info: MethodAbi) {

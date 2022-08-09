@@ -48,6 +48,31 @@ function doRender({
         </div>
       )
     }
+    case 'dict': {
+      const cell = toRaw(info.value as Cell).beginParse()
+      const dict = cell.readDict(256, (x) => x)
+      const kvs = [...dict.entries()]
+      return (
+        <div class="flex overflow-hidden break-words break-all">
+          {kvs.map(([key, value]) => {
+            return (
+              <div>
+                <div class="ml-4 text-secondary">{key}:</div>
+                <ValueCellWrapper
+                  info={{
+                    ...info,
+                    type: 'cell',
+                    value: toRaw(value),
+                  }}
+                  class="ml-8"
+                />
+              </div>
+            )
+          })}
+          {info.value as Slice}
+        </div>
+      )
+    }
     case 'cell': {
       return <ValueCellWrapper info={info} class="ml-4" />
     }

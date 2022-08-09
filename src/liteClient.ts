@@ -114,9 +114,8 @@ async function initLiteClient() {
   endWait(client)
 
   setInterval(async () => {
-    const info = await liteClient.getMasterchainInfo()
-    console.log('info', info)
-  }, 1000)
+    await liteClient.getMasterchainInfo()
+  }, 30000)
 }
 
 function intToIP(int: number) {

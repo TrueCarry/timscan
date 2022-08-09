@@ -22,10 +22,49 @@ const dnsItemAbi: ContractAbi = {
         { name: 'owner', type: 'address' },
         {
           name: 'content',
+          type: 'dict',
+          content: [
+            {
+              name: 'address cell',
+              type: 'cell',
+              content: [
+                { name: 'garbage', type: 'int', length: 16 },
+                { name: 'address', type: 'address' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    dnsresolve: {
+      input: [
+        {
+          name: 'subdomain',
+          type: 'cell_slice',
+          content: [
+            {
+              name: 'terminator',
+              type: 'int',
+              length: 8,
+            },
+          ],
+        },
+        { name: 'category', type: 'int' },
+      ],
+      output: [
+        { name: 'index', type: 'int' },
+        {
+          name: 'content',
           type: 'cell',
           content: [
-            { name: 'index', type: 'int', length: 8 },
-            { name: 'contentUri', type: 'slice' },
+            {
+              name: 'address cell',
+              type: 'cell',
+              content: [
+                { name: 'garbage', type: 'int', length: 16 },
+                { name: 'address', type: 'address' },
+              ],
+            },
           ],
         },
       ],
