@@ -125,6 +125,6 @@ function ValueCellWrapper({
     )
   } catch (e) {
     console.log('parse error', e)
-    return <>error</>
+    return <div>error</div>
   }
 }

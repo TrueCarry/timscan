@@ -1,6 +1,5 @@
 
 import wasmInit from './vm-exec.wasm?init'
-console.log(wasmInit, 'wasm')
 
 var Module = (() => {
 	var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;

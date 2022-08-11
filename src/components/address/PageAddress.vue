@@ -57,7 +57,7 @@
           <div class="flex">
             <!-- <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span> -->
             <span v-if="!lastTxTime" v-text="$t('address.info.no_activity')" />
-            <ui-timeago v-else :timestamp="lastTxTime * 1000" />
+            <ui-timeago v-else :timestamp="lastTxTime * 1000 || 0" />
           </div>
         </div>
 
@@ -105,7 +105,7 @@
         <div class="flex flex-col py-2">
           <div class="flex text-secondary" v-text="$t('address.info.last_update')" />
           <div class="flex items-center cursor-pointer" @click="loadData(true, false)">
-            <ui-timeago :timestamp="wallet?.lastUpdated" />
+            <ui-timeago :timestamp="wallet?.lastUpdated || 0" />
             <span>
               <IconRefresh class="w-4 text-white fill-current ml-1" />
             </span>
@@ -200,11 +200,6 @@ import IconContract from '@/assets/images/icon-contract.svg'
 import IconTransactions from '@/assets/images/icon-transactions.svg'
 
 const addressStore = useAddressStore()
-
-const $lc = inject('$lc') as LiteClient
-console.log('lc', $lc)
-
-// const store = useStore()
 
 const props = defineProps({
   address: {

@@ -4,27 +4,19 @@
       <div class="alert" v-text="$t('error.invalid_tx')" />
     </section>
 
-    <div v-else-if="tx" class="card">
-      <TxInfo :tx="tx" :address="address" :lt="lt" :hash="hash" />
+    <div v-else-if="tx" class="mx-4 my-4 gap-4 flex flex-col lg:container lg:mx-auto lg:flex-row">
+      <div class="w-full lg:w-1/2 space-y-4">
+        <TxInfo :tx="tx" :address="address" :lt="lt" :hash="hash" />
+        <TxPhaseInfo :tx="tx" />
+      </div>
 
-      <div class="tx-page-messages">
-        <div v-if="tx?.inMessage" class="tx-page-msg">
-          <div class="card-row__name">
-            <span class="tx-table__badge tx-table__badge--in">IN</span>
-          </div>
-          <!-- {{ tx.inMessage }} -->
-          <TxMsg class="tx-page-msg-details" :tx="tx" :message="tx.inMessage" />
-        </div>
+      <div class="w-full lg:w-1/2 space-y-4">
+        <TxMsg v-if="tx.inMessage" class="tx-page-msg-details" :tx="tx" :message="tx.inMessage" />
 
         <div v-for="(msg, i) in tx?.outMessages" :key="i" class="tx-page-msg">
-          <div class="card-row__name">
-            <span class="tx-table__badge tx-table__badge--out">OUT</span>
-          </div>
           <TxMsg class="tx-page-msg-details" :tx="tx" :message="msg" />
         </div>
       </div>
-
-      <TxPhaseInfo :tx="tx" />
     </div>
   </section>
 </template>

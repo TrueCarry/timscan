@@ -1,5 +1,5 @@
 <template>
-  <section style="overflow-x: auto; width: 100%; scrollbar-width: none">
+  <section class="card">
     <table style="width: 100%">
       <tr>
         <td>Source</td>

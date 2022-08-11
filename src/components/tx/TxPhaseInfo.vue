@@ -15,17 +15,12 @@ const props = defineProps({
 </script>
 
 <template>
-  <!-- Storage Phase -->
+  <StoragePhase :tx="tx" />
 
-  <div class="tx-page-messages">
-    <div class="card-row__name">
-      <span class="">Phases</span>
-    </div>
-
-    <StoragePhase :tx="tx" />
-
-    <BouncePhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
-    <ComputePhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
-    <ActionPhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
-  </div>
+  <BouncePhase
+    v-if="tx.description.type === 'generic' && tx.description.bouncePhase"
+    :tx="(tx as TransactionGeneric)"
+  />
+  <ComputePhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
+  <ActionPhase v-if="tx.description.type === 'generic'" :tx="(tx as TransactionGeneric)" />
 </template>

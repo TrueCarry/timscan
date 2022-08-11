@@ -11,7 +11,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="tx-page-msg">
+  <div class="card">
     <div class="card-row__name">
       <span class="tx-table__badge tx-table__badge--in">Bounce</span>
     </div>

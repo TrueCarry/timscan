@@ -74,8 +74,8 @@ updateTransactions()
     v-text="$t('address.tx_table.empty')"
   />
 
-  <div v-else class="flex bg-foreground shadow rounded p-4 w-full overflow-hidden">
-    <table class="flex-grow-0 w-full relative box-border">
+  <div v-else class="flex flex-col bg-foreground shadow rounded p-4 w-full overflow-x-auto">
+    <table class="flex-grow-0 flex-shrink-1 w-full relative box-border table-fixed">
       <thead>
         <tr>
           <th v-pre width="40" />

@@ -1,7 +1,7 @@
 // import Vue from 'vue';
 import { createI18n } from 'vue-i18n'
-import ru from './ru.js'
-import en from './en.js'
+import ru from './locales/ru'
+import en from './locales/en'
 import './timeago.js'
 
 // Vue.use(VueI18n);

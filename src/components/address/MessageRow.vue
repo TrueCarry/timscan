@@ -33,10 +33,10 @@ const isOut = computed(() => {
 })
 
 const from = computed(() => {
-  return props.message.info.src
+  return props.message.info.src?.toFriendly({ urlSafe: true, bounceable: true })
 })
 const to = computed(() => {
-  return props.message.info.dest
+  return props.message.info.dest?.toFriendly({ urlSafe: true, bounceable: true })
 })
 
 const isExternal = computed(() => {
@@ -64,61 +64,54 @@ const isVisible = ref(false)
 </script>
 
 <template>
-  <tr class="h-12">
-    <td>
-      <router-link class="tx-table-cell-icon" :to="routerUrl">
-        <IconLink class="w-4 h-4" />
-      </router-link>
-    </td>
-    <td>
-      <div class="mx-4">
-        <ui-timeago :timestamp="tx.time * 1000" class="whitespace-nowrap" />
-      </div>
-    </td>
-    <td>
-      <div v-if="!isExternal" class="mx-4">
-        <span v-if="!from">hidden</span>
-        <ui-address
-          v-else
-          :address="from.toFriendly({ urlSafe: true, bounceable: true })"
-          :disabled="isOut"
-          class=""
-        />
-      </div>
-    </td>
-    <td>
-      <div class="mx-4" style="padding: 0">
-        <div
-          v-if="isOut"
-          class="p-1 bg-accent rounded-lg text-xs font-bold w-10 text-center text-background"
-          :class="isExternal && 'tx-table__badge--service'"
-        >
-          OUT
+  <tbody>
+    <tr class="h-12">
+      <td>
+        <router-link class="tx-table-cell-icon" :to="routerUrl">
+          <IconLink class="w-4 h-4" />
+        </router-link>
+      </td>
+      <td>
+        <div class="mx-4">
+          <ui-timeago :timestamp="tx.time * 1000 || 0" class="whitespace-nowrap" />
         </div>
-        <div
-          v-else
-          class="p-1 bg-green-200 rounded-lg text-xs font-bold w-10 text-center text-background"
-          :class="isExternal && 'tx-table__badge--service'"
-        >
-          IN
+      </td>
+      <td>
+        <div v-if="!isExternal" class="mx-4 w-full">
+          <span v-if="!from">hidden</span>
+          <ui-address v-else :address="from" :disabled="isOut" class="" />
         </div>
-      </div>
-    </td>
-    <td>
-      <div v-if="to" class="mx-4">
-        <ui-address
-          :address="to.toFriendly({ urlSafe: true, bounceable: true })"
-          :disabled="!isOut"
-          class=""
-        />
-      </div>
-    </td>
-    <td>
-      <div v-if="amount" class="whitespace-nowrap mx-4">
-        {{ $ton(amount.toNumber()) }} TON
+      </td>
+      <td>
+        <div class="mx-4" style="padding: 0">
+          <div
+            v-if="isOut"
+            class="p-1 bg-accent rounded-lg text-xs font-bold w-10 text-center text-background"
+            :class="isExternal && 'tx-table__badge--service'"
+          >
+            OUT
+          </div>
+          <div
+            v-else
+            class="p-1 bg-green-200 rounded-lg text-xs font-bold w-10 text-center text-background"
+            :class="isExternal && 'tx-table__badge--service'"
+          >
+            IN
+          </div>
+        </div>
+      </td>
+      <td>
+        <div v-if="to" class="mx-4">
+          <ui-address :address="to" :disabled="!isOut" class="" />
+        </div>
+      </td>
+      <td>
+        <div v-if="amount" class="whitespace-nowrap mx-4">
+          {{ $ton(amount.toNumber()) }} TON
 
-        <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
-      </div>
-    </td>
-  </tr>
+          <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
+        </div>
+      </td>
+    </tr>
+  </tbody>
 </template>

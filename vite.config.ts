@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { visualizer } from 'rollup-plugin-visualizer'
 import svgLoader from 'vite-svg-loader'
+import vueI18n from '@intlify/vite-plugin-vue-i18n'
 
 dotenv.config()
 
@@ -21,11 +23,14 @@ export default defineConfig({
     vueJsx(),
     svgLoader(),
     visualizer(),
+    vueI18n({
+      include: resolve(dirname(fileURLToPath(import.meta.url)), './src/i18n/locales/**'),
+    }),
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      '~': path.resolve(__dirname, './src'),
+      '@': resolve(__dirname, './src'),
+      '~': resolve(__dirname, './src'),
     },
   },
   build: {

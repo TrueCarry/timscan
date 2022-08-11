@@ -12,6 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@intlify/vite-plugin-vue-i18n": "^6.0.1",
     "@noble/ed25519": "^1.6.1",
     "@types/aes-js": "^3.1.1",
     "@types/crypto-js": "^4.1.1",
