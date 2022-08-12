@@ -6,6 +6,7 @@ import { watch, PropType, ref, toRaw, reactive } from 'vue'
 
 const props = defineProps({
   input: { type: Object as PropType<InputArg | CellContent>, required: true },
+  level: { type: Number, required: false, default: 1 },
 })
 
 const emit = defineEmits(['input', 'update:modelValue'])
@@ -45,24 +46,41 @@ watch(inputs, (oldVal, newVal) => {
   emit('update:modelValue', boc)
   emit('input', boc)
 })
+
+const colorsList = ['navy', 'indigo', 'pink', 'gold', 'green']
 </script>
 
 <template>
-  <div v-for="(inputContent, i) in input.content" :key="i" class="card-row">
-    <template v-if="inputContent.type === 'int'">
-      <div class="card-row__name">{{ inputContent.name }}</div>
-      <div class="card-row__value">
-        <input v-model="inputs[i]" type="text" class="text-black" />
-      </div>
-    </template>
-    <template v-else-if="inputContent.type === 'slice'">
-      <div class="card-row__name">{{ inputContent.name }}</div>
-      <div class="card-row__value">
-        <input v-model="inputs[i]" type="text" class="text-black" />
-      </div>
-    </template>
-    <template v-else-if="inputContent.type === 'cell'">
-      <InputCellWrapper v-model="inputs[i]" :input="inputContent" />
-    </template>
+  <div class="pl-4 border-l" :class="`border-${colorsList[colorsList.length % level]}-500`">
+    <div v-for="(inputContent, i) in input.content" :key="i" class="mt-2">
+      <template v-if="inputContent.type === 'int'">
+        <div class="text-secondary">{{ inputContent.name }}</div>
+        <div class="mt-2">
+          <input
+            v-model="inputs[i]"
+            type="text"
+            class="rounded p-1 text-white outline-none bg-navy-800"
+          />
+        </div>
+      </template>
+      <template v-else-if="inputContent.type === 'slice'">
+        <div class="text-secondary">{{ inputContent.name }}</div>
+        <div class="mt-2">
+          <input
+            v-model="inputs[i]"
+            type="text"
+            class="rounded p-1 text-white outline-none bg-navy-800"
+          />
+        </div>
+      </template>
+      <template v-else-if="inputContent.type === 'cell'">
+        <InputCellWrapper
+          v-model="inputs[i]"
+          :input="inputContent"
+          class="px-4 border-l"
+          :level="level + 1"
+        />
+      </template>
+    </div>
   </div>
 </template>

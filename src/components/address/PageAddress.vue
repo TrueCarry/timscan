@@ -42,7 +42,8 @@
           <div class="flex text-secondary" v-text="$t('address.info.balance')" />
           <div v-if="balance" class="flex">
             {{ $ton(parseInt(balance)) }}
-            <span title="TON" v-text="'TON'" />
+            <IconToncoin class="w-4 ml-2" />
+            <!-- <span title="TON" v-text="'TON'" /> -->
             <!-- <span v-if="$store.state.exchangeRate" style="color: #717579">
                             ≈ ${{$fiat(wallet.balance * $store.state.exchangeRate)}}
                         </span> -->
@@ -198,6 +199,7 @@ import { useAddressStore } from '@/stores/address'
 
 import IconContract from '@/assets/images/icon-contract.svg'
 import IconTransactions from '@/assets/images/icon-transactions.svg'
+import IconToncoin from '@/assets/images/icon-toncoin.svg'
 
 const addressStore = useAddressStore()
 

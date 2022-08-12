@@ -56,7 +56,7 @@ function handleBlur() {
         ref="search"
         v-model.trim="searchValue"
         type="search"
-        class="shadow bg-white h-10 px-2 rounded w-96 outline-none"
+        class="shadow bg-navy-800 text-white py-2 px-4 rounded w-96 outline-none"
         enterkeyhint="search"
         spellcheck="false"
         autocomplete="off"

@@ -30,9 +30,9 @@ const dnsCollectionAbi: ContractAbi = {
           type: 'cell',
           content: [
             { name: 'index', type: 'int', length: 8 },
-            { name: 'content', type: 'slice' },
+            { name: 'collection_base', type: 'slice' },
             {
-              name: 'content',
+              name: 'nft_address',
               type: 'cell',
               content: [
                 {

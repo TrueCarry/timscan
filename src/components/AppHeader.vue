@@ -61,7 +61,7 @@ function reset() {
         <input
           ref="search"
           v-model.trim="searchValue"
-          class="shadow bg-white h-10 px-2 rounded w-96 outline-none"
+          class="shadow bg-navy-800 py-2 px-4 rounded w-96 outline-none"
           type="search"
           spellcheck="false"
           enterkeyhint="search"
@@ -71,8 +71,8 @@ function reset() {
           @keyup.enter="doSearch()"
         />
 
-        <div class="w-10 h-10 bg-white mx-2 rounded">
-          <IconSearch class="w-6 h-6 mx-2 my-2" />
+        <div class="w-10 h-10 bg-navy-800 mx-2 rounded">
+          <IconSearch class="w-6 h-6 mx-2 my-2 text-white fill-current" />
         </div>
 
         <!-- <svg

@@ -19,26 +19,20 @@ const logInput = (x) => {
 
 <template>
   <div v-if="input" class="card-row">
-    <template v-if="input.type === 'int'">
-      <div class="card-row__name">{{ input.name }}</div>
-      <div class="card-row__value">
+    <div v-if="input.type === 'int'" class="my-2">
+      <div class="text-secondary">{{ input.name }}</div>
+      <div class="mt-2">
         <input
           type="text"
-          class="text-black"
+          class="rounded p-1 text-white outline-none bg-navy-800"
           @input="(event) => emit('update:modelValue', (event.target as HTMLInputElement).value)"
         />
       </div>
-      <!-- <div class="card-row__value"><value-wrapper :info="output" /></div> -->
-    </template>
-    <InputCellWrapper
-      v-else-if="input.type === 'cell_slice'"
-      :input="input"
-      @input="(event) => logInput(event)"
-    />
-    <InputCellWrapper
-      v-else-if="input.type === 'cell'"
-      :input="input"
-      @input="(event) => logInput(event)"
-    />
+    </div>
+
+    <div v-else-if="input.type === 'cell_slice' || input.type === 'cell'" class="my-2">
+      <div class="text-secondary">{{ input.name }}</div>
+      <InputCellWrapper :input="input" :level="1" @input="(event) => logInput(event)" />
+    </div>
   </div>
 </template>

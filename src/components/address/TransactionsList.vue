@@ -79,7 +79,7 @@ updateTransactions()
       <thead>
         <tr>
           <th v-pre width="20" />
-          <th width="100">
+          <th width="140">
             <div class="tx-table__cell" v-text="$t('address.tx_table.age')" />
           </th>
           <th>
