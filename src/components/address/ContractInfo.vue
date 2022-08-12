@@ -1,20 +1,20 @@
 <template>
   <div class="flex flex-col bg-foreground shadow rounded p-4 mt-4">
-    <div class="flex border-b border-gray-400 py-2">
+    <div class="flex py-2">
       <div class="flex w-32">Name</div>
       <div class="">{{ addressStore.abi?.name || 'Unknown' }}</div>
     </div>
 
-    <div class="flex border-b border-gray-400 py-2">
+    <div class="flex py-2">
       <div class="flex shrink-0 w-32">Code</div>
       <textarea
-        class="outline-none break-words p-2 rounded break-all w-full bg-secondary"
+        class="outline-none break-words p-2 rounded break-all w-full bg-navy-800"
         rows="3"
         :value="addressStore.code"
       />
     </div>
 
-    <div class="flex border-b border-gray-400 py-2">
+    <div class="flex py-2">
       <div class="flex w-32">Code Hash</div>
       <div class="card-row__value">{{ codeHash }}</div>
     </div>
@@ -22,7 +22,7 @@
     <div class="flex py-2">
       <div class="flex shrink-0 w-32">Data</div>
       <textarea
-        class="outline-none break-words w-full p-2 rounded break-all bg-secondary"
+        class="outline-none break-words w-full p-2 rounded break-all bg-navy-800"
         rows="3"
         :value="addressStore.data"
       />
@@ -31,7 +31,7 @@
     <div class="flex py-2">
       <div class="flex shrink-0 w-32">ABI</div>
       <textarea
-        class="outline-none break-words w-full p-2 rounded break-all bg-secondary"
+        class="outline-none break-words w-full p-2 rounded break-all bg-navy-800"
         rows="3"
         :value="JSON.stringify(addressStore.abi, null, 2)"
       />

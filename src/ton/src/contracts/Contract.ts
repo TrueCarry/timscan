@@ -1,7 +1,7 @@
-import { Address } from "..";
-import { ContractSource } from "./sources/ContractSource";
+import { Address } from '..'
+import { ContractSource } from './sources/ContractSource'
 
 export interface Contract {
-    readonly address: Address;
-    readonly source: ContractSource;
+  readonly address: Address
+  readonly source: ContractSource
 }

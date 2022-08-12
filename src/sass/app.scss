@@ -13,8 +13,9 @@
 }
 
 body {
-    background: rgb(var(--color-background));
-    color: rgb(var(--color-primary));
+    @apply bg-background text-primary;
+    // background: rgb(var(--color-background));
+    // color: rgb(var(--color-primary));
     overflow-y: scroll;
     overflow-x: hidden;
 }

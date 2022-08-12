@@ -78,26 +78,19 @@ updateTransactions()
     <table class="flex-grow-0 flex-shrink-1 w-full relative box-border table-fixed">
       <thead>
         <tr>
-          <th v-pre width="40" />
+          <th v-pre width="20" />
           <th width="100">
             <div class="tx-table__cell" v-text="$t('address.tx_table.age')" />
           </th>
           <th>
-            <div
-              class="tx-table__cell tx-table__cell--align-right"
-              v-text="$t('address.tx_table.from')"
-            />
+            <div class="mx-4" v-text="$t('address.tx_table.from')" />
           </th>
-          <th v-pre width="50" />
+          <th v-pre width="60" />
           <th>
-            <div class="tx-table__cell" v-text="$t('address.tx_table.to')" />
+            <div class="mx-4" v-text="$t('address.tx_table.to')" />
           </th>
-          <th>
-            <div
-              class="tx-table__cell tx-table__cell--align-right"
-              style="padding-right: 26px"
-              v-text="$t('address.tx_table.value')"
-            />
+          <th width="180">
+            <div class="text-right" style="" v-text="$t('address.tx_table.value')" />
           </th>
         </tr>
       </thead>

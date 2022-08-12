@@ -181,7 +181,7 @@ function domainToBytes(domain: string) {
 
       <div v-for="(output, i) in result" :key="i" class="flex-col py-2">
         <template v-if="output">
-          <div class="text-secondary">{{ output.name }}</div>
+          <div class="text-secondary">{{ output.name }} ({{ output.type }})</div>
           <div class="card-row__value"><ValueWrapper :info="output" /></div>
         </template>
       </div>

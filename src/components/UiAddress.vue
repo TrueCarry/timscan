@@ -22,7 +22,7 @@ const name = computed(() => props.address)
   <component
     :is="disabled ? 'span' : 'router-link'"
     class="flex whitespace-nowrap"
-    :class="[!disabled && 'text-blue-500']"
+    :class="[!disabled && 'text-navy-300']"
     :to="{ name: 'address', params: { address } }"
   >
     <span class="overflow-ellipsis overflow-hidden whitespace-nowrap">

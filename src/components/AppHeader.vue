@@ -38,7 +38,7 @@ function reset() {
 </script>
 
 <template>
-  <header class="h-16 bg-gray-500">
+  <header class="h-16 bg-foreground">
     <div class="container mx-auto flex items-center h-16">
       <router-link
         :to="{ name: 'index' }"

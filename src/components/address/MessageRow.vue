@@ -4,6 +4,7 @@ import { Transaction } from '@/models/Transaction'
 import BN from 'bn.js'
 import { computed, PropType, ref } from 'vue'
 import IconLink from '@/assets/images/icon-link.svg'
+import IconToncoin from '@/assets/images/icon-toncoin.svg'
 
 type SourceFrom = 'in' | 'out'
 
@@ -77,7 +78,7 @@ const isVisible = ref(false)
         </div>
       </td>
       <td>
-        <div v-if="!isExternal" class="mx-4 w-full">
+        <div v-if="!isExternal" class="px-4 w-full">
           <span v-if="!from">hidden</span>
           <ui-address v-else :address="from" :disabled="isOut" class="" />
         </div>
@@ -86,14 +87,14 @@ const isVisible = ref(false)
         <div class="mx-4" style="padding: 0">
           <div
             v-if="isOut"
-            class="p-1 bg-accent rounded-lg text-xs font-bold w-10 text-center text-background"
+            class="p-1 bg-gold-300 rounded-lg text-xs font-bold w-10 text-center text-background"
             :class="isExternal && 'tx-table__badge--service'"
           >
             OUT
           </div>
           <div
             v-else
-            class="p-1 bg-green-200 rounded-lg text-xs font-bold w-10 text-center text-background"
+            class="p-1 bg-green-500 rounded-lg text-xs font-bold w-10 text-center text-white"
             :class="isExternal && 'tx-table__badge--service'"
           >
             IN
@@ -101,13 +102,13 @@ const isVisible = ref(false)
         </div>
       </td>
       <td>
-        <div v-if="to" class="mx-4">
+        <div v-if="to" class="px-4">
           <ui-address :address="to" :disabled="!isOut" class="" />
         </div>
       </td>
       <td>
-        <div v-if="amount" class="whitespace-nowrap mx-4">
-          {{ $ton(amount.toNumber()) }} TON
+        <div v-if="amount" class="whitespace-nowrap ml-4 flex items-center justify-end">
+          {{ $ton(amount.toNumber()) }} <IconToncoin class="w-4 ml-1" />
 
           <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
         </div>

@@ -6,7 +6,7 @@
 
     <section class="mx-4 mt-4 gap-4 flex flex-col lg:container lg:mx-auto lg:flex-row">
       <div class="flex flex-col bg-foreground shadow rounded p-4 h-min lg:w-1/3 lg:sticky top-4">
-        <div class="flex flex-col border-b border-gray-400 py-2">
+        <div class="flex flex-col py-2">
           <div class="flex text-secondary" v-text="$t('address.info.address')" />
           <div class="flex items-center cursor-pointer text-xs">
             <!-- <span
@@ -38,7 +38,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col border-b border-gray-400 py-2">
+        <div class="flex flex-col py-2">
           <div class="flex text-secondary" v-text="$t('address.info.balance')" />
           <div v-if="balance" class="flex">
             {{ $ton(parseInt(balance)) }}
@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col border-b border-gray-400 py-2">
+        <div class="flex flex-col py-2">
           <div class="flex text-secondary" v-text="$t('address.info.last_activity')" />
           <div class="flex">
             <!-- <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span> -->
@@ -61,7 +61,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col border-b border-gray-400 py-2">
+        <div class="flex flex-col py-2">
           <div class="flex text-secondary" v-text="$t('address.info.state')" />
           <div class="flex">
             <span
@@ -84,7 +84,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col border-b border-gray-400 py-2">
+        <div class="flex flex-col py-2">
           <div class="flex text-secondary" v-text="$t('address.info.contract_type')" />
 
           <div class="flex">
@@ -117,18 +117,18 @@
         <nav class="flex bg-foreground shadow rounded p-4 gap-4">
           <div
             class="flex cursor-pointer gap-2 p-2 rounded"
-            :class="selectedTab === 'transactions' && 'bg-accent'"
+            :class="selectedTab === 'transactions' && 'bg-navy-700'"
             @click="selectTab('transactions')"
           >
-            <IconTransactions class="w-6 h-6" />
+            <IconTransactions class="w-6 h-6 fill-current" />
             Transactions
           </div>
           <div
             class="flex cursor-pointer gap-2 p-2 rounded"
-            :class="selectedTab === 'contract' && 'bg-accent'"
+            :class="selectedTab === 'contract' && 'bg-navy-700'"
             @click="selectTab('contract')"
           >
-            <IconContract class="w-6 h-6 text-red-50" />
+            <IconContract class="w-6 h-6 fill-current" />
 
             Contract
           </div>

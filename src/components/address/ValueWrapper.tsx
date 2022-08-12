@@ -42,10 +42,9 @@ function doRender({
       }
       case 'address': {
         const address = (info.value as Slice).readAddress()
-        console.log('val', info)
         return (
           <div class="flex overflow-hidden break-words break-all">
-            Address: {address?.toFriendly({ bounceable: true, urlSafe: true })}
+            {address?.toFriendly({ bounceable: true, urlSafe: true })}
           </div>
         )
       }
@@ -57,15 +56,16 @@ function doRender({
           <div class="flex overflow-hidden break-words break-all">
             {kvs.map(([key, value]) => {
               return (
-                <div>
-                  <div class="ml-4 text-secondary">{key}:</div>
+                <div class="pl-4">
+                  <div class="text-secondary">{key}:</div>
                   <ValueCellWrapper
                     info={{
                       ...info,
                       type: 'cell',
                       value: toRaw(value),
                     }}
-                    class="ml-8"
+                    level={2}
+                    class="ml-4"
                   />
                 </div>
               )
