@@ -4,9 +4,14 @@ import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { matchAddress } from '~/search'
 import Logo from '@/assets/images/logo.svg'
+import { useAddressStore } from '@/stores/address'
+import UiAddress from './UiAddress.vue'
+import { Address } from '@/ton/src'
+import UiTimeago from './UiTimeago.vue'
 
 const router = useRouter()
 const toast = useToast()
+const addressStore = useAddressStore()
 
 const search = ref<HTMLInputElement | null>(null)
 const searchVisible = ref<boolean>(false)
@@ -46,6 +51,8 @@ function handleBlur() {
     searchVisible.value = false
   }
 }
+
+addressStore.loadHistory()
 </script>
 
 <template>
@@ -92,6 +99,17 @@ function handleBlur() {
           />
         </circle>
       </svg> -->
+    </div>
+
+    <div class="w-[32rem] mt-8">
+      <div
+        v-for="item in addressStore.history"
+        :key="item.address + item.ts"
+        class="flex justify-between"
+      >
+        <UiAddress :address="Address.parse(item.address).toFriendly()" class="flex-1 max-w-sm" />
+        <UiTimeago :timestamp="item.ts" class="" />
+      </div>
     </div>
   </section>
 </template>

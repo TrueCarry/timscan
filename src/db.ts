@@ -1,6 +1,7 @@
 import Dexie from 'dexie'
 // import { AccountState } from './api'
 import { AccountPlainState } from './models/AccountState'
+import { SearchHistory } from './models/SearchHistory'
 import { PlainTransaction } from './models/Transaction'
 
 // interface IState {
@@ -10,6 +11,7 @@ import { PlainTransaction } from './models/Transaction'
 class AppDb extends Dexie {
   accounts!: Dexie.Table<AccountPlainState, string>
   transactions!: Dexie.Table<PlainTransaction, string>
+  history!: Dexie.Table<SearchHistory, string>
 
   constructor() {
     super('AppDb')
@@ -23,7 +25,9 @@ class AppDb extends Dexie {
       return tx.table('transactions').clear()
     })
 
-    this.version(10).stores({})
+    this.version(11).stores({
+      history: 'address,ts',
+    })
   }
 }
 

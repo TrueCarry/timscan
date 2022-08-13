@@ -32,15 +32,6 @@ const name = computed(() => props.address)
       {{ name.substring(40) }}
     </span>
   </component>
-  <!-- <span v-else class="link" :data-loopa="name.slice(0, 40)" :data-poopa="name.slice(40)" /> -->
-  <!-- <span v-else class="flex whitespace-nowrap">
-    <span class="overflow-ellipsis overflow-hidden">
-      {{ name.substring(0, 44) }}
-    </span>
-    <span class="">
-      {{ name.substring(44) }}
-    </span>
-  </span> -->
 </template>
 
 <style lang="scss" scoped>

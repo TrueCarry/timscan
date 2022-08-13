@@ -1,11 +1,15 @@
 import { abiMap, ContractAbi } from '@/abi'
 import { getAddressInfo, getTransactions } from '@/api'
+import AppDb from '@/db'
 import { AccountPlainState } from '@/models/AccountState'
+import { SearchHistory } from '@/models/SearchHistory'
 import { Transaction } from '@/models/Transaction'
 import { Cell, parseTransaction } from '@/ton/src'
 import { callTonApi } from '@/utils/callTonApi'
 import { state } from 'fp-ts'
 import { defineStore } from 'pinia'
+
+const db = new AppDb()
 
 interface State {
   transactions: Array<Transaction>
@@ -13,6 +17,7 @@ interface State {
   abi: ContractAbi | undefined
   code: string
   data: string
+  history: SearchHistory[]
 }
 
 export const useAddressStore = defineStore('address', {
@@ -23,6 +28,7 @@ export const useAddressStore = defineStore('address', {
     code: '',
     data: '',
     abi: undefined,
+    history: [],
   }),
 
   actions: {
@@ -67,13 +73,15 @@ export const useAddressStore = defineStore('address', {
 
       // if (walletInfo?.state.type === 'uninit') {
       // } else
-      if (walletInfo?.state.type === 'active') {
+      if (walletInfo?.state.type === 'active' && walletInfo?.address) {
         if (walletInfo.state?.code && walletInfo.state?.data) {
           this.setCodeData({
             code: walletInfo.state?.code,
             data: walletInfo.state?.data,
           })
         }
+
+        db.history.put({ address: walletInfo.address, ts: Date.now() })
       }
     },
 
@@ -162,6 +170,11 @@ export const useAddressStore = defineStore('address', {
           }
         }
       }
+    },
+
+    async loadHistory() {
+      const items = await db.history.orderBy('ts').reverse().limit(10).toArray()
+      this.history = items
     },
   },
 })

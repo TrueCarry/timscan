@@ -75,7 +75,7 @@ updateTransactions()
   />
 
   <div v-else class="flex flex-col bg-foreground shadow rounded p-4 w-full overflow-x-auto">
-    <table class="flex-grow-0 flex-shrink-1 w-full relative box-border table-fixed">
+    <table class="flex-grow-0 flex-shrink-1 w-full relative box-border table-fixed min-w-[600px]">
       <thead>
         <tr>
           <th v-pre width="20" />
