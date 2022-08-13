@@ -58,12 +58,12 @@ addressStore.loadHistory()
 <template>
   <section class="container mx-auto items-center justify-center flex flex-col pt-32">
     <Logo class="w-32 h-32" />
-    <div class="mt-8">
+    <div class="mt-8 px-4 md:px-0 w-full md:w-[40rem] justify-center items-center flex flex-col">
       <input
         ref="search"
         v-model.trim="searchValue"
         type="search"
-        class="shadow bg-navy-800 text-white py-2 px-4 rounded w-[32rem] outline-none"
+        class="shadow bg-navy-800 text-white py-2 px-4 rounded w-full outline-none"
         enterkeyhint="search"
         spellcheck="false"
         autocomplete="off"
@@ -101,14 +101,14 @@ addressStore.loadHistory()
       </svg> -->
     </div>
 
-    <div class="w-[32rem] mt-8">
+    <div class="w-full md:w-[40rem] mt-8 px-4 md:px-0">
       <div
         v-for="item in addressStore.history"
         :key="item.address + item.ts"
         class="flex justify-between"
       >
-        <UiAddress :address="Address.parse(item.address).toFriendly()" class="flex-1 max-w-sm" />
-        <UiTimeago :timestamp="item.ts" class="" />
+        <UiAddress :address="Address.parse(item.address).toFriendly()" class="flex-1 w-1/2" />
+        <UiTimeago :timestamp="item.ts" class="ml-4" />
       </div>
     </div>
   </section>

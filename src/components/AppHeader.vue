@@ -39,7 +39,7 @@ function reset() {
 
 <template>
   <header class="h-16 bg-foreground">
-    <div class="container mx-auto flex items-center h-16">
+    <div class="px-4 lg:px-0 lg:mx-auto container flex items-center h-16">
       <router-link
         :to="{ name: 'index' }"
         class="flex items-center text-white hover:no-underline mr-4"
@@ -57,11 +57,11 @@ function reset() {
         </svg>
       </div> -->
 
-      <div class="flex relative">
+      <div class="flex relative w-full">
         <input
           ref="search"
           v-model.trim="searchValue"
-          class="shadow bg-navy-800 py-2 px-4 rounded w-96 outline-none"
+          class="shadow bg-navy-800 py-2 px-4 rounded w-full lg:w-96 outline-none"
           type="search"
           spellcheck="false"
           enterkeyhint="search"
@@ -71,8 +71,8 @@ function reset() {
           @keyup.enter="doSearch()"
         />
 
-        <div class="w-10 h-10 bg-navy-800 mx-2 rounded">
-          <IconSearch class="w-6 h-6 mx-2 my-2 text-white fill-current" />
+        <div class="w-10 h-10 bg-navy-800 ml-2 p-2 rounded">
+          <IconSearch class="w-6 h-6 text-white fill-current" />
         </div>
 
         <!-- <svg
