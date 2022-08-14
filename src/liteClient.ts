@@ -96,7 +96,7 @@ async function initLiteClient() {
 
   const engines: LiteSingleEngine[] = []
   // while (engines.length < 50) {
-  for (const ls of data.liteservers.slice(0, 1)) {
+  for (const ls of data.liteservers.slice(1, 2)) {
     const pubkey = encodeURIComponent(ls.id.key)
     engines.push(
       new LiteSingleEngine({
