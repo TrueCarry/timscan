@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { CONFIG_URL } from '@/config'
+import { IS_TESTNET } from '@/config'
 import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client'
+import networkConfig from '@/networkConfig'
 
 const { tmpClient, endWait } = getTempClient()
 let liteClient: LiteClient = tmpClient
@@ -86,11 +87,12 @@ async function initLiteClient() {
   if (initCalled) {
     return
   }
-  const configUrl = CONFIG_URL
+  // const configUrl = CONFIG_URL
   // process.env.TONCONFIG_URL ||
   // 'https://ton-blockchain.github.io/testnet-global.config.json'
 
-  const { data } = await axios(configUrl)
+  // const { data } = await axios(configUrl)c
+  const data = IS_TESTNET ? networkConfig.testnetConfig : networkConfig.mainnetConfig
 
   const engines: LiteSingleEngine[] = []
   // while (engines.length < 50) {
@@ -104,7 +106,6 @@ async function initLiteClient() {
       })
     )
   }
-  // }
 
   const engine = new LiteRoundRobinEngine(engines)
   const client = new LiteClient({ engine })
