@@ -95,29 +95,12 @@ export const getAddressInfo = async function (
   }
   const plain = AccountStateToPlain(result, Date.now(), block.last.seqno)
 
-  const putRes = await db.accounts.put(
-    plain
-
-    // {
-    //   address: rawAddress,
-    //   raw: result.raw.toString(),
-    //   ...AccountStateToPlain(result),
-    // },
-    // rawAddress
-  )
-  console.log(putRes)
+  if (plain.address) {
+    await db.accounts.put(plain)
+  } else {
+    plain.address = Address.parse(address).toString()
+  }
   return plain
-
-  // return Object.freeze({ address,
-  //     invalid: false,
-  //     is_wallet: result.wallet,
-  //     balance: result.balance,
-  //     is_active: result.account_state === 'active',
-  //     is_frozen: result.account_state === 'frozen',
-  //     wallet_type: result.wallet_type || 'Unknown',
-  //     last_tx_lt: result.last_transaction_id?.lt,
-  //     last_tx_hash: result.last_transaction_id?.hash,
-  // });
 }
 
 /**
