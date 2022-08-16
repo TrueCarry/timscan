@@ -39,7 +39,7 @@ function reset() {
 
 <template>
   <header class="h-16 bg-foreground">
-    <div class="px-4 lg:px-0 lg:mx-auto container flex items-center h-16">
+    <div class="px-4 lg:px-0 lg:mx-auto max-w-4xl container flex items-center h-16">
       <router-link
         :to="{ name: 'index' }"
         class="flex items-center text-white hover:no-underline mr-4"

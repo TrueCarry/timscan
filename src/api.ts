@@ -103,6 +103,11 @@ export const getAddressInfo = async function (
   return plain
 }
 
+export async function getLocalAccountInfo(rawAddress: string) {
+  const existing = await db.accounts.where('address').equals(rawAddress).first()
+  return existing
+}
+
 /**
  * @param  {String} address
  * @param  {Number} lt

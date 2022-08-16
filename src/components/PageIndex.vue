@@ -5,9 +5,7 @@ import { useToast } from 'vue-toastification'
 import { matchAddress } from '~/search'
 import Logo from '@/assets/images/logo.svg'
 import { useAddressStore } from '@/stores/address'
-import UiAddress from './UiAddress.vue'
-import { Address } from '@/ton/src'
-import UiTimeago from './UiTimeago.vue'
+import RecentHistory from './index/RecentHistory.vue'
 
 const router = useRouter()
 const toast = useToast()
@@ -101,15 +99,6 @@ addressStore.loadHistory()
       </svg> -->
     </div>
 
-    <div class="w-full md:w-[40rem] mt-8 px-4 md:px-0">
-      <div
-        v-for="item in addressStore.history"
-        :key="item.address + item.ts"
-        class="flex justify-between"
-      >
-        <UiAddress :address="Address.parse(item.address).toFriendly()" class="flex-1 w-1/2" />
-        <UiTimeago :timestamp="item.ts" class="ml-4" />
-      </div>
-    </div>
+    <RecentHistory />
   </section>
 </template>
