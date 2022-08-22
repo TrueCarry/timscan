@@ -49,7 +49,7 @@
     "timeago.js": "^4.0.2",
     "ton": "file:./src/ton",
     "ton-crypto": "^3.2.0",
-    "ton-lite-client": "npm:@truecarry/ton-lite-client@^1.5.10",
+    "ton-lite-client": "npm:@truecarry/ton-lite-client@^1.6.1",
     "ton-tl": "^0.2.2",
     "ts-loader": "^9.3.1",
     "tweetnacl": "^1.0.3",
