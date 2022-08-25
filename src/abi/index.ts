@@ -57,4 +57,5 @@ export const abiMap: Record<string, ContractAbi> = {
   eec5bbc25065628799468860d8fd48031585f649c32fa382c888ba48831625a3: dnsCollectionAbi, // dns collection
   '8b5ffc9ebfd39064d8d5f56e4659c826bb7593923f5ca48728be4d60af6f51f9': dnsItemAbi,
   fc00a29dd0205bcdcc0d3ffb9ca38cc3c8c159ec60d8aa543240a92f10592d40: getgemsAuctionAbi,
+  '6668872fa79705443ffd47523e8e9ea9f76ab99f9a0b59d27de8f81a1c27b9d4': getgemsAuctionAbi, // getgems auction v2
 }
