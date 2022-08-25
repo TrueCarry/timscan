@@ -1,7 +1,7 @@
 import { ContractAbi } from '.'
 
 const getgemsAuctionV2Abi: ContractAbi = {
-  name: 'Getgems NFT Auction',
+  name: 'Getgems NFT Auction V2',
   methods: {
     get_sale_data: {
       input: [],
