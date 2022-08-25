@@ -8,7 +8,7 @@ import { nftEditableAbi } from './nftEditable'
 import { dnsCollectionAbi } from './dnsCollection'
 import { dnsItemAbi } from './dnsItem'
 import { getgemsAuctionAbi } from './getgemsAuction'
-import { getgemsAuctionV2Abi } from './getgemsAuctionv2'
+import { getgemsAuctionV2Abi } from './getgemsAuctionV2'
 
 export interface ContractAbi {
   name?: string
