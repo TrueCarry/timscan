@@ -28,6 +28,7 @@ export default defineConfig({
       include: resolve(dirname(fileURLToPath(import.meta.url)), './src/i18n/locales/**'),
     }),
     chunkSplitPlugin({
+      strategy: 'all-in-one',
       customSplitting: {
         wasm: [/vm-exec.source.ts/],
       },
