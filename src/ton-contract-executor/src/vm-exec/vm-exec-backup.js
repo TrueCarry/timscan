@@ -1,4 +1,4 @@
-import { WASM_CONTENT } from './vm-exec.source.ts'
+import wasmInit from './vm-exec.wasm?init'
 
 const Module = (() => {
   let _scriptDir =
@@ -6,7 +6,7 @@ const Module = (() => {
       ? document.currentScript.src
       : undefined
   if (typeof __filename !== 'undefined') _scriptDir = _scriptDir || __filename
-  return async function (Module) {
+  return function (Module) {
     Module = Module || {}
 
     var Module = typeof Module !== 'undefined' ? Module : {}
@@ -28,6 +28,7 @@ const Module = (() => {
       typeof process.versions === 'object' &&
       typeof process.versions.node === 'string'
     let scriptDirectory = ''
+
     function locateFile(path) {
       if (Module.locateFile) {
         return Module.locateFile(path, scriptDirectory)
@@ -35,6 +36,7 @@ const Module = (() => {
       return scriptDirectory + path
     }
     let read_, readAsync, readBinary, setWindowTitle
+
     function logExceptionOnExit(e) {
       if (e instanceof ExitStatus) return
       const toLog = e
@@ -156,6 +158,7 @@ const Module = (() => {
     if (Module.arguments) arguments_ = Module.arguments
     if (Module.thisProgram) thisProgram = Module.thisProgram
     if (Module.quit) quit_ = Module.quit
+
     function warnOnce(text) {
       if (!warnOnce.shown) warnOnce.shown = {}
       if (!warnOnce.shown[text]) {
@@ -179,6 +182,7 @@ const Module = (() => {
     let EXITSTATUS
     const ALLOC_NORMAL = 0
     const ALLOC_STACK = 1
+
     function allocate(slab, allocator) {
       let ret
       if (allocator == ALLOC_STACK) {
@@ -193,6 +197,7 @@ const Module = (() => {
       return ret
     }
     const UTF8Decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder('utf8') : undefined
+
     function UTF8ArrayToString(heapOrArray, idx, maxBytesToRead) {
       const endIdx = idx + maxBytesToRead
       let endPtr = idx
@@ -228,9 +233,11 @@ const Module = (() => {
       }
       return str
     }
+
     function UTF8ToString(ptr, maxBytesToRead) {
       return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead) : ''
     }
+
     function stringToUTF8Array(str, heap, outIdx, maxBytesToWrite) {
       if (!(maxBytesToWrite > 0)) return 0
       const startIdx = outIdx
@@ -264,6 +271,7 @@ const Module = (() => {
       heap[outIdx] = 0
       return outIdx - startIdx
     }
+
     function lengthBytesUTF8(str) {
       let len = 0
       for (let i = 0; i < str.length; ++i) {
@@ -277,9 +285,11 @@ const Module = (() => {
       }
       return len
     }
+
     function writeArrayToMemory(array, buffer) {
       HEAP8.set(array, buffer)
     }
+
     function writeAsciiToMemory(str, buffer, dontAddNull) {
       for (let i = 0; i < str.length; ++i) {
         HEAP8[buffer++ >> 0] = str.charCodeAt(i)
@@ -287,6 +297,7 @@ const Module = (() => {
       if (!dontAddNull) HEAP8[buffer >> 0] = 0
     }
     let buffer, HEAP8, HEAPU8, HEAP16, HEAPU16, HEAP32, HEAPU32, HEAPF32, HEAPF64
+
     function updateGlobalBufferAndViews(buf) {
       buffer = buf
       Module.HEAP8 = HEAP8 = new Int8Array(buf)
@@ -304,9 +315,11 @@ const Module = (() => {
     const __ATINIT__ = []
     const __ATPOSTRUN__ = []
     let runtimeInitialized = false
+
     function keepRuntimeAlive() {
       return noExitRuntime
     }
+
     function preRun() {
       if (Module.preRun) {
         if (typeof Module.preRun === 'function') Module.preRun = [Module.preRun]
@@ -316,10 +329,12 @@ const Module = (() => {
       }
       callRuntimeCallbacks(__ATPRERUN__)
     }
+
     function initRuntime() {
       runtimeInitialized = true
       callRuntimeCallbacks(__ATINIT__)
     }
+
     function postRun() {
       if (Module.postRun) {
         if (typeof Module.postRun === 'function') Module.postRun = [Module.postRun]
@@ -329,24 +344,29 @@ const Module = (() => {
       }
       callRuntimeCallbacks(__ATPOSTRUN__)
     }
+
     function addOnPreRun(cb) {
       __ATPRERUN__.unshift(cb)
     }
+
     function addOnInit(cb) {
       __ATINIT__.unshift(cb)
     }
+
     function addOnPostRun(cb) {
       __ATPOSTRUN__.unshift(cb)
     }
     let runDependencies = 0
     let runDependencyWatcher = null
     let dependenciesFulfilled = null
+
     function addRunDependency(id) {
       runDependencies++
       if (Module.monitorRunDependencies) {
         Module.monitorRunDependencies(runDependencies)
       }
     }
+
     function removeRunDependency(id) {
       runDependencies--
       if (Module.monitorRunDependencies) {
@@ -366,6 +386,7 @@ const Module = (() => {
     }
     Module.preloadedImages = {}
     Module.preloadedAudios = {}
+
     function abort(what) {
       {
         if (Module.onAbort) {
@@ -382,37 +403,68 @@ const Module = (() => {
       throw e
     }
     const dataURIPrefix = 'data:application/octet-stream;base64,'
+
     function isDataURI(filename) {
       return filename.startsWith(dataURIPrefix)
     }
+
     function isFileURI(filename) {
       return filename.startsWith('file://')
     }
-    let wasmBinaryFile
-    wasmBinaryFile = 'vm-exec.wasm'
-    console.log('wasmBinaryFile', wasmBinaryFile)
-    if (!isDataURI(wasmBinaryFile)) {
-      wasmBinaryFile = locateFile(wasmBinaryFile)
-    }
-    function getBinary(file) {
-      try {
-        if (file == wasmBinaryFile && wasmBinary) {
-          return new Uint8Array(wasmBinary)
-        }
-        if (readBinary) {
-          return readBinary(file)
-        } else {
-          throw 'both async and sync fetching of the wasm failed'
-        }
-      } catch (err) {
-        abort(err)
-      }
-    }
-    function getBinaryPromise() {
-      return Promise.resolve(Buffer.from(WASM_CONTENT, 'base64'))
-    }
+    // var wasmBinaryFile;
+    // wasmBinaryFile = "/src/js/ton-contract-executor/src/vm-exec/vm-exec.wasm";
+    // if (!isDataURI(wasmBinaryFile)) {
+    // 	wasmBinaryFile = locateFile(wasmBinaryFile)
+    // }
+
+    // function getBinary(file) {
+    // 	try {
+    // 		if (file == wasmBinaryFile && wasmBinary) {
+    // 			return new Uint8Array(wasmBinary)
+    // 		}
+    // 		if (readBinary) {
+    // 			return readBinary(file)
+    // 		} else {
+    // 			throw "both async and sync fetching of the wasm failed"
+    // 		}
+    // 	} catch (err) {
+    // 		abort(err)
+    // 	}
+    // }
+
+    // function getBinaryPromise() {
+    // 	if (!wasmBinary && (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER)) {
+    // 		if (typeof fetch == "function" && !isFileURI(wasmBinaryFile)) {
+    // 			return fetch(wasmBinaryFile, {
+    // 				credentials: "same-origin"
+    // 			}).then(function(response) {
+    // 				if (!response["ok"]) {
+    // 					throw "failed to load wasm binary file at '" + wasmBinaryFile + "'"
+    // 				}
+    // 				return response["arrayBuffer"]()
+    // 			}).catch(function() {
+    // 				return getBinary(wasmBinaryFile)
+    // 			})
+    // 		} else {
+    // 			if (readAsync) {
+    // 				return new Promise(function(resolve, reject) {
+    // 					readAsync(wasmBinaryFile, function(response) {
+    // 						resolve(new Uint8Array(response))
+    // 					}, reject)
+    // 				})
+    // 			}
+    // 		}
+    // 	}
+    // 	return Promise.resolve().then(function() {
+    // 		return getBinary(wasmBinaryFile)
+    // 	})
+    // }
+
     function createWasm() {
-      const info = { a: asmLibraryArg }
+      const info = {
+        a: asmLibraryArg,
+      }
+
       function receiveInstance(instance, module) {
         const exports = instance.exports
         Module.asm = exports
@@ -423,43 +475,62 @@ const Module = (() => {
         removeRunDependency('wasm-instantiate')
       }
       addRunDependency('wasm-instantiate')
+
       function receiveInstantiationResult(result) {
-        receiveInstance(result.instance)
+        console.log('receiveInstantiationResult', result)
+        receiveInstance(result)
       }
+
       function instantiateArrayBuffer(receiver) {
-        return getBinaryPromise()
-          .then(function (binary) {
-            return WebAssembly.instantiate(binary, info)
-          })
+        // return getBinaryPromise().then(function(binary) {
+        // return WebAssembly.instantiate(binary, info)
+
+        // })
+        return wasmInit(info)
           .then(function (instance) {
             return instance
           })
-          .then(receiver, function (reason) {
+          .then(receiveInstantiationResult, function (reason) {
             err('failed to asynchronously prepare wasm: ' + reason)
             abort(reason)
           })
       }
-      function instantiateAsync() {
-        return instantiateArrayBuffer(receiveInstantiationResult)
-        // }
-      }
-      if (Module.instantiateWasm) {
-        try {
-          const exports = Module.instantiateWasm(info, receiveInstance)
-          return exports
-        } catch (e) {
-          err('Module.instantiateWasm callback failed with error: ' + e)
-          return false
-        }
-      }
-      instantiateAsync().catch(readyPromiseReject)
-      return {}
+      instantiateArrayBuffer().catch(readyPromiseReject)
+
+      // function instantiateAsync() {
+      // 	if (!wasmBinary && typeof WebAssembly.instantiateStreaming == "function" && !isDataURI(wasmBinaryFile) && !isFileURI(wasmBinaryFile) && typeof fetch == "function") {
+      // 		return fetch(wasmBinaryFile, {
+      // 			credentials: "same-origin"
+      // 		}).then(function(response) {
+      // 			var result = WebAssembly.instantiateStreaming(response, info);
+      // 			return result.then(receiveInstantiationResult, function(reason) {
+      // 				err("wasm streaming compile failed: " + reason);
+      // 				err("falling back to ArrayBuffer instantiation");
+      // 				return instantiateArrayBuffer(receiveInstantiationResult)
+      // 			})
+      // 		})
+      // 	} else {
+      // 		return instantiateArrayBuffer(receiveInstantiationResult)
+      // 	}
+      // }
+      // if (Module["instantiateWasm"]) {
+      // 	try {
+      // 		var exports = Module["instantiateWasm"](info, receiveInstance);
+      // 		return exports
+      // 	} catch (e) {
+      // 		err("Module.instantiateWasm callback failed with error: " + e);
+      // 		return false
+      // 	}
+      // }
+      // instantiateAsync().catch(readyPromiseReject);
+      // return {}
     }
     const ASM_CONSTS = {
       425108: function ($0) {
         throw UTF8ToString($0)
       },
     }
+
     function callRuntimeCallbacks(callbacks) {
       while (callbacks.length > 0) {
         const callback = callbacks.shift()
@@ -479,9 +550,11 @@ const Module = (() => {
         }
       }
     }
+
     function getWasmTableEntry(funcPtr) {
       return wasmTable.get(funcPtr)
     }
+
     function jsStackTrace() {
       let error = new Error()
       if (!error.stack) {
@@ -496,6 +569,7 @@ const Module = (() => {
       }
       return error.stack.toString()
     }
+
     function ___assert_fail(condition, filename, line, func) {
       abort(
         'Assertion failed: ' +
@@ -508,9 +582,11 @@ const Module = (() => {
           ]
       )
     }
+
     function ___cxa_allocate_exception(size) {
       return _malloc(size + 16) + 16
     }
+
     function ExceptionInfo(excPtr) {
       this.excPtr = excPtr
       this.ptr = excPtr - 16
@@ -560,6 +636,7 @@ const Module = (() => {
         return prev === 1
       }
     }
+
     function CatchInfo(ptr) {
       this.free = function () {
         _free(this.ptr)
@@ -600,10 +677,12 @@ const Module = (() => {
       }
     }
     const exceptionCaught = []
+
     function exception_addRef(info) {
       info.add_ref()
     }
     let uncaughtExceptionCount = 0
+
     function ___cxa_begin_catch(ptr) {
       const catchInfo = new CatchInfo(ptr)
       const info = catchInfo.get_exception_info()
@@ -617,9 +696,11 @@ const Module = (() => {
       return catchInfo.get_exception_ptr()
     }
     let exceptionLast = 0
+
     function ___cxa_free_exception(ptr) {
       return _free(new ExceptionInfo(ptr).ptr)
     }
+
     function exception_decRef(info) {
       if (info.release_ref() && !info.get_rethrown()) {
         const destructor = info.get_destructor()
@@ -629,6 +710,7 @@ const Module = (() => {
         ___cxa_free_exception(info.excPtr)
       }
     }
+
     function ___cxa_end_catch() {
       _setThrew(0)
       const catchInfo = exceptionCaught.pop()
@@ -636,6 +718,7 @@ const Module = (() => {
       catchInfo.free()
       exceptionLast = 0
     }
+
     function ___resumeException(catchInfoPtr) {
       const catchInfo = new CatchInfo(catchInfoPtr)
       const ptr = catchInfo.get_base_ptr()
@@ -645,6 +728,7 @@ const Module = (() => {
       catchInfo.free()
       throw ptr
     }
+
     function ___cxa_find_matching_catch_2() {
       const thrown = exceptionLast
       if (!thrown) {
@@ -674,6 +758,7 @@ const Module = (() => {
       setTempRet0(thrownType)
       return catchInfo.ptr | 0
     }
+
     function ___cxa_find_matching_catch_3() {
       const thrown = exceptionLast
       if (!thrown) {
@@ -703,6 +788,7 @@ const Module = (() => {
       setTempRet0(thrownType)
       return catchInfo.ptr | 0
     }
+
     function ___cxa_find_matching_catch_5() {
       const thrown = exceptionLast
       if (!thrown) {
@@ -732,6 +818,7 @@ const Module = (() => {
       setTempRet0(thrownType)
       return catchInfo.ptr | 0
     }
+
     function ___cxa_throw(ptr, type, destructor) {
       const info = new ExceptionInfo(ptr)
       info.init(type, destructor)
@@ -764,44 +851,59 @@ const Module = (() => {
         return low
       },
     }
+
     function ___syscall_fcntl64(fd, cmd, varargs) {
       SYSCALLS.varargs = varargs
       return 0
     }
+
     function ___syscall_fstat64(fd, buf) {}
+
     function ___syscall_getdents64(fd, dirp, count) {}
+
     function ___syscall_ioctl(fd, op, varargs) {
       SYSCALLS.varargs = varargs
       return 0
     }
+
     function ___syscall_lstat64(path, buf) {}
+
     function ___syscall_newfstatat(dirfd, path, buf, flags) {}
+
     function ___syscall_openat(dirfd, path, flags, varargs) {
       SYSCALLS.varargs = varargs
     }
+
     function ___syscall_stat64(path, buf) {}
+
     function __dlopen_js(filename, flag) {
       abort(
         "To use dlopen, you need to use Emscripten's linking support, see https://github.com/emscripten-core/emscripten/wiki/Linking"
       )
     }
+
     function __dlsym_js(handle, symbol) {
       abort(
         "To use dlopen, you need to use Emscripten's linking support, see https://github.com/emscripten-core/emscripten/wiki/Linking"
       )
     }
+
     function __emscripten_date_now() {
       return Date.now()
     }
     const nowIsMonotonic = true
+
     function __emscripten_get_now_is_monotonic() {
       return nowIsMonotonic
     }
+
     function __munmap_js(addr, len, prot, flags, fd, offset) {}
+
     function _abort() {
       abort('')
     }
     const readAsmConstArgsArray = []
+
     function readAsmConstArgs(sigPtr, buf) {
       readAsmConstArgsArray.length = 0
       let ch
@@ -814,6 +916,7 @@ const Module = (() => {
       }
       return readAsmConstArgsArray
     }
+
     function _emscripten_asm_const_int(code, sigPtr, argbuf) {
       const args = readAsmConstArgs(sigPtr, argbuf)
       return ASM_CONSTS[code].apply(null, args)
@@ -825,15 +928,19 @@ const Module = (() => {
         return t[0] * 1e3 + t[1] / 1e6
       }
     } else _emscripten_get_now = () => performance.now()
+
     function reallyNegative(x) {
       return x < 0 || (x === 0 && 1 / x === -Infinity)
     }
+
     function convertI32PairToI53(lo, hi) {
       return (lo >>> 0) + hi * 4294967296
     }
+
     function convertU32PairToI53(lo, hi) {
       return (lo >>> 0) + (hi >>> 0) * 4294967296
     }
+
     function reSign(value, bits) {
       if (value <= 0) {
         return value
@@ -844,15 +951,18 @@ const Module = (() => {
       }
       return value
     }
+
     function unSign(value, bits) {
       if (value >= 0) {
         return value
       }
       return bits <= 32 ? 2 * Math.abs(1 << (bits - 1)) + value : Math.pow(2, bits) + value
     }
+
     function formatString(format, varargs) {
       let textIndex = format
       let argIndex = varargs
+
       function prepVararg(ptr, type) {
         if (type === 'double' || type === 'i64') {
           if (ptr & 7) {
@@ -862,6 +972,7 @@ const Module = (() => {
         }
         return ptr
       }
+
       function getNextArg(type) {
         let ret
         argIndex = prepVararg(argIndex, type)
@@ -1217,6 +1328,7 @@ const Module = (() => {
       }
       return ret
     }
+
     function traverseStack(args) {
       if (!args || !args.callee || !args.callee.name) {
         return [null, '', '']
@@ -1243,6 +1355,7 @@ const Module = (() => {
       if (first) str = ''
       return [args, funcname, str]
     }
+
     function _emscripten_get_callstack_js(flags) {
       let callstack = jsStackTrace()
       const iThisFunc = callstack.lastIndexOf('_emscripten_log')
@@ -1296,7 +1409,10 @@ const Module = (() => {
         }
         let haveSourceMap = false
         if (flags & 8) {
-          const orig = emscripten_source_map.originalPositionFor({ line: lineno, column })
+          const orig = emscripten_source_map.originalPositionFor({
+            line: lineno,
+            column,
+          })
           haveSourceMap = orig && orig.source
           if (haveSourceMap) {
             if (flags & 64) {
@@ -1341,6 +1457,7 @@ const Module = (() => {
       callstack = callstack.replace(/\s+$/, '')
       return callstack
     }
+
     function _emscripten_log_js(flags, str) {
       if (flags & 24) {
         str = str.replace(/\s+$/, '')
@@ -1364,14 +1481,17 @@ const Module = (() => {
         out(str)
       }
     }
+
     function _emscripten_log(flags, format, varargs) {
       const result = formatString(format, varargs)
       const str = UTF8ArrayToString(result, 0)
       _emscripten_log_js(flags, str)
     }
+
     function _emscripten_get_heap_max() {
       return 2147483648
     }
+
     function emscripten_realloc_buffer(size) {
       try {
         wasmMemory.grow((size - buffer.byteLength + 65535) >>> 16)
@@ -1379,6 +1499,7 @@ const Module = (() => {
         return 1
       } catch (e) {}
     }
+
     function _emscripten_resize_heap(requestedSize) {
       const oldSize = HEAPU8.length
       requestedSize = requestedSize >>> 0
@@ -1402,9 +1523,11 @@ const Module = (() => {
       return false
     }
     const ENV = {}
+
     function getExecutableName() {
       return thisProgram || './this.program'
     }
+
     function getEnvStrings() {
       if (!getEnvStrings.strings) {
         const lang =
@@ -1433,6 +1556,7 @@ const Module = (() => {
       }
       return getEnvStrings.strings
     }
+
     function _environ_get(__environ, environ_buf) {
       let bufSize = 0
       getEnvStrings().forEach(function (string, i) {
@@ -1443,6 +1567,7 @@ const Module = (() => {
       })
       return 0
     }
+
     function _environ_sizes_get(penviron_count, penviron_buf_size) {
       const strings = getEnvStrings()
       HEAP32[penviron_count >> 2] = strings.length
@@ -1453,16 +1578,20 @@ const Module = (() => {
       HEAP32[penviron_buf_size >> 2] = bufSize
       return 0
     }
+
     function _fd_close(fd) {
       return 0
     }
+
     function _fd_read(fd, iov, iovcnt, pnum) {
       const stream = SYSCALLS.getStreamFromFD(fd)
       const num = SYSCALLS.doReadv(stream, iov, iovcnt)
       HEAP32[pnum >> 2] = num
       return 0
     }
+
     function _fd_seek(fd, offset_low, offset_high, whence, newOffset) {}
+
     function _fd_write(fd, iov, iovcnt, pnum) {
       let num = 0
       for (let i = 0; i < iovcnt; i++) {
@@ -1477,18 +1606,23 @@ const Module = (() => {
       HEAP32[pnum >> 2] = num
       return 0
     }
+
     function _getTempRet0() {
       return getTempRet0()
     }
+
     function _llvm_eh_typeid_for(type) {
       return type
     }
+
     function _setTempRet0(val) {
       setTempRet0(val)
     }
+
     function __isLeapYear(year) {
       return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
     }
+
     function __arraySum(array, index) {
       let sum = 0
       for (let i = 0; i <= index; sum += array[i++]) {}
@@ -1496,6 +1630,7 @@ const Module = (() => {
     }
     const __MONTH_DAYS_LEAP = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     const __MONTH_DAYS_REGULAR = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
     function __addDays(date, days) {
       const newDate = new Date(date.getTime())
       while (days > 0) {
@@ -1518,6 +1653,7 @@ const Module = (() => {
       }
       return newDate
     }
+
     function _strftime(s, maxsize, format, tm) {
       const tm_zone = HEAP32[(tm + 40) >> 2]
       const date = {
@@ -1590,6 +1726,7 @@ const Module = (() => {
         'November',
         'December',
       ]
+
       function leadingSomething(value, digits, character) {
         let str = typeof value === 'number' ? value.toString() : value || ''
         while (str.length < digits) {
@@ -1597,9 +1734,11 @@ const Module = (() => {
         }
         return str
       }
+
       function leadingNulls(value, digits) {
         return leadingSomething(value, digits, '0')
       }
+
       function compareByDay(date1, date2) {
         function sgn(value) {
           return value < 0 ? -1 : value > 0 ? 1 : 0
@@ -1612,6 +1751,7 @@ const Module = (() => {
         }
         return compare
       }
+
       function getFirstWeekStartDate(janFourth) {
         switch (janFourth.getDay()) {
           case 0:
@@ -1630,6 +1770,7 @@ const Module = (() => {
             return new Date(janFourth.getFullYear() - 1, 11, 30)
         }
       }
+
       function getWeekBasedYear(date) {
         const thisDate = __addDays(new Date(date.tm_year + 1900, 0, 1), date.tm_yday)
         const janFourthThisYear = new Date(thisDate.getFullYear(), 0, 4)
@@ -1781,9 +1922,11 @@ const Module = (() => {
       writeArrayToMemory(bytes, s)
       return bytes.length - 1
     }
+
     function _strftime_l(s, maxsize, format, tm) {
       return _strftime(s, maxsize, format, tm)
     }
+
     function intArrayFromString(stringy, dontAddNull, length) {
       const len = length > 0 ? length : lengthBytesUTF8(stringy) + 1
       const u8array = new Array(len)
@@ -1896,6 +2039,7 @@ const Module = (() => {
     var dynCall_iij = (Module.dynCall_iij = function () {
       return (dynCall_iij = Module.dynCall_iij = Module.asm.sa).apply(null, arguments)
     })
+
     function invoke_iii(index, a1, a2) {
       const sp = stackSave()
       try {
@@ -1906,6 +2050,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_ii(index, a1) {
       const sp = stackSave()
       try {
@@ -1916,6 +2061,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_viii(index, a1, a2, a3) {
       const sp = stackSave()
       try {
@@ -1926,6 +2072,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_vii(index, a1, a2) {
       const sp = stackSave()
       try {
@@ -1936,6 +2083,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_iiii(index, a1, a2, a3) {
       const sp = stackSave()
       try {
@@ -1946,6 +2094,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_vi(index, a1) {
       const sp = stackSave()
       try {
@@ -1956,6 +2105,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_iiiii(index, a1, a2, a3, a4) {
       const sp = stackSave()
       try {
@@ -1966,6 +2116,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_iiiiiiii(index, a1, a2, a3, a4, a5, a6, a7) {
       const sp = stackSave()
       try {
@@ -1976,6 +2127,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_viiiii(index, a1, a2, a3, a4, a5) {
       const sp = stackSave()
       try {
@@ -1986,6 +2138,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_iiiiii(index, a1, a2, a3, a4, a5) {
       const sp = stackSave()
       try {
@@ -1996,6 +2149,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_viiii(index, a1, a2, a3, a4) {
       const sp = stackSave()
       try {
@@ -2006,6 +2160,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_v(index) {
       const sp = stackSave()
       try {
@@ -2016,6 +2171,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_iiiiiiiiii(index, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
       const sp = stackSave()
       try {
@@ -2026,6 +2182,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_viiiiiii(index, a1, a2, a3, a4, a5, a6, a7) {
       const sp = stackSave()
       try {
@@ -2036,6 +2193,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_i(index) {
       const sp = stackSave()
       try {
@@ -2046,6 +2204,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_iiiiiii(index, a1, a2, a3, a4, a5, a6) {
       const sp = stackSave()
       try {
@@ -2056,6 +2215,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_vij(index, a1, a2, a3) {
       const sp = stackSave()
       try {
@@ -2066,6 +2226,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_ji(index, a1) {
       const sp = stackSave()
       try {
@@ -2076,6 +2237,7 @@ const Module = (() => {
         _setThrew(1, 0)
       }
     }
+
     function invoke_iij(index, a1, a2, a3) {
       const sp = stackSave()
       try {
@@ -2091,6 +2253,7 @@ const Module = (() => {
     Module.UTF8ToString = UTF8ToString
     Module.ALLOC_NORMAL = ALLOC_NORMAL
     let calledRun
+
     function ExitStatus(status) {
       this.name = 'ExitStatus'
       this.message = 'Program terminated with exit(' + status + ')'
@@ -2100,6 +2263,7 @@ const Module = (() => {
       if (!calledRun) run()
       if (!calledRun) dependenciesFulfilled = runCaller
     }
+
     function run(args) {
       args = args || arguments_
       if (runDependencies > 0) {
@@ -2109,6 +2273,7 @@ const Module = (() => {
       if (runDependencies > 0) {
         return
       }
+
       function doRun() {
         if (calledRun) return
         calledRun = true
