@@ -7325,6 +7325,11 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
+vite-plugin-chunk-split@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-chunk-split/-/vite-plugin-chunk-split-0.3.0.tgz#0a8abe8eb8190f887c165bd6c629c649163fd1d2"
+  integrity sha512-2+AltyaVnKx33HRKwRQBWzmt3RHGJvDEUp+HDUbPcl4xpKXbWLvMCezlspXun9hL+3sEmqp3nF89uXknPtkc6A==
+
 vite-svg-loader@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/vite-svg-loader/-/vite-svg-loader-3.4.0.tgz#4638827fe86b85ecfcea1ad61dd972c351d5befd"

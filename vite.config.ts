@@ -7,6 +7,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import { visualizer } from 'rollup-plugin-visualizer'
 import svgLoader from 'vite-svg-loader'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
+import { chunkSplitPlugin } from 'vite-plugin-chunk-split'
 
 dotenv.config()
 
@@ -25,6 +26,11 @@ export default defineConfig({
     visualizer(),
     vueI18n({
       include: resolve(dirname(fileURLToPath(import.meta.url)), './src/i18n/locales/**'),
+    }),
+    chunkSplitPlugin({
+      customSplitting: {
+        wasm: [/vm-exec.source.ts/],
+      },
     }),
   ],
   resolve: {
