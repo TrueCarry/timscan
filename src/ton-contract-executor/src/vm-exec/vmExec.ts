@@ -1,6 +1,6 @@
 import { TVMExecuteConfig } from '../executor/executor'
 
-import VmExec from './vm-exec-backup.js'
+import VmExec from './vm-exec.js'
 // const VmExec: any = require('../vm-exec/vm-exec')
 
 let instance: any = null
