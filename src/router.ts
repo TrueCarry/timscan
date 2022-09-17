@@ -7,6 +7,7 @@ import PageBlocks from '~/components/block/PageBlocks.vue'
 import PageIndex from '~/components/PageIndex.vue'
 import PageTx from '~/components/tx/PageTx.vue'
 import PageNft from '~/components/nft/PageNft.vue'
+import PageFuncCompiler from '@/components/pages/FuncCompiler.vue'
 import { ADDRESS_REGEX } from '~/config.js'
 
 // Vue.use(VueRouter);
@@ -67,6 +68,12 @@ const router = createRouter({
       name: 'nft',
       path: `/nft/:address(${ADDRESS_REGEX.source})`,
       component: PageNft,
+      props: true,
+    },
+    {
+      name: 'compiler',
+      path: `/compiler`,
+      component: PageFuncCompiler,
       props: true,
     },
   ],
