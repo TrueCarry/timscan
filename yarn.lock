@@ -444,6 +444,13 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@kouts/vue-modal@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@kouts/vue-modal/-/vue-modal-3.0.7.tgz#5eee9762a319f3dce8d9a82851c2458fda1f22be"
+  integrity sha512-lwT5dzPkQMRzqZrndlHyrsTudNOfrkOmxl3U+QcweQ3K/MlL6W+n+v2xFnMlLa/wovCkojZOD5coG2sz2j4skw==
+  dependencies:
+    vue "^3.2.37"
+
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"

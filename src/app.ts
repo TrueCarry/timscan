@@ -20,6 +20,9 @@ import AppDb from './db'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 
+import VueModal from '@kouts/vue-modal'
+import '@kouts/vue-modal/dist/vue-modal.css'
+
 const db = new AppDb()
 db.open()
 
@@ -66,6 +69,8 @@ app.component('UiCopyButton', UiCopyButton)
 app.component('UiAddress', UiAddress)
 app.component('UiTimeago', UiTimeago)
 app.component('UiModal', UiModal)
+// eslint-disable-next-line vue/multi-word-component-names
+app.component('Modal', VueModal)
 
 app.config.globalProperties.$ton = formatTons
 app.config.globalProperties.$fee = formatFee

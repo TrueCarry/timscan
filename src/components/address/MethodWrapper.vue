@@ -31,13 +31,19 @@ const props = defineProps({
 })
 
 const inputs = reactive({})
+const emit = defineEmits(['addInput'])
 
 const abiString = computed(() => JSON.stringify(props.abi))
+const cellString = computed(() => props.codeCell.toString())
 // const result = computed(() => )
 const result = ref<OutputResult[] | null | undefined>(null)
 callMethod(props.name, props.abi)
 watch([abiString, inputs], async () => {
   console.log('inputs called')
+  return updateResult()
+})
+watch([props.codeCell, cellString], async () => {
+  console.log('codeCell called', cellString)
   return updateResult()
 })
 updateResult()
@@ -103,7 +109,7 @@ async function callMethod(name: string, info: MethodAbi) {
       }
     }
 
-    console.log('values', values)
+    console.log('values', values, res)
     return values
   } catch (e) {
     console.log('e', e)
@@ -174,6 +180,8 @@ function domainToBytes(domain: string) {
     <div class="flex flex-col w-2/6">
       <div class="text-secondary">Inputs</div>
       <InputWrapper v-for="(input, i) in abi.input" :key="i" v-model="inputs[i]" :input="input" />
+
+      <div @click="emit('addInput')">Add input</div>
     </div>
 
     <div class="flex flex-col w-3/6">
