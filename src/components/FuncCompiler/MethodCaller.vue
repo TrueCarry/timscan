@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ContractAbi, InputArg, MethodAbi } from '@/abi'
+import { TVMStackEntry } from '@/ton-contract-executor/src'
 import { Cell, Address } from '@/ton/src'
 import { CompileResult } from '@ton.org/func-js'
 import { computed, Prop, PropType, ref } from 'vue'
@@ -25,7 +26,10 @@ const exampleMethod: MethodAbi = {
 }
 
 const showModal = ref(false)
+const showAddInputModal = ref(false)
 const newMethodName = ref('')
+const newInputType = ref('')
+const newInputName = ref('')
 
 const abi = ref<ContractAbi>({
   name: 'playground',
@@ -68,11 +72,24 @@ function addMethod() {
 }
 
 function addInput(method: string) {
+  showAddInputModal.value = true
+  newInputName.value = method
+}
+
+function addInputType() {
+  const newInput: InputArg = {
+    name: newMethodName.value,
+    type: newInputType.value as unknown as TVMStackEntry['type'], // 'int',
+  }
+  abi.value.methods[newInputName.value].input.push(newInput)
+}
+
+function addOutput(method: string) {
   const newInput: InputArg = {
     name: 'x',
     type: 'int',
   }
-  abi.value.methods[method].input.push(newInput)
+  abi.value.methods[method].output.push(newInput)
 }
 </script>
 
@@ -91,6 +108,7 @@ function addInput(method: string) {
       :data-cell="dataCell"
       :address="Address.parse('EQCUNkfC75Y7oOlxpfphlbkV4B7sBVtWfE1R8kzEx5ROZX8O')"
       @add-input="addInput(method)"
+      @add-output="addOutput(method)"
     />
 
     <div @click="openPopup">Add method</div>
@@ -101,6 +119,20 @@ function addInput(method: string) {
         <input v-model="newMethodName" type="text" />
 
         <button @click="addMethod">Add</button>
+      </div>
+    </Modal>
+
+    <Modal v-model="showAddInputModal">
+      <div class="text-black">
+        Input name:
+        <input v-model="newMethodName" type="text" />
+
+        <select v-model="newInputType">
+          <option value="int">int</option>
+          <option value="cell">cell</option>
+        </select>
+
+        <button @click="addInputType()">Add</button>
       </div>
     </Modal>
   </div>

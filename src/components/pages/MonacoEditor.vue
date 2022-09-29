@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, defineProps } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import * as monaco from 'monaco-editor'
 // import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 // import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'

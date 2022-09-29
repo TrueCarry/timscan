@@ -5,6 +5,7 @@ import { ref, h, onMounted, watch } from 'vue'
 import MonacoEditor from './MonacoEditor.vue'
 import CompiledResult from '../FuncCompiler/CompiledResult.vue'
 import MethodCaller from '../FuncCompiler/MethodCaller.vue'
+import StdlibText from '@/components/FuncCompiler/stdlib'
 // import MonacoEditor from 'vue-monaco'
 
 // MonacoEditor.render = () => h('div')
@@ -24,26 +25,30 @@ function onInput(key: number) {
   }
 }
 
-watch(
-  () => files.value.length,
-  (newVal, oldVal) => {
-    console.log('old', oldVal, newVal)
-    if (newVal > oldVal) {
-      entrypoints.value.push({ index: newVal - 1, enabled: true })
-    }
-    // if (files.value.length !== entrypoints.value.length) {
-    // entrypoints.value = files.value.map((f, i) => ({ index: i, enabled: true }))
-    // }
-  }
-)
+// watch(
+//   () => files.value.length,
+//   (newVal, oldVal) => {
+//     console.log('old', oldVal, newVal)
+//     // if (newVal > oldVal) {
+//     //   entrypoints.value.push({ index: newVal - 1, enabled: true })
+//     // }
+//     // if (files.value.length !== entrypoints.value.length) {
+//     // entrypoints.value = files.value.map((f, i) => ({ index: i, enabled: true }))
+//     // }
+//   }
+// )
 
-const addFile = (editorContent?: string) => {
-  files.value.push({ name: `new file.fc`, content: editorContent || '' })
+const addFile = (editorContent?: string, name?: string) => {
+  files.value.push({ name: name || `new file.fc`, content: editorContent || '' })
+  entrypoints.value.push({ index: files.value.length - 1, enabled: true })
   console.log('f', files.value)
   selectedFile.value = files.value.length - 1
 }
 
-onMounted(() => addFile('int main(int a, int b) { return a + b; }'))
+onMounted(() => {
+  addFile(StdlibText, 'stdlib.fc')
+  addFile('int main(int a, int b) {\n  return a + b;\n}')
+})
 
 async function compile() {
   const compileRes = await funcCompile({
@@ -101,7 +106,7 @@ function moveDown(i: number) {
             >
               <input
                 class="px-2 h-8 outline-none"
-                :class="selectedFile === key ? 'bg-navy-800 text-white' : 'text-black'"
+                :class="selectedFile === key ? 'text-black' : 'bg-navy-800 text-white'"
                 type="text"
                 :value="file.name"
                 @input="(e) => onInput(key)(e)"

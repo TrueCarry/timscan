@@ -31,7 +31,7 @@ const props = defineProps({
 })
 
 const inputs = reactive({})
-const emit = defineEmits(['addInput'])
+const emit = defineEmits(['addInput', 'addOutput'])
 
 const abiString = computed(() => JSON.stringify(props.abi))
 const cellString = computed(() => props.codeCell.toString())
@@ -193,6 +193,8 @@ function domainToBytes(domain: string) {
           <div class="card-row__value"><ValueWrapper :info="output" /></div>
         </template>
       </div>
+
+      <div @click="emit('addOutput')">Add output</div>
     </div>
     <!-- {{results[method]}}</div> -->
   </div>
