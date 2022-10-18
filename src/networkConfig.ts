@@ -1218,35 +1218,11 @@ const mainnetConfig = {
       },
     },
     {
-      ip: -1539021362,
-      port: 52995,
-      id: {
-        '@type': 'pub.ed25519',
-        key: 'QnGFe9kihW+TKacEvvxFWqVXeRxCB6ChjjhNTrL7+/k=',
-      },
-    },
-    {
-      ip: -1539021936,
-      port: 20334,
-      id: {
-        '@type': 'pub.ed25519',
-        key: 'gyLh12v4hBRtyBygvvbbO2HqEtgl+ojpeRJKt4gkMq0=',
-      },
-    },
-    {
       ip: -1136338705,
       port: 19925,
       id: {
         '@type': 'pub.ed25519',
         key: 'ucho5bEkufbKN1JR1BGHpkObq602whJn3Q3UwhtgSo4=',
-      },
-    },
-    {
-      ip: 908566172,
-      port: 51565,
-      id: {
-        '@type': 'pub.ed25519',
-        key: 'TDg+ILLlRugRB4Kpg3wXjPcoc+d+Eeb7kuVe16CS9z8=',
       },
     },
   ],
