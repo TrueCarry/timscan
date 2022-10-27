@@ -1,7 +1,8 @@
 {
   "rewrites": [
     { "source": "/address/:address", "destination": "/" },
-    { "source": "/tx/:tx", "destination": "/" }
+    { "source": "/tx/:tx", "destination": "/" },
+    { "source": "/compiler", "destination": "/" }
   ],
   "headers": [
     {
