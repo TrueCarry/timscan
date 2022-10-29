@@ -6,6 +6,7 @@ import BN from 'bn.js'
 import { watch, computed, PropType, ref, toRaw, reactive } from 'vue'
 import ValueWrapper from './ValueWrapper'
 import InputWrapper from './InputWrapper.vue'
+import { boolean } from 'fp-ts'
 
 const props = defineProps({
   name: {
@@ -27,6 +28,10 @@ const props = defineProps({
   dataCell: {
     type: Object as PropType<Cell>,
     required: true,
+  },
+  allowAddInput: {
+    type: Boolean,
+    required: false,
   },
 })
 
@@ -181,7 +186,7 @@ function domainToBytes(domain: string) {
       <div class="text-secondary">Inputs</div>
       <InputWrapper v-for="(input, i) in abi.input" :key="i" v-model="inputs[i]" :input="input" />
 
-      <div @click="emit('addInput')">Add input</div>
+      <div v-if="allowAddInput" @click="emit('addInput')">Add input</div>
     </div>
 
     <div class="flex flex-col w-3/6">
@@ -194,7 +199,7 @@ function domainToBytes(domain: string) {
         </template>
       </div>
 
-      <div @click="emit('addOutput')">Add output</div>
+      <div v-if="allowAddInput" @click="emit('addOutput')">Add output</div>
     </div>
     <!-- {{results[method]}}</div> -->
   </div>
