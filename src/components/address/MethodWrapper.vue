@@ -6,6 +6,7 @@ import BN from 'bn.js'
 import { watch, computed, PropType, ref, toRaw, reactive } from 'vue'
 import ValueWrapper from './ValueWrapper'
 import InputWrapper from './InputWrapper.vue'
+import { boolean } from 'fp-ts'
 
 const props = defineProps({
   name: {
@@ -28,16 +29,26 @@ const props = defineProps({
     type: Object as PropType<Cell>,
     required: true,
   },
+  allowAddInput: {
+    type: Boolean,
+    required: false,
+  },
 })
 
 const inputs = reactive({})
+const emit = defineEmits(['addInput', 'addOutput'])
 
 const abiString = computed(() => JSON.stringify(props.abi))
+const cellString = computed(() => props.codeCell.toString())
 // const result = computed(() => )
 const result = ref<OutputResult[] | null | undefined>(null)
 callMethod(props.name, props.abi)
 watch([abiString, inputs], async () => {
   console.log('inputs called')
+  return updateResult()
+})
+watch([props.codeCell, cellString], async () => {
+  console.log('codeCell called', cellString)
   return updateResult()
 })
 updateResult()
@@ -103,7 +114,7 @@ async function callMethod(name: string, info: MethodAbi) {
       }
     }
 
-    console.log('values', values)
+    console.log('values', values, res)
     return values
   } catch (e) {
     console.log('e', e)
@@ -174,6 +185,8 @@ function domainToBytes(domain: string) {
     <div class="flex flex-col w-2/6">
       <div class="text-secondary">Inputs</div>
       <InputWrapper v-for="(input, i) in abi.input" :key="i" v-model="inputs[i]" :input="input" />
+
+      <div v-if="allowAddInput" @click="emit('addInput')">Add input</div>
     </div>
 
     <div class="flex flex-col w-3/6">
@@ -185,6 +198,8 @@ function domainToBytes(domain: string) {
           <div class="card-row__value"><ValueWrapper :info="output" /></div>
         </template>
       </div>
+
+      <div v-if="allowAddInput" @click="emit('addOutput')">Add output</div>
     </div>
     <!-- {{results[method]}}</div> -->
   </div>
