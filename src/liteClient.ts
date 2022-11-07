@@ -96,15 +96,26 @@ async function initLiteClient() {
 
   const engines: LiteSingleEngine[] = []
   // while (engines.length < 50) {
-  const ls = data.liteservers[Math.floor(Math.random() * data.liteservers.length)]
-  const pubkey = encodeURIComponent(ls.id.key)
-  engines.push(
-    new LiteSingleEngine({
-      host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
-      // host: `ws://127.0.0.1:5999/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
-      publicKey: Buffer.from(ls.id.key, 'base64'),
-    })
-  )
+  const pickedServrs: number[] = []
+  for (let i = 0; i < Math.min(data.liteservers.length, 3); i++) {
+    let random
+    while (true) {
+      random = Math.floor(Math.random() * data.liteservers.length)
+      if (pickedServrs.indexOf(random) === -1) {
+        pickedServrs.push(random)
+        break
+      }
+    }
+    const ls = data.liteservers[random]
+    const pubkey = encodeURIComponent(ls.id.key)
+    engines.push(
+      new LiteSingleEngine({
+        host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
+        // host: `ws://127.0.0.1:5999/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
+        publicKey: Buffer.from(ls.id.key, 'base64'),
+      })
+    )
+  }
 
   const engine = new LiteRoundRobinEngine(engines)
   const client = new LiteClient({ engine })

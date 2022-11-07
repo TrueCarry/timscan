@@ -9,6 +9,9 @@ import svgLoader from 'vite-svg-loader'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import { chunkSplitPlugin } from 'vite-plugin-chunk-split'
 
+// You don't need to add this to deps, it's included by @esbuild-plugins/node-modules-polyfill
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
+
 dotenv.config()
 
 // const builtinsPlugin = builtins({crypto: true});
@@ -38,6 +41,8 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
       '~': resolve(__dirname, './src'),
+
+      util: 'rollup-plugin-node-polyfills/polyfills/util',
     },
   },
   build: {
@@ -47,6 +52,7 @@ export default defineConfig({
     include: ['bn.js'],
   },
   define: {
+    process: {},
     // 'process.env': {},
     // 'process.env': process.env,
   },

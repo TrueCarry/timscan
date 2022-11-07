@@ -22,11 +22,14 @@ import 'vue-toastification/dist/index.css'
 
 import VueModal from '@kouts/vue-modal'
 import '@kouts/vue-modal/dist/vue-modal.css'
+import { initSqlite } from './sqlite'
 
 const db = new AppDb()
 db.open()
 
 const pinia = createPinia()
+
+initSqlite()
 
 // Vue.use(VueClipboard)
 
