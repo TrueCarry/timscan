@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MethodAbi, OutputResult } from '@/abi'
-import { SmartContract, TVMStack } from '@/ton-contract-executor/src'
+import { SmartContract, TVMStack } from 'ton-contract-executor'
 import { Address, Cell } from '@/ton/src'
 import BN from 'bn.js'
 import { watch, computed, PropType, ref, toRaw, reactive } from 'vue'

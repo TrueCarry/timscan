@@ -1,7 +1,7 @@
 import { nftAbi } from './nft'
 import { walletAbi } from './wallet'
 import { highloadWalletAbi } from './highloadWallet'
-import { NormalizedStackEntry, TVMStackEntry } from '@/ton-contract-executor/src'
+import { TVMStackEntry, SuccessfulExecutionResult } from 'ton-contract-executor'
 import { nftCollectionAbi } from './nftCollectionEditable'
 import { nftSaleAbi } from './nftSale'
 import { nftEditableAbi } from './nftEditable'
@@ -38,6 +38,8 @@ export interface CellContent {
   length?: number
   content?: CellContent[]
 }
+
+type NormalizedStackEntry = SuccessfulExecutionResult['result'][number]
 
 export interface OutputResult extends OutputArg {
   value: NormalizedStackEntry
