@@ -5,7 +5,7 @@ const highloadWalletAbi: ContractAbi = {
   methods: {
     get_public_key: {
       input: [],
-      output: [{ name: 'public_key', type: 'int', length: 256 }],
+      output: [{ name: 'public_key', type: 'int' }],
     },
   },
 }
