@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MethodAbi, OutputResult } from '@/abi'
-import { SmartContract, TVMStack } from 'ton-contract-executor'
+import * as executor from 'ton-contract-executor'
 import { Address, Cell } from '@/ton/src'
 import BN from 'bn.js'
 import { watch, computed, PropType, ref, toRaw, reactive } from 'vue'
@@ -67,60 +67,64 @@ async function updateResult() {
 }
 
 async function callMethod(name: string, info: MethodAbi) {
-  try {
-    if (!props.codeCell || !props.dataCell) {
-      return
-    }
-    const wallet = await SmartContract.fromCell(toRaw<Cell>(props.codeCell), toRaw(props.dataCell))
-    wallet.setC7Config({
-      myself: props.address,
-    })
-
-    const args: TVMStack = []
-    let i = 0
-    for (const input of props.abi.input) {
-      const value = inputs[i] || 0
-      args.push({
-        type: input.type,
-        value: value.toString(),
-      })
-      i++
-    }
-
-    console.log('args', args)
-    const res = await wallet.invokeGetMethod(name, args)
-
-    if (res.type !== 'success') {
-      console.log('not type', res.type)
-      console.log(res)
-      return null
-    }
-
-    if (res.exit_code !== 0) {
-      return null
-    }
-
-    const values: OutputResult[] = []
-    // console.log(res.results], res)
-    for (let i = 0; i < info.output.length; i++) {
-      console.log(i)
-      switch (info.output[i].type) {
-        default: {
-          values.push({
-            ...info.output[i],
-            value: res.result[i],
-          })
-        }
-      }
-    }
-
-    console.log('values', values, res)
-    return values
-  } catch (e) {
-    console.log('e', e)
-    return null
-  }
+  console.log('exevutor', executor)
+  return name
 }
+// async function callMethod(name: string, info: MethodAbi) {
+//   try {
+//     if (!props.codeCell || !props.dataCell) {
+//       return
+//     }
+//     const wallet = await SmartContract.fromCell(toRaw<Cell>(props.codeCell), toRaw(props.dataCell))
+//     wallet.setC7Config({
+//       myself: props.address,
+//     })
+
+//     const args: TVMStack = []
+//     let i = 0
+//     for (const input of props.abi.input) {
+//       const value = inputs[i] || 0
+//       args.push({
+//         type: input.type,
+//         value: value.toString(),
+//       })
+//       i++
+//     }
+
+//     console.log('args', args)
+//     const res = await wallet.invokeGetMethod(name, args)
+
+//     if (res.type !== 'success') {
+//       console.log('not type', res.type)
+//       console.log(res)
+//       return null
+//     }
+
+//     if (res.exit_code !== 0) {
+//       return null
+//     }
+
+//     const values: OutputResult[] = []
+//     // console.log(res.results], res)
+//     for (let i = 0; i < info.output.length; i++) {
+//       console.log(i)
+//       switch (info.output[i].type) {
+//         default: {
+//           values.push({
+//             ...info.output[i],
+//             value: res.result[i],
+//           })
+//         }
+//       }
+//     }
+
+//     console.log('values', values, res)
+//     return values
+//   } catch (e) {
+//     console.log('e', e)
+//     return null
+//   }
+// }
 
 /**
  * Verify and convert domain
