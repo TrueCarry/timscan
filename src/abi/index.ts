@@ -9,6 +9,9 @@ import { dnsCollectionAbi } from './dnsCollection'
 import { dnsItemAbi } from './dnsItem'
 import { getgemsAuctionAbi } from './getgemsAuction'
 import { getgemsAuctionV2Abi } from './getgemsAuctionV2'
+import { telemintNftAbi } from './nftTelemint'
+import { getgemsSaleV2 } from './getgemsSaleV2'
+import { getgemsOffer } from './getgemsOffer'
 
 export interface ContractAbi {
   name?: string
@@ -59,4 +62,9 @@ export const abiMap: Record<string, ContractAbi> = {
   '8b5ffc9ebfd39064d8d5f56e4659c826bb7593923f5ca48728be4d60af6f51f9': dnsItemAbi,
   fc00a29dd0205bcdcc0d3ffb9ca38cc3c8c159ec60d8aa543240a92f10592d40: getgemsAuctionAbi,
   '6668872fa79705443ffd47523e8e9ea9f76ab99f9a0b59d27de8f81a1c27b9d4': getgemsAuctionV2Abi, // getgems auction v2
+
+  a7a2616a4d639a076c2f67e7cce0423fd2a1c2ee550ad651c1eda16ee13bcaca: telemintNftAbi,
+  '8278f4c5233de6fbedc969af519344a7a9bffc544856dba986a95c0bcf8571c9': getgemsSaleV2,
+
+  '7aa13161df5469acb9daab5ad3b9cb14a2c9754395e6355ccdb8dded6482092b': getgemsOffer, // offer
 }
