@@ -3,8 +3,8 @@ import fs from 'fs'
 import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client'
 
 async function main() {
-  const testnetConfigUrl = 'https://ton-blockchain.github.io/testnet-global.config.json'
-  const mainnetConfigUrl = 'https://ton-blockchain.github.io/global.config.json'
+  const testnetConfigUrl = 'https://ton.org/testnet-global.config.json'
+  const mainnetConfigUrl = 'https://ton.org/global.config.json'
 
   const testnetConfig = await getArchiveNodesFromConfig(testnetConfigUrl)
   const mainnetConfig = await getArchiveNodesFromConfig(mainnetConfigUrl)

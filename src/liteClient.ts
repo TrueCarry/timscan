@@ -103,6 +103,7 @@ async function initLiteClient() {
       host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
       // host: `ws://127.0.0.1:5999/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
       publicKey: Buffer.from(ls.id.key, 'base64'),
+      client: 'ws',
     })
   )
 

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { LITE_API_ENDPOINT } from './config.js'
 import { base64ToHex, hexToAddress, dechex } from '~/utils.js'
 import {
-  Address,
+  // Address,
   Cell,
   parseTransaction,
   RawAccountStorage,
@@ -18,6 +18,7 @@ import { PlainTransaction, Transaction, TransactionGeneric } from './models/Tran
 import BN from 'bn.js'
 import lc from './liteClient.js'
 import { RawTransactionDescriptionGeneric } from './ton/src/block/parse.js'
+import { Account, CurrencyCollection, Address } from 'ton-core'
 
 const db = new AppDb()
 
@@ -36,16 +37,12 @@ export const detectAddress = async function (address) {
 }
 
 export interface AccountState {
-  state: {
-    address: Address | null
-    storageStat: RawStorageInfo
-    storage: RawAccountStorage
-  } | null
+  state: Account | null
   lastTx: {
-    lt: string
-    hash: Buffer
+    lt: bigint
+    hash: bigint
   } | null
-  balance: RawCurrencyCollection
+  balance: CurrencyCollection
   raw: Buffer
   proof: Buffer
   block: tonNode_blockIdExt

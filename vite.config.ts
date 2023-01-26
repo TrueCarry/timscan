@@ -45,6 +45,9 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['bn.js'],
+    esbuildOptions: {
+      target: 'esnext',
+    },
   },
   define: {
     // 'process.env': {},

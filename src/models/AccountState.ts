@@ -61,14 +61,14 @@ export function AccountStateToPlain(
   let storage: PlainAccountStorage | null
   if (account.state) {
     storage = {
-      lastPaid: account.state.storageStat.lastPaid,
-      duePayment: account.state.storageStat.duePayment
-        ? account.state.storageStat.duePayment.toString(10)
+      lastPaid: account.state.storageStats.lastPaid,
+      duePayment: account.state.storageStats.duePayment
+        ? account.state.storageStats.duePayment.toString(10)
         : null,
       used: {
-        bits: account.state.storageStat.used.bits,
-        cells: account.state.storageStat.used.cells,
-        publicCells: account.state.storageStat.used.publicCells,
+        bits: Number(account.state.storageStats.used.bits),
+        cells: Number(account.state.storageStats.used.cells),
+        publicCells: Number(account.state.storageStats.used.publicCells),
       },
     }
     if (account.state.storage.state.type === 'uninit') {
@@ -88,7 +88,7 @@ export function AccountStateToPlain(
     } else {
       state = {
         type: 'frozen',
-        stateHash: account.state.storage.state.stateHash.toString('base64'),
+        stateHash: account.state.storage.state.stateHash.toString(),
       }
     }
   } else {
@@ -98,15 +98,15 @@ export function AccountStateToPlain(
 
   // Convert currencies
   const currencies: { [id: number]: number } = {}
-  if (account.balance.extraCurrencies) {
-    for (const ec of account.balance.extraCurrencies) {
-      currencies[ec[0]] = ec[1]
+  if (account.balance.other) {
+    for (const ec of account.balance.other) {
+      currencies[ec[0]] = Number(ec[1])
     }
   }
 
   return {
     // account: {
-    address: account.state?.address?.toString() || null,
+    address: account.state?.addr?.toString() || null,
     state,
     storage,
     balance: {
@@ -115,8 +115,8 @@ export function AccountStateToPlain(
     },
     lastTx: account.lastTx
       ? {
-          lt: account.lastTx.lt,
-          hash: account.lastTx.hash.toString('base64'),
+          lt: account.lastTx.lt.toString(),
+          hash: Buffer.from(account.lastTx.hash.toString(16), 'hex').toString('base64'),
         }
       : null,
 
