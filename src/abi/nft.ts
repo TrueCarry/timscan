@@ -1,4 +1,4 @@
-import { ContractAbi } from '.'
+import { ContractAbi } from './'
 
 const nftAbi: ContractAbi = {
   name: 'Standard Tonweb NFT',

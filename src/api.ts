@@ -1,15 +1,11 @@
 /* eslint-disable camelcase */
 import axios from 'axios'
 import { LITE_API_ENDPOINT } from './config.js'
-import { base64ToHex, hexToAddress, dechex } from '~/utils.js'
+import { hexToAddress, dechex } from '~/utils.js'
 import {
   // Address,
   Cell,
   parseTransaction,
-  RawAccountStorage,
-  RawCurrencyCollection,
-  RawStorageInfo,
-  RawTransactionDescription,
 } from '@/ton/src'
 import { tonNode_blockIdExt } from 'ton-lite-client/dist/schema'
 import AppDb from '~/db'
@@ -180,7 +176,6 @@ async function getExistingTransactions(
     .equals(rawAddress)
     .limit(allowMore ? 100 : limit)
     .and((tx) => {
-      // console.log('check lt', tx.lt)
       return new BN(tx.lt).lte(new BN(lt))
     })
     .reverse()
@@ -262,11 +257,13 @@ export const getTransaction = async function ({
   address,
   lt,
   hash,
+  searchFromHead,
 }: {
   address: string
   lt: string
-  hash: Buffer
-}) {
+  hash?: Buffer
+  searchFromHead?: boolean
+}): Promise<PlainTransaction | undefined> {
   try {
     const parsedAddress = Address.parse(address)
     const rawAddress = parsedAddress.toString()
@@ -275,6 +272,23 @@ export const getTransaction = async function ({
     console.log('exisintg???', existing)
     if (existing) {
       return existing
+    }
+
+    if (!hash || hash.length === 0) {
+      const last = await lc.getMasterchainInfo()
+      const lastTx = await lc.getAccountTransaction(parsedAddress, lt, last.last)
+      const txCell = Cell.fromBoc(lastTx.transaction)[0]
+      const parsedTx = parseTransaction(0, txCell.beginParse())
+      const tx = Object.freeze({
+        address: address.toString(),
+        lt,
+        hash: txCell.hash().toString('hex'),
+        data: Cell.fromBoc(lastTx.transaction)[0].toBoc().toString('base64'),
+        prevLt: parsedTx.prevTransaction.lt.toString(),
+        prevHash: parsedTx.prevTransaction.hash.toString('hex'),
+      })
+
+      return tx
     }
 
     console.log('await', 11, lt, hash)

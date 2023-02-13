@@ -54,6 +54,7 @@ export const abiMap: Record<string, ContractAbi> = {
 
   feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0: walletAbi,
   '84dafa449f98a6987789ba232358072bc0f76dc4524002a5d0918b9a75d2d599': walletAbi,
+  cbd73dced5b4e113234e5b3da1b933f6aad9205b5b8250964bee7a261507de6a: walletAbi, // getgems marketplace
   '9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812': highloadWalletAbi,
   '64bb2d4661b5f2dc1a83bf5cbbe09e92ac0b460a1b879a5519386fca4c348bca': nftCollectionAbi,
   ece528db075258917931e5c0d725fcedf9a0e349ba546244e609059813564a1a: nftCollectionAbi, // g-bots

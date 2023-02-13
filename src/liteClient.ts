@@ -2,6 +2,7 @@ import axios from 'axios'
 import { IS_TESTNET } from '@/config'
 import { LiteClient, LiteRoundRobinEngine, LiteSingleEngine } from 'ton-lite-client'
 import networkConfig from '@/networkConfig'
+import { delay } from './utils/callTonApi'
 
 const { tmpClient, endWait } = getTempClient()
 let liteClient: LiteClient = tmpClient
@@ -87,31 +88,42 @@ async function initLiteClient() {
   if (initCalled) {
     return
   }
-  // const configUrl = CONFIG_URL
-  // process.env.TONCONFIG_URL ||
-  // 'https://ton-blockchain.github.io/testnet-global.config.json'
+  initCalled = true
 
-  // const { data } = await axios(configUrl)c
   const data = IS_TESTNET ? networkConfig.testnetConfig : networkConfig.mainnetConfig
 
   const engines: LiteSingleEngine[] = []
-  // while (engines.length < 50) {
-  const ls = data.liteservers[Math.floor(Math.random() * data.liteservers.length)]
-  const pubkey = encodeURIComponent(ls.id.key)
-  engines.push(
-    new LiteSingleEngine({
+
+  while (true) {
+    const ls = data.liteservers[Math.floor(Math.random() * data.liteservers.length)]
+    const pubkey = encodeURIComponent(ls.id.key)
+    const singleEngine = new LiteSingleEngine({
       host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
-      // host: `ws://127.0.0.1:5999/?dest_host=${intToIP(ls.ip)}:${ls.port}`,
       publicKey: Buffer.from(ls.id.key, 'base64'),
       client: 'ws',
     })
-  )
+
+    const check = await checkEngine(singleEngine)
+    singleEngine.close()
+    if (!check) {
+      continue
+    }
+
+    engines.push(
+      new LiteSingleEngine({
+        host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
+        publicKey: Buffer.from(ls.id.key, 'base64'),
+        client: 'ws',
+      })
+    )
+    break
+  }
 
   const engine = new LiteRoundRobinEngine(engines)
   const client = new LiteClient({ engine })
 
   liteClient = client
-  initCalled = true
+
   endWait(client)
 
   setInterval(async () => {
@@ -131,3 +143,38 @@ function intToIP(int: number) {
 export default liteClient
 
 export { initLiteClient, liteClient }
+
+async function checkEngine(engine: LiteSingleEngine): Promise<boolean> {
+  console.log('check  engine')
+  let resolve, reject
+  const promise = new Promise<boolean>((_resolve, _reject) => {
+    resolve = _resolve
+    reject = _reject
+  })
+
+  const doChecks = async () => {
+    const client = new LiteClient({ engine })
+
+    let rejected = false
+    setTimeout(() => {
+      rejected = true
+      resolve(false)
+    }, 1000)
+
+    while (true) {
+      if (rejected) {
+        break
+      }
+      try {
+        await client.getCurrentTime()
+        resolve(true)
+        break
+      } catch (e) {
+        await delay(16)
+      }
+    }
+  }
+
+  doChecks()
+  return promise
+}

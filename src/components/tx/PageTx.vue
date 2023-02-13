@@ -6,15 +6,21 @@
 
     <div v-else-if="tx" class="mx-4 my-4 gap-4 flex flex-col lg:container lg:mx-auto lg:flex-row">
       <div class="w-full lg:w-1/2 space-y-4">
-        <TxInfo :tx="tx" :address="address" :lt="lt" :hash="hash" />
+        <TxInfo :tx="tx" :address="address" :lt="lt" :hash="txHash" />
         <TxPhaseInfo :tx="tx" />
       </div>
 
       <div class="w-full lg:w-1/2 space-y-4">
-        <TxMsg v-if="tx.inMessage" class="tx-page-msg-details" :tx="tx" :message="tx.inMessage" />
+        <TxMsg
+          v-if="tx.inMessage"
+          class="tx-page-msg-details"
+          :tx="tx"
+          :message="tx.inMessage"
+          :direction="'in'"
+        />
 
-        <div v-for="(msg, i) in tx?.outMessages" :key="i" class="tx-page-msg">
-          <TxMsg class="tx-page-msg-details" :tx="tx" :message="msg" />
+        <div v-for="(msg, i) in tx?.outMessages" :key="`${props.lt}:${i}`" class="tx-page-msg">
+          <TxMsg class="tx-page-msg-details" :tx="tx" :message="msg" :direction="'out'" />
         </div>
       </div>
     </div>
@@ -25,7 +31,7 @@
 import { getTransaction } from '@/api'
 import { Transaction } from '@/models/Transaction'
 import { Cell, parseTransaction } from '@/ton/src'
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import TxMsg from './TxMsg.vue'
 import TxInfo from './TxInfo.vue'
 import TxPhaseInfo from './TxPhaseInfo.vue'
@@ -64,15 +70,25 @@ async function loadData() {
   })
   console.log('got tx', apiTx)
   if (apiTx) {
+    const cellData = Cell.fromBoc(Buffer.from(apiTx.data, 'base64'))[0]
     const data = parseTransaction(
       0,
       Cell.fromBoc(Buffer.from(apiTx.data, 'base64'))[0].beginParse()
     )
     tx.value = { ...data, hash: apiTx.hash }
+    console.log('cell hash', cellData.hash().toString('base64'))
   } else {
     isError.value = true
   }
 }
 
+const txHash = computed(() => {
+  return Buffer.from(tx?.value?.hash || '', 'hex').toString('base64')
+})
+
+watch([props], () => {
+  console.log('page tx watch')
+  loadData()
+})
 loadData()
 </script>

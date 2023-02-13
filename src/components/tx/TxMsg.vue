@@ -45,7 +45,12 @@
 
       <tr>
         <td>Creation LT</td>
-        <td>{{ createdLt }}</td>
+        <td>
+          <router-link v-if="outTxLt" class="text-navy-300" :to="outTxLt">{{
+            createdLt
+          }}</router-link>
+          <div v-else>{{ createdLt }}</div>
+        </td>
       </tr>
       <tr>
         <td>Created At</td>
@@ -53,16 +58,22 @@
       </tr>
       <tr>
         <td>Body hash</td>
-        <td>{{ bodyHash }}</td>
+        <td>{{ bodyHash?.toString('hex') }}</td>
       </tr>
     </table>
   </section>
 </template>
 
 <script setup lang="ts">
+import { getTransactions } from '@/api'
 import { Transaction } from '@/models/Transaction'
 import { RawMessage } from '@/ton/src'
-import { computed, PropType, toRaw } from 'vue'
+import { computed, PropType, ref, toRaw, watch } from 'vue'
+import lc from '@/liteClient'
+import { loadTransaction, Address, Cell } from 'ton-core'
+import { tr } from 'timeago.js/esm/lang'
+import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
+import { bufferToBase64Url } from '@/utils/toBase64Url'
 
 const props = defineProps({
   tx: {
@@ -71,6 +82,11 @@ const props = defineProps({
   },
   message: {
     type: Object as PropType<RawMessage>,
+    required: true,
+  },
+
+  direction: {
+    type: String as PropType<'in' | 'out'>,
     required: true,
   },
 })
@@ -106,6 +122,142 @@ const createdAt = computed(() => {
   return props.message.info.type === 'external-in' ? 0 : props.message.info.createdAt
 })
 const bodyHash = computed(() => {
-  return props.message.body && toRaw(props.message.body).hash().toString('hex')
+  return props.message.body && toRaw(props.message.body).hash()
 })
+
+const outTxLt = ref('')
+const updateOutTxLt = async (message: RawMessage) => {
+  if (message.info.type !== 'internal' || !message.info.dest) {
+    return
+  }
+
+  const dest = message.info.dest
+  const masterInfo = await lc.getMasterchainInfo()
+  const addressInfo = await lc.getAccountState(Address.parse(dest.toString()), masterInfo.last)
+
+  if (!addressInfo.lastTx) {
+    return
+  }
+
+  let lastTxLt = addressInfo.lastTx.lt.toString()
+  let lastTxHash = bigIntToBuffer(addressInfo.lastTx.hash)
+
+  while (true) {
+    const transactions = await getTransactions(dest.toString(), lastTxLt, lastTxHash, 16, true)
+    if (transactions.length === 0) {
+      console.log('no txes break')
+      break
+    }
+
+    let found = false
+    for (const transaction of transactions) {
+      const txCell = Cell.fromBoc(Buffer.from(transaction.data, 'base64'))[0]
+      const data = loadTransaction(txCell.asSlice())
+      if (data.inMessage?.info.type !== 'internal') {
+        continue
+      }
+
+      if (String(data.inMessage?.info.createdLt) === createdLt.value.toString()) {
+        console.log('same message', data)
+        outTxLt.value = `/tx/${String(data.lt)}:${bufferToBase64Url(
+          txCell.hash()
+        )}:${message.info.dest?.toFriendly({
+          urlSafe: true,
+          bounceable: true,
+        })}`
+        found = true
+        break
+      }
+    }
+
+    const lastTx = transactions.at(-1)
+    if (lastTx) {
+      const lastTxData = loadTransaction(
+        Cell.fromBoc(Buffer.from(lastTx.data, 'base64'))[0].asSlice()
+      )
+      lastTxLt = lastTxData.prevTransactionLt.toString()
+      lastTxHash = bigIntToBuffer(lastTxData.prevTransactionHash)
+    }
+
+    if (found) {
+      break
+    }
+  }
+}
+
+const updateInTxLt = async (message: RawMessage) => {
+  if (message.info.type !== 'internal' || !message.info.src) {
+    console.log('no dfest')
+    return
+  }
+
+  const dest = message.info.src
+  const masterInfo = await lc.getMasterchainInfo()
+  const addressInfo = await lc.getAccountState(Address.parse(dest.toString()), masterInfo.last)
+
+  if (!addressInfo.lastTx) {
+    console.log('no last', addressInfo)
+    return
+  }
+
+  let lastTxLt = addressInfo.lastTx.lt.toString()
+  let lastTxHash = bigIntToBuffer(addressInfo.lastTx.hash)
+
+  while (true) {
+    const transactions = await getTransactions(dest.toString(), lastTxLt, lastTxHash, 100, true)
+    if (transactions.length === 0) {
+      break
+    }
+
+    let found = false
+    for (const transaction of transactions) {
+      const txCell = Cell.fromBoc(Buffer.from(transaction.data, 'base64'))[0]
+      const data = loadTransaction(txCell.asSlice())
+
+      for (const message of data.outMessages.values()) {
+        if (message.info.type !== 'internal') {
+          continue
+        }
+
+        if (String(message.info.createdLt) === createdLt.value.toString()) {
+          console.log('same message', data)
+          outTxLt.value = `/tx/${String(data.lt)}:${bufferToBase64Url(
+            txCell.hash()
+          )}:${message.info.src?.toString({
+            urlSafe: true,
+            bounceable: true,
+          })}`
+          found = true
+          break
+        }
+      }
+    }
+
+    const lastTx = transactions.at(-1)
+    if (lastTx) {
+      const lastTxData = loadTransaction(
+        Cell.fromBoc(Buffer.from(lastTx.data, 'base64'))[0].asSlice()
+      )
+      lastTxLt = lastTxData.prevTransactionLt.toString()
+      lastTxHash = bigIntToBuffer(lastTxData.prevTransactionHash)
+    }
+
+    if (found) {
+      break
+    }
+  }
+}
+watch([props], async () => {
+  outTxLt.value = ''
+  if (props.direction === 'out') {
+    updateOutTxLt(props.message)
+  } else {
+    updateInTxLt(props.message)
+  }
+})
+if (props.direction === 'out') {
+  updateOutTxLt(props.message)
+} else {
+  updateInTxLt(props.message)
+}
 </script>

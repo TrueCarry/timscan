@@ -1,4 +1,5 @@
 // import { RawAccountStorage, RawCurrencyCollection, RawStateInit, RawStorageInfo } from '@/ton/src'
+import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 import { AccountState } from '../api'
 
 export type CurrencyCollection = {
@@ -104,6 +105,10 @@ export function AccountStateToPlain(
     }
   }
 
+  // const lastTxHash = undefined
+  // if (account.lastTx) {
+  //   lastTxHash =
+  // }
   return {
     // account: {
     address: account.state?.addr?.toString() || null,
@@ -116,7 +121,7 @@ export function AccountStateToPlain(
     lastTx: account.lastTx
       ? {
           lt: account.lastTx.lt.toString(),
-          hash: Buffer.from(account.lastTx.hash.toString(16), 'hex').toString('base64'),
+          hash: bigIntToBuffer(account.lastTx.hash).toString('base64'),
         }
       : null,
 
