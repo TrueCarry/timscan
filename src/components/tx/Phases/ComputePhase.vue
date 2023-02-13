@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
 import { Transaction, TransactionGeneric } from '@/models/Transaction'
+import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 
 const props = defineProps({
   tx: {
@@ -45,19 +46,19 @@ const props = defineProps({
         </tr>
         <tr>
           <td>Gas Fees</td>
-          <td>{{ $ton(tx.description.computePhase.gasFees.toNumber()) }}</td>
+          <td>{{ $ton(tx.description.computePhase.gasFees) }}</td>
         </tr>
         <tr>
           <td>Gas Used</td>
-          <td>{{ $ton(tx.description.computePhase.gasUsed.toNumber()) }}</td>
+          <td>{{ $ton(tx.description.computePhase.gasUsed) }}</td>
         </tr>
         <tr>
           <td>Gas Limit</td>
-          <td>{{ $ton(tx.description.computePhase.gasLimit.toNumber()) }}</td>
+          <td>{{ $ton(tx.description.computePhase.gasLimit) }}</td>
         </tr>
         <tr>
           <td>Gas Credit</td>
-          <td>{{ $ton(tx.description.computePhase.gasCredit?.toNumber()) }}</td>
+          <td>{{ $ton(tx.description.computePhase.gasCredit) }}</td>
         </tr>
         <tr>
           <td>Mode</td>
@@ -77,11 +78,15 @@ const props = defineProps({
         </tr>
         <tr>
           <td>VM Init State Hash</td>
-          <td>{{ tx.description.computePhase.vmInitStateHash.toString('base64') }}</td>
+          <td>
+            {{ bigIntToBuffer(tx.description.computePhase.vmInitStateHash).toString('base64') }}
+          </td>
         </tr>
         <tr>
           <td>VM Final State Hash</td>
-          <td>{{ tx.description.computePhase.vmFinalStateHash.toString('base64') }}</td>
+          <td>
+            {{ bigIntToBuffer(tx.description.computePhase.vmFinalStateHash).toString('base64') }}
+          </td>
         </tr>
       </table>
     </section>

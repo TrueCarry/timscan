@@ -19,7 +19,11 @@
           :direction="'in'"
         />
 
-        <div v-for="(msg, i) in tx?.outMessages" :key="`${props.lt}:${i}`" class="tx-page-msg">
+        <div
+          v-for="(msg, i) in tx?.outMessages.values()"
+          :key="`${props.lt}:${i}`"
+          class="tx-page-msg"
+        >
           <TxMsg class="tx-page-msg-details" :tx="tx" :message="msg" :direction="'out'" />
         </div>
       </div>
@@ -30,7 +34,7 @@
 <script setup lang="ts">
 import { getTransaction } from '@/api'
 import { Transaction } from '@/models/Transaction'
-import { Cell, parseTransaction } from '@/ton/src'
+import { Cell, loadTransaction } from 'ton-core'
 import { computed, ref, watch } from 'vue'
 import TxMsg from './TxMsg.vue'
 import TxInfo from './TxInfo.vue'
@@ -71,10 +75,7 @@ async function loadData() {
   console.log('got tx', apiTx)
   if (apiTx) {
     const cellData = Cell.fromBoc(Buffer.from(apiTx.data, 'base64'))[0]
-    const data = parseTransaction(
-      0,
-      Cell.fromBoc(Buffer.from(apiTx.data, 'base64'))[0].beginParse()
-    )
+    const data = loadTransaction(Cell.fromBoc(Buffer.from(apiTx.data, 'base64'))[0].beginParse())
     tx.value = { ...data, hash: apiTx.hash }
     console.log('cell hash', cellData.hash().toString('base64'))
   } else {

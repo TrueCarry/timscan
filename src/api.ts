@@ -5,8 +5,12 @@ import { hexToAddress, dechex } from '~/utils.js'
 import {
   // Address,
   Cell,
-  parseTransaction,
-} from '@/ton/src'
+  loadTransaction,
+  Account,
+  CurrencyCollection,
+  Address,
+  TransactionDescriptionGeneric,
+} from 'ton-core'
 import { tonNode_blockIdExt } from 'ton-lite-client/dist/schema'
 import AppDb from '~/db'
 import { AccountPlainState, AccountStateToPlain } from './models/AccountState.js'
@@ -14,7 +18,7 @@ import { PlainTransaction, Transaction, TransactionGeneric } from './models/Tran
 import BN from 'bn.js'
 import lc from './liteClient.js'
 import { RawTransactionDescriptionGeneric } from './ton/src/block/parse.js'
-import { Account, CurrencyCollection, Address } from 'ton-core'
+import { bigIntToBuffer } from './utils/bigIntToBuffer'
 
 const db = new AppDb()
 
@@ -132,8 +136,8 @@ export const getTransactions = async function (
   ltToHash.set(lt, hash)
 
   const transactions = cell.map((c) => {
-    const tx = parseTransaction(address.workChain, c.beginParse())
-    ltToHash.set(tx.prevTransaction.lt.toString(), tx.prevTransaction.hash)
+    const tx = loadTransaction(c.beginParse())
+    ltToHash.set(tx.prevTransactionLt.toString(), bigIntToBuffer(tx.prevTransactionHash))
     return tx
   })
 
@@ -154,8 +158,8 @@ export const getTransactions = async function (
       lt,
       hash: hash.toString('hex'),
       data: cell[i].toBoc().toString('base64'),
-      prevLt: tx.prevTransaction.lt.toString(),
-      prevHash: tx.prevTransaction.hash.toString('hex'),
+      prevLt: tx.prevTransactionLt.toString(),
+      prevHash: bigIntToBuffer(tx.prevTransactionHash).toString('hex'),
     })
   })
 
@@ -218,8 +222,8 @@ async function getExistingTransactions(
   }
 
   const last = existing[existing.length - 1]
-  const tx = parseTransaction(0, Cell.fromBoc(Buffer.from(last.data, 'base64'))[0].beginParse())
-  if (tx.prevTransaction.lt.toNumber() === 0) {
+  const tx = loadTransaction(Cell.fromBoc(Buffer.from(last.data, 'base64'))[0].beginParse())
+  if (tx.prevTransactionLt === 0n) {
     return existing
   }
 
@@ -242,7 +246,7 @@ function txGenericInput(tx: TransactionGeneric) {
   console.log('generic')
 }
 
-function genericDescription(d: RawTransactionDescriptionGeneric) {
+function genericDescription(d: TransactionDescriptionGeneric) {
   console.log('ok')
 }
 
@@ -278,14 +282,14 @@ export const getTransaction = async function ({
       const last = await lc.getMasterchainInfo()
       const lastTx = await lc.getAccountTransaction(parsedAddress, lt, last.last)
       const txCell = Cell.fromBoc(lastTx.transaction)[0]
-      const parsedTx = parseTransaction(0, txCell.beginParse())
+      const parsedTx = loadTransaction(txCell.beginParse())
       const tx = Object.freeze({
         address: address.toString(),
         lt,
         hash: txCell.hash().toString('hex'),
         data: Cell.fromBoc(lastTx.transaction)[0].toBoc().toString('base64'),
-        prevLt: parsedTx.prevTransaction.lt.toString(),
-        prevHash: parsedTx.prevTransaction.hash.toString('hex'),
+        prevLt: parsedTx.prevTransactionLt.toString(),
+        prevHash: bigIntToBuffer(parsedTx.prevTransactionHash).toString('hex'),
       })
 
       return tx
@@ -295,14 +299,14 @@ export const getTransaction = async function ({
     const result = await lc.getAccountTransactions(parsedAddress, lt, hash, 1)
     console.log('result', result)
 
-    const parsedTx = parseTransaction(0, Cell.fromBoc(result.transactions)[0].beginParse())
+    const parsedTx = loadTransaction(Cell.fromBoc(result.transactions)[0].beginParse())
     const tx = Object.freeze({
       address: address.toString(),
       lt,
       hash: hash.toString('hex'),
       data: Cell.fromBoc(result.transactions)[0].toBoc().toString('base64'),
-      prevLt: parsedTx.prevTransaction.lt.toString(),
-      prevHash: parsedTx.prevTransaction.hash.toString('hex'),
+      prevLt: parsedTx.prevTransactionLt.toString(),
+      prevHash: bigIntToBuffer(parsedTx.prevTransactionHash).toString('hex'),
     })
 
     await db.transactions.put(tx)

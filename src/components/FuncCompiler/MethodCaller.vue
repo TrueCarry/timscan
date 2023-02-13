@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import { ContractAbi, InputArg, MethodAbi } from '@/abi'
-import { TVMStackEntry } from '@/ton-contract-executor/src'
-import { Cell, Address } from '@/ton/src'
+// import { TVMStackEntry } from '@/ton-contract-executor/src'
+import { Cell, Address } from 'ton-core'
 import { CompileResult } from '@ton.org/func-js'
 import { computed, Prop, PropType, ref } from 'vue'
 import MethodWrapper from '../address/MethodWrapper.vue'
 
-const exampleMethod: MethodAbi = {
-  input: [
-    {
-      name: 'a',
-      type: 'int',
-    },
-    {
-      name: 'b',
-      type: 'int',
-    },
-  ],
-  output: [
-    {
-      name: 'int',
-      type: 'int',
-    },
-  ],
-}
+// const exampleMethod: MethodAbi = {
+//   input: [
+//     {
+//       name: 'a',
+//       type: 'int',
+//     },
+//     {
+//       name: 'b',
+//       type: 'int',
+//     },
+//   ],
+//   output: [
+//     {
+//       name: 'int',
+//       type: 'int',
+//     },
+//   ],
+// }
 
 const showModal = ref(false)
 const showAddInputModal = ref(false)
@@ -34,7 +34,7 @@ const newInputName = ref('')
 const abi = ref<ContractAbi>({
   name: 'playground',
   methods: {
-    main: { ...exampleMethod },
+    // main: { ...exampleMethod },
   },
 })
 const props = defineProps({
@@ -79,7 +79,7 @@ function addInput(method: string) {
 function addInputType() {
   const newInput: InputArg = {
     name: newMethodName.value,
-    type: newInputType.value as unknown as TVMStackEntry['type'], // 'int',
+    // type: newInputType.value as unknown as TVMStackEntry['type'], // 'int',
   }
   abi.value.methods[newInputName.value].input.push(newInput)
 }
@@ -87,7 +87,7 @@ function addInputType() {
 function addOutput(method: string) {
   const newInput: InputArg = {
     name: 'x',
-    type: 'int',
+    // type: 'int',
   }
   abi.value.methods[method].output.push(newInput)
 }

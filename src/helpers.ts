@@ -11,14 +11,14 @@ const currencyFormatter = new Intl.NumberFormat('en', {
 })
 
 export const formatTons = function formatNanoTonsLimitNumberLength(
-  value: number | null | undefined,
+  value: number | bigint | null | undefined,
   round = true
 ) {
   if (!value) {
     return 0
   }
 
-  return feeFormatter.format(value / MULTIPLIER)
+  return feeFormatter.format(Number(value) / MULTIPLIER)
 }
 
 export const formatFiat = function formatFiatValue(value) {

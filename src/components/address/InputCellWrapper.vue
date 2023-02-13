@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { InputArg, OutputArg, CellContent } from '@/abi'
-import { Cell } from '@/ton/src'
+import { Cell } from 'ton-core'
 import BN from 'bn.js'
 import { watch, PropType, ref, toRaw, reactive } from 'vue'
 

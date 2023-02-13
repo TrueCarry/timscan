@@ -1,4 +1,4 @@
-// import { RawAccountStorage, RawCurrencyCollection, RawStateInit, RawStorageInfo } from '@/ton/src'
+// import { RawAccountStorage, RawCurrencyCollection, RawStateInit, RawStorageInfo } from 'ton-core'
 import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 import { AccountState } from '../api'
 

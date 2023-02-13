@@ -56,7 +56,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { Address, Cell } from '@/ton/src'
+import { Address, Cell } from 'ton-core'
 import MethodWrapper from './MethodWrapper.vue'
 import { useAddressStore } from '@/stores/address'
 

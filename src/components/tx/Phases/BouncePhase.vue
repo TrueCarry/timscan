@@ -17,6 +17,7 @@ const props = defineProps({
     </div>
 
     <section
+      v-if="tx.description.type === 'generic'"
       style="overflow-x: auto; width: 100%; scrollbar-width: none"
       class="tx-page-msg-details"
     >
@@ -27,23 +28,30 @@ const props = defineProps({
         </tr>
 
         <template v-if="tx.description.bouncePhase.type !== 'negative-funds'">
-          <tr>
-            <td>Forward Fees</td>
-            <td>{{ $ton(tx.description.bouncePhase.fwdFees.toNumber()) }}</td>
-          </tr>
-
           <template v-if="tx.description.bouncePhase?.type === 'ok'">
             <tr>
               <td>Message fees</td>
-              <td>{{ $ton(tx.description.bouncePhase.msgFees.toNumber()) }}</td>
+              <td>{{ $ton(tx.description.bouncePhase.messageFees) }}</td>
+            </tr>
+
+            <tr>
+              <td>Forward Fees</td>
+              <td>{{ $ton(tx.description.bouncePhase.forwardFees) }}</td>
+            </tr>
+          </template>
+
+          <template v-if="tx.description.bouncePhase?.type === 'no-funds'">
+            <tr>
+              <td>Required Forward Fees</td>
+              <td>{{ $ton(tx.description.bouncePhase.requiredForwardFees) }}</td>
             </tr>
           </template>
 
           <tr>
             <td>Message size</td>
-            <td v-if="tx.description.bouncePhase.msgSize">
-              cells: {{ tx.description.bouncePhase.msgSize.cells }}, bits:
-              {{ tx.description.bouncePhase.msgSize.bits }}
+            <td v-if="tx.description.bouncePhase.messageSize">
+              cells: {{ tx.description.bouncePhase.messageSize.cells }}, bits:
+              {{ tx.description.bouncePhase.messageSize.bits }}
             </td>
             <td v-else>cells: 0, bits: 0</td>
           </tr>

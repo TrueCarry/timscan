@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Transaction } from '@/models/Transaction'
-import { Address } from '@/ton/src'
+import { Address } from 'ton-core'
 import { computed, PropType, ref } from 'vue'
 import MessageRow from './MessageRow.vue'
 import MultiOutputRow from './MultiOutputRow.vue'

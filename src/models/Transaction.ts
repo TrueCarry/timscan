@@ -1,5 +1,9 @@
-import { RawTransaction } from '@/ton/src'
-import { RawTransactionDescriptionGeneric } from '@/ton/src/block/parse'
+import {
+  Transaction as CoreTransaction,
+  TransactionDescription,
+  TransactionDescriptionGeneric,
+} from 'ton-core'
+// import { RawTransactionDescriptionGeneric } from '@/ton/src/block/parse'
 
 // export type PlainTransaction = {
 //   address: Address
@@ -30,10 +34,10 @@ export interface PlainTransaction {
   prevHash: string
 }
 
-export type Transaction = RawTransaction & {
+export type Transaction = CoreTransaction & {
   hash: string
 }
 
 export type TransactionGeneric = Transaction & {
-  description: RawTransactionDescriptionGeneric
+  description: TransactionDescriptionGeneric
 }

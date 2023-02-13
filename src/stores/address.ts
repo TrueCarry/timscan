@@ -4,10 +4,11 @@ import AppDb from '@/db'
 import { AccountPlainState } from '@/models/AccountState'
 import { SearchHistory } from '@/models/SearchHistory'
 import { Transaction } from '@/models/Transaction'
-import { Cell, parseTransaction } from '@/ton/src'
+import { Cell, loadTransaction } from 'ton-core'
 import { callTonApi } from '@/utils/callTonApi'
 import { state } from 'fp-ts'
 import { defineStore } from 'pinia'
+import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 
 const db = new AppDb()
 
@@ -104,8 +105,8 @@ export const useAddressStore = defineStore('address', {
         checkForNew = true
       } else {
         const lastTx = this.transactions[this.transactions.length - 1]
-        lt = lastTx.prevTransaction.lt.toString()
-        hash = lastTx.prevTransaction.hash
+        lt = lastTx.prevTransactionLt.toString()
+        hash = bigIntToBuffer(lastTx.prevTransactionHash)
       }
 
       const limit = 50
@@ -127,8 +128,7 @@ export const useAddressStore = defineStore('address', {
       const addTx = () => {
         const tx = plainTxes.shift()
         if (tx) {
-          const parsed = parseTransaction(
-            0,
+          const parsed = loadTransaction(
             Cell.fromBoc(Buffer.from(tx.data, 'base64'))[0].beginParse()
           )
 
@@ -161,10 +161,7 @@ export const useAddressStore = defineStore('address', {
               continue
             }
 
-            const parsed = parseTransaction(
-              0,
-              Cell.fromBoc(Buffer.from(tx.data, 'base64'))[0].beginParse()
-            )
+            const parsed = loadTransaction(Cell.fromBase64(tx.data).asSlice())
 
             this.transactions.unshift({ ...parsed, hash: tx.hash })
           }

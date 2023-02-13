@@ -17,19 +17,19 @@
       </tr>
       <tr>
         <td>Value</td>
-        <td>{{ $ton(amounts?.value?.coins.toNumber(), false) }} TON</td>
+        <td>{{ $ton(amounts?.value?.coins, false) }} TON</td>
       </tr>
       <tr v-if="amounts?.fwdFee">
         <td>Forward fee</td>
-        <td>{{ $ton(amounts?.fwdFee?.toNumber()) }} TON</td>
+        <td>{{ $ton(amounts?.fwdFee) }} TON</td>
       </tr>
       <tr v-if="amounts?.ihrFee">
         <td>IHR fee</td>
-        <td>{{ $ton(amounts?.ihrFee?.toNumber()) }} TON</td>
+        <td>{{ $ton(amounts?.ihrFee) }} TON</td>
       </tr>
       <tr v-if="amounts?.importFee">
         <td>Import fee</td>
-        <td>{{ $ton(amounts?.importFee?.toNumber()) }} TON</td>
+        <td>{{ $ton(amounts?.importFee) }} TON</td>
       </tr>
 
       <template v-if="message.info.type === 'internal'">
@@ -67,10 +67,9 @@
 <script setup lang="ts">
 import { getTransactions } from '@/api'
 import { Transaction } from '@/models/Transaction'
-import { RawMessage } from '@/ton/src'
+import { Message, loadTransaction, Address, Cell } from 'ton-core'
 import { computed, PropType, ref, toRaw, watch } from 'vue'
 import lc from '@/liteClient'
-import { loadTransaction, Address, Cell } from 'ton-core'
 import { tr } from 'timeago.js/esm/lang'
 import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 import { bufferToBase64Url } from '@/utils/toBase64Url'
@@ -81,7 +80,7 @@ const props = defineProps({
     required: true,
   },
   message: {
-    type: Object as PropType<RawMessage>,
+    type: Object as PropType<Message>,
     required: true,
   },
 
@@ -92,10 +91,10 @@ const props = defineProps({
 })
 
 const source = computed(() => {
-  return props.message.info.src?.toFriendly({ bounceable: true, urlSafe: true })
+  return props.message.info.src?.toString({ bounceable: true, urlSafe: true })
 })
 const destination = computed(() => {
-  return props.message.info.dest?.toFriendly({ bounceable: true, urlSafe: true })
+  return props.message.info.dest?.toString({ bounceable: true, urlSafe: true })
 })
 const amounts = computed(() => {
   switch (props.message.info.type) {
@@ -109,7 +108,7 @@ const amounts = computed(() => {
       return {
         value: props.message.info.value,
         ihrFee: props.message.info.ihrFee,
-        fwdFee: props.message.info.fwdFee,
+        fwdFee: props.message.info.forwardFee,
       }
     default:
       return null
@@ -126,7 +125,7 @@ const bodyHash = computed(() => {
 })
 
 const outTxLt = ref('')
-const updateOutTxLt = async (message: RawMessage) => {
+const updateOutTxLt = async (message: Message) => {
   if (message.info.type !== 'internal' || !message.info.dest) {
     return
   }
@@ -161,7 +160,7 @@ const updateOutTxLt = async (message: RawMessage) => {
         console.log('same message', data)
         outTxLt.value = `/tx/${String(data.lt)}:${bufferToBase64Url(
           txCell.hash()
-        )}:${message.info.dest?.toFriendly({
+        )}:${message.info.dest?.toString({
           urlSafe: true,
           bounceable: true,
         })}`
@@ -185,7 +184,7 @@ const updateOutTxLt = async (message: RawMessage) => {
   }
 }
 
-const updateInTxLt = async (message: RawMessage) => {
+const updateInTxLt = async (message: Message) => {
   if (message.info.type !== 'internal' || !message.info.src) {
     console.log('no dfest')
     return

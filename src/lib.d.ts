@@ -17,6 +17,6 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $store: Store
     $lc: LiteClient
-    $ton: (value: number | null | undefined, round?: boolean) => string
+    $ton: (value: number | bigint | null | undefined, round?: boolean) => string
   }
 }

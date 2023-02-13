@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { RawMessage } from '@/ton/src'
+import { Message } from 'ton-core'
 import { Transaction } from '@/models/Transaction'
 import BN from 'bn.js'
 import { computed, PropType, ref } from 'vue'
-import IconLink from '@/assets/images/icon-link.svg'
-import IconToncoin from '@/assets/images/icon-toncoin.svg'
+import IconLink from '@/assets/images/icon-link.svg?component'
+import IconToncoin from '@/assets/images/icon-toncoin.svg?component'
+import { bigIntToAddress } from '@/utils/bigIntToAddress'
 
 type SourceFrom = 'in' | 'out'
 
@@ -15,7 +16,7 @@ const props = defineProps({
     // default: () => undefined
   },
   message: {
-    type: Object as PropType<RawMessage>,
+    type: Object as PropType<Message>,
     required: true,
   },
   source: {
@@ -34,27 +35,27 @@ const isOut = computed(() => {
 })
 
 const from = computed(() => {
-  return props.message.info.src?.toFriendly({ urlSafe: true, bounceable: true })
+  return props.message?.info?.src?.toString({ urlSafe: true, bounceable: true })
 })
 const to = computed(() => {
-  return props.message.info.dest?.toFriendly({ urlSafe: true, bounceable: true })
+  return props.message?.info?.dest?.toString({ urlSafe: true, bounceable: true })
 })
 
 const isExternal = computed(() => {
-  return props.message.info.type === 'external-in' || props.message.info.type === 'external-out'
+  return props.message?.info?.type === 'external-in' || props.message?.info?.type === 'external-out'
 })
 
 const amount = computed(() => {
-  if (props.message.info.type === 'internal') {
+  if (props.message?.info?.type === 'internal') {
     return props.message.info.value.coins
   }
-  return new BN(0)
+  return 0n
 })
 
 const routerUrl = computed(() => {
   return `/tx/${props.tx.lt.toString()}:${fromBase64(
     Buffer.from(props.tx.hash, 'hex').toString('base64')
-  )}:${props.tx.address.toFriendly({ urlSafe: true, bounceable: true })}`
+  )}:${bigIntToAddress(0, props.tx.address).toString({ urlSafe: true, bounceable: true })}`
 })
 
 function fromBase64(base64: string): string {
@@ -74,7 +75,7 @@ const isVisible = ref(false)
       </td>
       <td>
         <div class="mx-4">
-          <ui-timeago :timestamp="tx.time * 1000 || 0" class="whitespace-nowrap" />
+          <ui-timeago :timestamp="tx.now * 1000 || 0" class="whitespace-nowrap" />
         </div>
       </td>
       <td>
@@ -108,7 +109,7 @@ const isVisible = ref(false)
       </td>
       <td>
         <div v-if="amount" class="whitespace-nowrap ml-4 flex items-center justify-end">
-          {{ $ton(amount.toNumber()) }} <IconToncoin class="w-4 ml-1" />
+          {{ $ton(amount) }} <IconToncoin class="w-4 ml-1" />
 
           <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
         </div>

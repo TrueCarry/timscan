@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
-import { Transaction } from '@/models/Transaction'
+import { Transaction, TransactionGeneric } from '@/models/Transaction'
+import { TransactionDescriptionStorage } from 'ton-core'
 
 const props = defineProps({
   tx: {
-    type: Object as PropType<Transaction>,
+    type: Object as PropType<TransactionDescriptionStorage>,
     required: true,
   },
 })
@@ -23,15 +24,15 @@ const props = defineProps({
       <table style="width: 100%">
         <tr>
           <td>Storage Fees Collected</td>
-          <td>{{ tx.description.storagePhase?.storageFeesCollected }}</td>
+          <td>{{ tx.storagePhase?.storageFeesCollected }}</td>
         </tr>
         <tr>
           <td>Storage Fees Due</td>
-          <td>{{ tx.description.storagePhase?.storageFeesDue?.toNumber() || 0 }}</td>
+          <td>{{ Number(tx.storagePhase?.storageFeesDue) || 0 }}</td>
         </tr>
         <tr>
           <td>Status Change</td>
-          <td>{{ tx.description.storagePhase?.statusChange }}</td>
+          <td>{{ tx.storagePhase?.statusChange }}</td>
         </tr>
       </table>
     </section>

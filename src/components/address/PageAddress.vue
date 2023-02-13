@@ -194,7 +194,7 @@ import { LiteClient } from 'ton-lite-client'
 import TransactionsList from './TransactionsList.vue'
 import IconRefresh from '@/assets/images/icon-refresh.svg?component'
 import { Transaction } from '@/models/Transaction'
-import { Address } from '@/ton/src'
+import { Address } from 'ton-core'
 import { useAddressStore } from '@/stores/address'
 
 import IconContract from '@/assets/images/icon-contract.svg'

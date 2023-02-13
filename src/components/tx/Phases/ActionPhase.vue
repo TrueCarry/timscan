@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
 import { Transaction, TransactionGeneric } from '@/models/Transaction'
+import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 
 const props = defineProps({
   tx: {
@@ -39,11 +40,11 @@ const props = defineProps({
         </tr>
         <tr>
           <td>Total Forward Fees</td>
-          <td>{{ $ton(tx.description.actionPhase?.totalFwdFees?.toNumber()) }}</td>
+          <td>{{ $ton(tx.description.actionPhase?.totalFwdFees) }}</td>
         </tr>
         <tr>
           <td>Total Action Fees</td>
-          <td>{{ $ton(tx.description.actionPhase?.totalActionFees?.toNumber()) }}</td>
+          <td>{{ $ton(tx.description.actionPhase?.totalActionFees) }}</td>
         </tr>
         <tr>
           <td>Result Code</td>
@@ -59,7 +60,7 @@ const props = defineProps({
         </tr>
         <tr>
           <td>Special Actions</td>
-          <td>{{ tx.description.actionPhase?.specialActions }}</td>
+          <td>{{ tx.description.actionPhase?.specActions }}</td>
         </tr>
         <tr>
           <td>Skipped Actions</td>
@@ -71,15 +72,17 @@ const props = defineProps({
         </tr>
         <tr>
           <td>Total Messages Size</td>
-          <td v-if="tx.description.actionPhase?.totalMessageSizes">
-            cells: {{ tx.description.actionPhase?.totalMessageSizes.cells }}, bits:
-            {{ tx.description.actionPhase?.totalMessageSizes.bits }}
+          <td v-if="tx.description.actionPhase?.totalMessageSize">
+            cells: {{ tx.description.actionPhase?.totalMessageSize.cells }}, bits:
+            {{ tx.description.actionPhase?.totalMessageSize.bits }}
           </td>
           <td v-else>cells: 0, bits: 0</td>
         </tr>
         <tr>
           <td>Action List Hash</td>
-          <td>{{ tx.description.actionPhase?.actionListHash.toString('base64') }}</td>
+          <td>
+            {{ bigIntToBuffer(tx.description.actionPhase?.actionListHash)?.toString('base64') }}
+          </td>
         </tr>
       </table>
     </section>

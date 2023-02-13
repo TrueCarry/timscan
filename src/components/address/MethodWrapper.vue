@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MethodAbi, OutputResult } from '@/abi'
-import { SmartContract, TVMStack } from '@/ton-contract-executor/src'
-import { Address, Cell } from '@/ton/src'
+// import { SmartContract, TVMStack } from '@/ton-contract-executor/src'
+import { Address, Cell } from 'ton-core'
 import BN from 'bn.js'
 import { watch, computed, PropType, ref, toRaw, reactive } from 'vue'
 import ValueWrapper from './ValueWrapper'
@@ -42,85 +42,85 @@ const abiString = computed(() => JSON.stringify(props.abi))
 const cellString = computed(() => props.codeCell.toString())
 // const result = computed(() => )
 const result = ref<OutputResult[] | null | undefined>(null)
-callMethod(props.name, props.abi)
-watch([abiString, inputs], async () => {
-  console.log('inputs called')
-  return updateResult()
-})
-watch([props.codeCell, cellString], async () => {
-  console.log('codeCell called', cellString)
-  return updateResult()
-})
-updateResult()
+// callMethod(props.name, props.abi)
+// watch([abiString, inputs], async () => {
+//   console.log('inputs called')
+//   return updateResult()
+// })
+// watch([props.codeCell, cellString], async () => {
+//   console.log('codeCell called', cellString)
+//   return updateResult()
+// })
+// updateResult()
 
-async function updateResult() {
-  const res = await callMethod(props.name, props.abi)
-  console.log('got res', res)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (res) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: Type instantiation is excessively deep and possibly infinite.
-    result.value = res
-  } else {
-    result.value = null
-  }
-}
+// async function updateResult() {
+//   const res = await callMethod(props.name, props.abi)
+//   console.log('got res', res)
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   if (res) {
+//     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//     // @ts-ignore: Type instantiation is excessively deep and possibly infinite.
+//     result.value = res
+//   } else {
+//     result.value = null
+//   }
+// }
 
-async function callMethod(name: string, info: MethodAbi) {
-  try {
-    if (!props.codeCell || !props.dataCell) {
-      return
-    }
-    const wallet = await SmartContract.fromCell(toRaw<Cell>(props.codeCell), toRaw(props.dataCell))
-    wallet.setC7Config({
-      myself: props.address,
-    })
+// async function callMethod(name: string, info: MethodAbi) {
+//   try {
+//     if (!props.codeCell || !props.dataCell) {
+//       return
+//     }
+//     const wallet = await SmartContract.fromCell(toRaw<Cell>(props.codeCell), toRaw(props.dataCell))
+//     wallet.setC7Config({
+//       myself: props.address,
+//     })
 
-    const args: TVMStack = []
-    let i = 0
-    for (const input of props.abi.input) {
-      const value = inputs[i] || 0
-      args.push({
-        type: input.type,
-        value: value.toString(),
-      })
-      i++
-    }
+//     const args: TVMStack = []
+//     let i = 0
+//     for (const input of props.abi.input) {
+//       const value = inputs[i] || 0
+//       args.push({
+//         type: input.type,
+//         value: value.toString(),
+//       })
+//       i++
+//     }
 
-    console.log('args', args)
-    const res = await wallet.invokeGetMethod(name, args)
+//     console.log('args', args)
+//     const res = await wallet.invokeGetMethod(name, args)
 
-    if (res.type !== 'success') {
-      console.log('not type', res.type)
-      console.log(res)
-      return null
-    }
+//     if (res.type !== 'success') {
+//       console.log('not type', res.type)
+//       console.log(res)
+//       return null
+//     }
 
-    if (res.exit_code !== 0) {
-      return null
-    }
+//     if (res.exit_code !== 0) {
+//       return null
+//     }
 
-    const values: OutputResult[] = []
-    // console.log(res.results], res)
-    for (let i = 0; i < info.output.length; i++) {
-      console.log(i)
-      switch (info.output[i].type) {
-        default: {
-          values.push({
-            ...info.output[i],
-            value: res.result[i],
-          })
-        }
-      }
-    }
+//     const values: OutputResult[] = []
+//     // console.log(res.results], res)
+//     for (let i = 0; i < info.output.length; i++) {
+//       console.log(i)
+//       switch (info.output[i].type) {
+//         default: {
+//           values.push({
+//             ...info.output[i],
+//             value: res.result[i],
+//           })
+//         }
+//       }
+//     }
 
-    console.log('values', values, res)
-    return values
-  } catch (e) {
-    console.log('e', e)
-    return null
-  }
-}
+//     console.log('values', values, res)
+//     return values
+//   } catch (e) {
+//     console.log('e', e)
+//     return null
+//   }
+// }
 
 /**
  * Verify and convert domain
@@ -194,7 +194,7 @@ function domainToBytes(domain: string) {
 
       <div v-for="(output, i) in result" :key="i" class="flex-col py-2">
         <template v-if="output">
-          <div class="text-secondary">{{ output.name }} ({{ output.type }})</div>
+          <!-- <div class="text-secondary">{{ output.name }} ({{ output.type }})</div> -->
           <div class="card-row__value"><ValueWrapper :info="output" /></div>
         </template>
       </div>

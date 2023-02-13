@@ -1,7 +1,7 @@
 import { nftAbi } from './nft'
 import { walletAbi } from './wallet'
 import { highloadWalletAbi } from './highloadWallet'
-import { NormalizedStackEntry, TVMStackEntry } from '@/ton-contract-executor/src'
+// import { NormalizedStackEntry, TVMStackEntry } from '@/ton-contract-executor/src'
 import { nftCollectionAbi } from './nftCollectionEditable'
 import { nftSaleAbi } from './nftSale'
 import { nftEditableAbi } from './nftEditable'
@@ -25,13 +25,13 @@ export interface MethodAbi {
 
 export interface InputArg {
   name: string
-  type: TVMStackEntry['type']
+  // type: TVMStackEntry['type']
   content?: CellContent[]
 }
 
 export interface OutputArg {
   name: string
-  type: TVMStackEntry['type'] | string
+  // type: TVMStackEntry['type'] | string
   content?: CellContent[]
 }
 
@@ -43,7 +43,8 @@ export interface CellContent {
 }
 
 export interface OutputResult extends OutputArg {
-  value: NormalizedStackEntry
+  value: any
+  // value: NormalizedStackEntry
 }
 
 export const abiMap: Record<string, ContractAbi> = {

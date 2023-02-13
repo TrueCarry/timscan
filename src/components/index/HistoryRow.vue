@@ -2,9 +2,9 @@
 import { abiMap } from '@/abi'
 import { getLocalAccountInfo } from '@/api'
 import { SearchHistory } from '@/models/SearchHistory'
-import { Address, Cell } from '@/ton/src'
+import { Address, Cell } from 'ton-core'
 import { PropType } from 'vue'
-import IconToncoin from '@/assets/images/icon-toncoin.svg'
+import IconToncoin from '@/assets/images/icon-toncoin.svg?component'
 
 const props = defineProps({
   item: { type: Object as PropType<SearchHistory>, required: true },
@@ -30,7 +30,7 @@ const abi = abiMap[codeHash || '']
 <template>
   <div class="grid grid-cols-[minmax(0,_2fr)_120px_minmax(0,_1fr)_120px] gap-4">
     <div class="flex-1 w-full">
-      <UiAddress :address="Address.parse(item.address).toFriendly()" />
+      <UiAddress :address="Address.parse(item.address).toString()" />
     </div>
 
     <!-- Balance Info -->
@@ -39,7 +39,7 @@ const abi = abiMap[codeHash || '']
     </div>
 
     <!-- ContractInfo -->
-    <div class="whitespace-nowrap overflow-hidden overflow-ellipsis">{{ abi.name }}</div>
+    <div class="whitespace-nowrap overflow-hidden overflow-ellipsis">{{ abi?.name }}</div>
     <div class="whitespace-nowrap overflow-hidden overflow-ellipsis">
       <UiTimeago :timestamp="item.ts" class="ml-4" />
     </div>
