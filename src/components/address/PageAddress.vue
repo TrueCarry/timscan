@@ -4,16 +4,11 @@
             <div class="alert" v-text="$t('error.invalid_address')"/>
         </section> -->
 
-    <section class="mx-4 mt-4 gap-4 flex flex-col lg:container lg:mx-auto lg:flex-row">
-      <div class="flex flex-col bg-foreground shadow rounded p-4 h-min lg:w-1/3 lg:sticky top-4">
-        <div class="flex flex-col py-2">
+    <section class="mx-4 mt-4 gap-4 flex flex-col lg:container lg:mx-auto">
+      <div class="flex flex-row flex-wrap bg-foreground shadow rounded p-4 h-min top-4">
+        <div class="flex flex-col py-2 w-1/3">
           <div class="flex text-secondary" v-text="$t('address.info.address')" />
           <div class="flex items-center cursor-pointer text-xs">
-            <!-- <span
-              v-if="addressMeta.isScam"
-              class="card-main-address-badge card-main-address-badge--scam"
-              >SCAM</span
-            > -->
             <ui-copy-button
               show-button
               class="card-main-address flex items-center"
@@ -38,7 +33,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col py-2">
+        <div class="flex flex-col py-2 w-1/3">
           <div class="flex text-secondary" v-text="$t('address.info.balance')" />
           <div v-if="balance" class="flex">
             {{ $ton(parseInt(balance)) }}
@@ -53,7 +48,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col py-2">
+        <div class="flex flex-col py-2 w-1/3">
           <div class="flex text-secondary" v-text="$t('address.info.last_activity')" />
           <div class="flex">
             <!-- <span v-if="lastActivity === undefined" class="skeleton">99 minutes ago</span> -->
@@ -62,7 +57,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col py-2">
+        <div class="flex flex-col py-2 w-1/3">
           <div class="flex text-secondary" v-text="$t('address.info.state')" />
           <div class="flex">
             <span
@@ -85,7 +80,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col py-2">
+        <div class="flex flex-col py-2 w-1/3">
           <div class="flex text-secondary" v-text="$t('address.info.contract_type')" />
 
           <div class="flex">
@@ -103,7 +98,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col py-2">
+        <div class="flex flex-col py-2 w-1/3">
           <div class="flex text-secondary" v-text="$t('address.info.last_update')" />
           <div class="flex items-center cursor-pointer" @click="loadData(true, false)">
             <ui-timeago :timestamp="wallet?.lastUpdated || 0" />
@@ -114,7 +109,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col mb-8 lg:w-2/3">
+      <div class="flex flex-col mb-8">
         <nav class="flex bg-foreground shadow rounded p-4 gap-4">
           <div
             class="flex cursor-pointer gap-2 p-2 rounded"
@@ -197,9 +192,9 @@ import { Transaction } from '@/models/Transaction'
 import { Address } from 'ton-core'
 import { useAddressStore } from '@/stores/address'
 
-import IconContract from '@/assets/images/icon-contract.svg'
-import IconTransactions from '@/assets/images/icon-transactions.svg'
-import IconToncoin from '@/assets/images/icon-toncoin.svg'
+import IconContract from '@/assets/images/icon-contract.svg?component'
+import IconTransactions from '@/assets/images/icon-transactions.svg?component'
+import IconToncoin from '@/assets/images/icon-toncoin.svg?component'
 
 const addressStore = useAddressStore()
 
@@ -210,7 +205,7 @@ const props = defineProps({
   },
 })
 
-const lastTxTime = computed(() => addressStore.transactions[0]?.time)
+const lastTxTime = computed(() => addressStore.transactions[0]?.now)
 
 const wallet = computed(() => addressStore.wallet)
 

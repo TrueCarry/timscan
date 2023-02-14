@@ -104,6 +104,9 @@ export const useAddressStore = defineStore('address', {
         hash = Buffer.from(this.wallet?.lastTx?.hash || '', 'base64')
         checkForNew = true
       } else {
+        if (this.transactions.length === 0) {
+          return
+        }
         const lastTx = this.transactions[this.transactions.length - 1]
         lt = lastTx.prevTransactionLt.toString()
         hash = bigIntToBuffer(lastTx.prevTransactionHash)

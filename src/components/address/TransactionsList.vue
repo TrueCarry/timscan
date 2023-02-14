@@ -8,6 +8,7 @@ import { Address } from 'ton-core'
 import { address } from '@/ton/src/traits/trait_address'
 import { bigIntToAddress } from '@/utils/bigIntToAddress'
 // import { useStore } from 'vuex'
+import InfiniteLoading from 'v3-infinite-loading'
 
 // const store = useStore()
 const addressStore = useAddressStore()
@@ -95,6 +96,12 @@ updateTransactions()
           <th width="180">
             <div class="text-right" style="" v-text="$t('address.tx_table.value')" />
           </th>
+          <th width="180">
+            <div class="text-right" style="" v-text="'Message'" />
+          </th>
+          <th width="80">
+            <div class="text-right" style="" v-text="'Exit'" />
+          </th>
         </tr>
       </thead>
 
@@ -108,5 +115,7 @@ updateTransactions()
     <div v-if="hasMore" class="mugen-scroll">
       <div class="mugen-scroll__button" @click="loadMore">Load more</div>
     </div>
+
+    <InfiniteLoading @infinite="loadMore" />
   </div>
 </template>

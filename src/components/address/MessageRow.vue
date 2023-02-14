@@ -23,6 +23,11 @@ const props = defineProps({
     type: String as PropType<SourceFrom>,
     required: true,
   },
+  exitCode: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
 })
 
 const sourceAddress = computed(() => {
@@ -62,7 +67,24 @@ function fromBase64(base64: string): string {
   return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
 }
 
-const isVisible = ref(false)
+const message = computed(() => {
+  const body = props.message.body.asSlice()
+  if (body.remainingBits < 32) {
+    return undefined
+  }
+
+  const opcode = body.loadUint(32)
+  if (opcode !== 0) {
+    return 'OP: 0x' + opcode.toString(16)
+  }
+
+  if (body.remainingBits % 8 !== 0) {
+    return undefined
+  }
+  console.log('body.remainingBits', body.remainingBits)
+
+  return body.loadBuffer(body.remainingBits / 8).toString('utf-8')
+})
 </script>
 
 <template>
@@ -113,6 +135,12 @@ const isVisible = ref(false)
 
           <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
         </div>
+      </td>
+      <td>
+        <div class="text-right h-6 overflow-hidden text-ellipsis truncate ml-4">{{ message }}</div>
+      </td>
+      <td>
+        <div class="text-right">{{ exitCode }}</div>
       </td>
     </tr>
   </tbody>

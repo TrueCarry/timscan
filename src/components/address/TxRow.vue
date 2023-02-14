@@ -35,11 +35,27 @@ const messages = computed(() => {
 // dateTime() {
 //     return new Date(this.timestamp);
 // },
+
+const exitCode = computed(() => {
+  if (props.tx.description.type !== 'generic') {
+    return undefined
+  }
+  // if (props.message.info.type !== 'internal') {
+  //   return undefined
+  // }
+
+  // props.message.
+
+  if (props.tx.description.computePhase.type === 'skipped') {
+    return undefined
+  }
+  return props.tx.description.computePhase.exitCode
+})
 </script>
 
 <template>
   <template v-if="tx.outMessagesCount < 10">
-    <template v-for="(message, i) in tx.outMessages" :key="i">
+    <template v-for="(message, i) in tx.outMessages.values()" :key="i">
       <MessageRow
         :tx="tx"
         :message="message"
@@ -56,6 +72,7 @@ const messages = computed(() => {
       :message="tx.inMessage"
       :source="'in'"
       :class="'border-b border-navy-600'"
+      :exit-code="exitCode"
     />
   </template>
 </template>
