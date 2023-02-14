@@ -110,15 +110,13 @@ const message = computed(() => {
         <div class="mx-4" style="padding: 0">
           <div
             v-if="isOut"
-            class="p-1 bg-gold-300 rounded-lg text-xs font-bold w-10 text-center text-background"
-            :class="isExternal && 'tx-table__badge--service'"
+            class="p-1 bg-cocoa-500 rounded-lg text-xs font-bold w-10 text-center text-white"
           >
             OUT
           </div>
           <div
             v-else
             class="p-1 bg-green-500 rounded-lg text-xs font-bold w-10 text-center text-white"
-            :class="isExternal && 'tx-table__badge--service'"
           >
             IN
           </div>

@@ -19,6 +19,25 @@
         <td>Value</td>
         <td>{{ $ton(amounts?.value?.coins, false) }} TON</td>
       </tr>
+
+      <tr>
+        <td>Direction</td>
+        <td>
+          <div
+            v-if="props.direction === 'out'"
+            class="p-1 bg-cocoa-500 rounded-lg text-xs font-bold w-10 text-center text-white"
+          >
+            OUT
+          </div>
+          <div
+            v-else
+            class="p-1 bg-green-500 rounded-lg text-xs font-bold w-10 text-center text-white"
+          >
+            IN
+          </div>
+        </td>
+      </tr>
+
       <tr v-if="amounts?.fwdFee">
         <td>Forward fee</td>
         <td>{{ $ton(amounts?.fwdFee) }} TON</td>
@@ -83,7 +102,6 @@ import lc from '@/liteClient'
 import { tr } from 'timeago.js/esm/lang'
 import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 import { bufferToBase64Url } from '@/utils/toBase64Url'
-import { Tabs, Tab } from 'vue3-tabs-component'
 import TabsContainer from '../ui/TabsContainer.vue'
 import TabItem from '../ui/TabItem.vue'
 const props = defineProps({
