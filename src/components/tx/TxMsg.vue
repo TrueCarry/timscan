@@ -1,8 +1,8 @@
 <template>
   <section class="card">
-    <table style="width: 100%">
+    <table style="width: 100%" class="table-fixed">
       <tr>
-        <td>Source</td>
+        <td width="120">Source</td>
         <td>
           <ui-address v-if="source" :address="source" />
           <span v-else>empty</span>
@@ -60,6 +60,16 @@
         <td>Body hash</td>
         <td>{{ bodyHash?.toString('hex') }}</td>
       </tr>
+      <tr>
+        <td>Body Data</td>
+        <td class="bg-navy-800 p-2 rounded overflow-hidden">
+          <TabsContainer :options="{ useUrlFragment: false }">
+            <TabItem name="String"> {{ body.toString() }} </TabItem>
+            <TabItem name="Hex"> {{ body.toBoc().toString('hex') }} </TabItem>
+            <TabItem name="Base64"> {{ body.toBoc().toString('base64') }} </TabItem>
+          </TabsContainer>
+        </td>
+      </tr>
     </table>
   </section>
 </template>
@@ -73,7 +83,9 @@ import lc from '@/liteClient'
 import { tr } from 'timeago.js/esm/lang'
 import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
 import { bufferToBase64Url } from '@/utils/toBase64Url'
-
+import { Tabs, Tab } from 'vue3-tabs-component'
+import TabsContainer from '../ui/TabsContainer.vue'
+import TabItem from '../ui/TabItem.vue'
 const props = defineProps({
   tx: {
     type: Object as PropType<Transaction>,
@@ -122,6 +134,9 @@ const createdAt = computed(() => {
 })
 const bodyHash = computed(() => {
   return props.message.body && toRaw(props.message.body).hash()
+})
+const body = computed(() => {
+  return props.message.body && toRaw(props.message.body)
 })
 
 const outTxLt = ref('')
@@ -260,3 +275,26 @@ if (props.direction === 'out') {
   updateInTxLt(props.message)
 }
 </script>
+
+<style scoped lang="scss">
+.tabs-component {
+  /* @apply bg-navy-800; */
+
+  :deep(.tabs-component-tabs) {
+    @apply flex mb-2;
+  }
+
+  :deep(.tabs-component-tab) {
+    @apply px-2 rounded overflow-hidden break-all;
+    display: inline-block;
+
+    &.is-active {
+      @apply bg-navy-500;
+    }
+  }
+
+  :deep(.tabs-component-panel) {
+    @apply px-2 break-all whitespace-pre-wrap;
+  }
+}
+</style>
