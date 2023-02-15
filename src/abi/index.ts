@@ -12,6 +12,7 @@ import { getgemsAuctionV2Abi } from './getgemsAuctionV2'
 import { telemintNftAbi } from './nftTelemint'
 import { getgemsSaleV2 } from './getgemsSaleV2'
 import { getgemsOffer } from './getgemsOffer'
+import { TupleItem } from 'ton-core'
 
 export interface ContractAbi {
   name?: string
@@ -25,13 +26,13 @@ export interface MethodAbi {
 
 export interface InputArg {
   name: string
-  // type: TVMStackEntry['type']
+  type: TupleItem['type']
   content?: CellContent[]
 }
 
 export interface OutputArg {
   name: string
-  // type: TVMStackEntry['type'] | string
+  type: TupleItem['type'] | string
   content?: CellContent[]
 }
 
@@ -43,8 +44,7 @@ export interface CellContent {
 }
 
 export interface OutputResult extends OutputArg {
-  value: any
-  // value: NormalizedStackEntry
+  value: TupleItem
 }
 
 export const abiMap: Record<string, ContractAbi> = {
