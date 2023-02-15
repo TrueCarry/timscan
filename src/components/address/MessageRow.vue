@@ -78,7 +78,7 @@ const message = computed(() => {
     return 'OP: 0x' + opcode.toString(16)
   }
 
-  if (body.remainingBits % 8 !== 0) {
+  if (body.remainingBits < 8 || body.remainingBits % 8 !== 0) {
     return undefined
   }
   console.log('body.remainingBits', body.remainingBits)
