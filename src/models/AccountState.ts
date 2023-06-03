@@ -1,5 +1,6 @@
 // import { RawAccountStorage, RawCurrencyCollection, RawStateInit, RawStorageInfo } from 'ton-core'
 import { bigIntToBuffer } from '@/utils/bigIntToBuffer'
+import { beginCell } from 'ton-core/dist/boc/Builder'
 import { AccountState } from '../api'
 
 export type CurrencyCollection = {
@@ -15,7 +16,7 @@ export type CurrencyCollection = {
 
 export type PlainAccountState =
   | { type: 'uninit' }
-  | { type: 'active'; code: string | null; data: string | null }
+  | { type: 'active'; code: string | null; data: string | null; libraries: string | null }
   | { type: 'frozen'; stateHash: string }
 
 export interface PlainAccountStorage {
@@ -84,6 +85,13 @@ export function AccountStateToPlain(
           : null,
         data: account.state.storage.state.state.data
           ? account.state.storage.state.state.data.toBoc({ idx: false }).toString('base64')
+          : null,
+        libraries: account.state.storage.state.state.libraries
+          ? beginCell()
+              .store(account.state.storage.state.state.libraries.store)
+              .endCell()
+              .toBoc({ idx: false })
+              .toString('base64')
           : null,
       }
     } else {

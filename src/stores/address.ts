@@ -18,6 +18,7 @@ interface State {
   abi: ContractAbi | undefined
   code: string
   data: string
+  libs: string
   history: SearchHistory[]
 }
 
@@ -28,6 +29,7 @@ export const useAddressStore = defineStore('address', {
     wallet: undefined,
     code: '',
     data: '',
+    libs: '',
     abi: undefined,
     history: [],
   }),

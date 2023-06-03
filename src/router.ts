@@ -70,12 +70,12 @@ const router = createRouter({
       component: PageNft,
       props: true,
     },
-    {
-      name: 'compiler',
-      path: `/compiler`,
-      component: PageFuncCompiler,
-      props: true,
-    },
+    // {
+    //   name: 'compiler',
+    //   path: `/compiler`,
+    //   component: PageFuncCompiler,
+    //   props: true,
+    // },
   ],
 })
 

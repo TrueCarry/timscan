@@ -13,6 +13,7 @@ import { telemintNftAbi } from './nftTelemint'
 import { getgemsSaleV2 } from './getgemsSaleV2'
 import { getgemsOffer } from './getgemsOffer'
 import { TupleItem } from 'ton-core'
+import { getgemsSwap } from './getgemsSwap'
 
 export interface ContractAbi {
   name?: string
@@ -67,6 +68,9 @@ export const abiMap: Record<string, ContractAbi> = {
 
   a7a2616a4d639a076c2f67e7cce0423fd2a1c2ee550ad651c1eda16ee13bcaca: telemintNftAbi,
   '8278f4c5233de6fbedc969af519344a7a9bffc544856dba986a95c0bcf8571c9': getgemsSaleV2,
+  '32050dfac44f64866bcc86f2cd9e1305fe9dcadb3959c002237cfb0902d44323': getgemsSaleV2,
 
   '7aa13161df5469acb9daab5ad3b9cb14a2c9754395e6355ccdb8dded6482092b': getgemsOffer, // offer
+
+  '4a9e4a547710a4a5edcb56369aaab36b0bfc1461914702923d9947f1f1de5c72': getgemsSwap,
 }

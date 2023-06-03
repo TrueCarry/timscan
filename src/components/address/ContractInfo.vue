@@ -15,6 +15,15 @@
     </div>
 
     <div class="flex py-2">
+      <div class="flex shrink-0 w-32">Code</div>
+      <textarea
+        class="outline-none break-words p-2 rounded break-all w-full bg-navy-800"
+        rows="3"
+        :value="addressStore.code"
+      />
+    </div>
+
+    <div class="flex py-2">
       <div class="flex w-32">Code Hash</div>
       <div class="card-row__value">{{ codeHash }}</div>
     </div>
