@@ -80,7 +80,5 @@ const props = defineProps({
         <span v-else v-text="$t('tx.msgs_count', [1, tx?.outMessagesCount])" />
       </div>
     </div>
-
-    <div>{{ tx.description }}</div>
   </div>
 </template>
