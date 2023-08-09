@@ -50,10 +50,10 @@ const testnetConfig = {
     },
     {
       ip: -1177439932,
-      port: 50420,
+      port: 4695,
       id: {
         '@type': 'pub.ed25519',
-        key: 'wsjICz2iEXH04g4zp5oa2MW+5YMr7pIR9u1WMAXLslU=',
+        key: 'cZpMFqy6n0Lsu8x/z2Jq0wh/OdM1WAVJJKSb2CvDECQ=',
       },
     },
     {
@@ -77,7 +77,7 @@ const testnetConfig = {
       port: 49760,
       id: {
         '@type': 'pub.ed25519',
-        key: 'I++/fRgw5+002UqThnF3tN2FkQChlDyfFQolVsuNSOE=',
+        key: '1runGS/h6Pel2LRC46suIEKaOtAYWaDGA+cXeI4HXGo=',
       },
     },
     {
@@ -122,18 +122,18 @@ const testnetConfig = {
     },
     {
       ip: -1185526389,
-      port: 29896,
+      port: 64842,
       id: {
         '@type': 'pub.ed25519',
-        key: 'hr63y8Ch9vzKRcBJZ7chUroGrg3WLTi7FiSiDZC0TK0=',
+        key: 'cmpsvK5tBuW029x0WnLHV4NAzf5F0wxEagtbODtRvjI=',
       },
     },
     {
       ip: -1185526601,
-      port: 24401,
+      port: 11087,
       id: {
         '@type': 'pub.ed25519',
-        key: 'AkvJHlavPYkfBvbmVXGWbQN2GjxbMV7cHiNMfTgOb9E=',
+        key: 'NeOgnMj1Z3xvy9Tq2yAbnGf7HrSMeNNr+ba4WY3Gs+E=',
       },
     },
   ],
@@ -290,31 +290,7 @@ const testnetConfig = {
           '@type': 'dht.node',
           id: {
             '@type': 'pub.ed25519',
-            key: '+U2zJXltAQVbgOepQdkam7sJAAdDboxlwvkTG4Oih04=',
-          },
-          addr_list: {
-            '@type': 'adnl.addressList',
-            addrs: [
-              {
-                '@type': 'adnl.address.udp',
-                ip: 1959448750,
-                port: 60982,
-              },
-            ],
-            version: 0,
-            reinit_date: 0,
-            priority: 0,
-            expire_at: 0,
-          },
-          version: -1,
-          signature:
-            'sVdFJxk2SG/Wjh35x4yKnuZzzXyQgmuK/FLy0wge3qGHCs6Wg5HhhxU1WnpgXPLIGXfjVKN7Ud0L1APlgVmuDg==',
-        },
-        {
-          '@type': 'dht.node',
-          id: {
-            '@type': 'pub.ed25519',
-            key: '6uvjsW8hhE7iwUZokAlJRkOj7ELLUGKtS9mvQGfw8k4=',
+            key: 'VFerQdFbdGKfJ8srPW0FpHoB6DJUTnHaRYifYfPqXzE=',
           },
           addr_list: {
             '@type': 'adnl.addressList',
@@ -322,7 +298,7 @@ const testnetConfig = {
               {
                 '@type': 'adnl.address.udp',
                 ip: -1177439932,
-                port: 56626,
+                port: 3133,
               },
             ],
             version: 0,
@@ -332,7 +308,7 @@ const testnetConfig = {
           },
           version: -1,
           signature:
-            'ITA3/XCAcAGB3qofGCGMguP13IwQ/+HRKTd5U/XBIcHwNS4jG5l/isVg1V822ZHOVqcnfeK/7gHVgDHLRTUGCg==',
+            'QKgnmn4H1iQTR6QEOMyp8rV37NedgUHahYJvTKRwTYAOGiFXGu1reRrRaq7mzM+zgKXi8v9kqILtKObT48MEDg==',
         },
         {
           '@type': 'dht.node',
@@ -386,7 +362,7 @@ const testnetConfig = {
           '@type': 'dht.node',
           id: {
             '@type': 'pub.ed25519',
-            key: 'g3TiYRaF9TiBN3nVcC24RxQ5cWZof1SiMBPFA1U0S/s=',
+            key: 'NfC7SMh+7SlsAb9zWkkazMcZnAjRO1WaZ/PBUkVA1I8=',
           },
           addr_list: {
             '@type': 'adnl.addressList',
@@ -394,7 +370,7 @@ const testnetConfig = {
               {
                 '@type': 'adnl.address.udp',
                 ip: -1185526389,
-                port: 42157,
+                port: 22812,
               },
             ],
             version: 0,
@@ -404,13 +380,13 @@ const testnetConfig = {
           },
           version: -1,
           signature:
-            'JmhNp8zAcSHFuCY/s8YlOA913PGMgnFkw9+46PgdLl0TNly954utbSi6kmjzUtZrgtJpADpDWjPMsZMs229KCQ==',
+            'cN2nUs6VaeabNE+GnK+SgHKYtuj2Qmm8Pf+pBLLiC6JIAQQUrseSfoDNSzKmLRcBu8ChMeAa4bqfFN/k8oReDA==',
         },
         {
           '@type': 'dht.node',
           id: {
             '@type': 'pub.ed25519',
-            key: 'WM7kCw4KiDCialXo1Sr4ztpL++vaRQDMuEY5NfuBAvU=',
+            key: 'cynp0io4/1PsoDPuDCHPYH4l7KS3SxUCHxyq9DIjwEo=',
           },
           addr_list: {
             '@type': 'adnl.addressList',
@@ -418,7 +394,7 @@ const testnetConfig = {
               {
                 '@type': 'adnl.address.udp',
                 ip: -1185526601,
-                port: 31859,
+                port: 16026,
               },
             ],
             version: 0,
@@ -428,7 +404,7 @@ const testnetConfig = {
           },
           version: -1,
           signature:
-            '/b91Za9f8MkY1uhZr6imFTGgrUmgsiszeEY8BdU4eQjrcYPN3wvxUfjGwt/ily4m4M5K/MXQLZwkz40twwgEBw==',
+            'gZyIWMA/hLkv5hGZi8S/6gcsPMeNqxzKVeVEbO2s2+rw6s4V6ayu7OCgTyLQplej4jjVj3JovE24gIHCCltzCg==',
         },
         {
           '@type': 'dht.node',
@@ -535,6 +511,14 @@ const testnetConfig = {
       },
     },
     {
+      ip: 1162057690,
+      port: 35939,
+      id: {
+        '@type': 'pub.ed25519',
+        key: '97y55AkdzXWyyVuOAn+WX6p66XTNs2hEGG0jFUOkCIo=',
+      },
+    },
+    {
       ip: -1304477830,
       port: 20700,
       id: {
@@ -551,11 +535,19 @@ const testnetConfig = {
       },
     },
     {
-      ip: -1177439932,
-      port: 50420,
+      ip: -809760973,
+      port: 20700,
       id: {
         '@type': 'pub.ed25519',
-        key: 'wsjICz2iEXH04g4zp5oa2MW+5YMr7pIR9u1WMAXLslU=',
+        key: 'vunMV7K35yPlTQPx/Fqk6s+4/h5lpcbP+ao0Cy3M2hw=',
+      },
+    },
+    {
+      ip: -1177439932,
+      port: 4695,
+      id: {
+        '@type': 'pub.ed25519',
+        key: 'cZpMFqy6n0Lsu8x/z2Jq0wh/OdM1WAVJJKSb2CvDECQ=',
       },
     },
     {
@@ -572,14 +564,6 @@ const testnetConfig = {
       id: {
         '@type': 'pub.ed25519',
         key: 'WqVn3UcFKCLaGCVp1FOZ09duh13tRqUR+rTaA9Q9sW0=',
-      },
-    },
-    {
-      ip: 1097633201,
-      port: 17439,
-      id: {
-        '@type': 'pub.ed25519',
-        key: '0MIADpLH4VQn+INHfm0FxGiuZZAA8JfTujRqQugkkA8=',
       },
     },
   ],
@@ -1112,9 +1096,9 @@ const mainnetConfig = {
       file_hash: 'XplPz01CXAps5qeSWUtxcyBfdAo5zVb1N979KLSKD24=',
     },
     init_block: {
-      root_hash: 'X9KHJorLeUrMmiE+J6jw9e01E+3EHRiyRVxDv9cydPg=',
-      seqno: 24001954,
-      file_hash: 'uUppFBsq1He9SGLugrrynECQ/1XY4inPYBH9DUPd7TY=',
+      root_hash: 'YRkrcmZMvLBvjanwKCyL3w4oceGPtFfgx8ym1QKCK/4=',
+      seqno: 27747086,
+      file_hash: 'N42xzPnJjDlE3hxPXOb+pNzXomgRtpX5AZzMPnIA41s=',
       workchain: -1,
       shard: -9223372036854776000,
     },
@@ -1161,14 +1145,6 @@ const mainnetConfig = {
         key: 'ucho5bEkufbKN1JR1BGHpkObq602whJn3Q3UwhtgSo4=',
       },
     },
-    {
-      ip: 908566172,
-      port: 51565,
-      id: {
-        '@type': 'pub.ed25519',
-        key: 'TDg+ILLlRugRB4Kpg3wXjPcoc+d+Eeb7kuVe16CS9z8=',
-      },
-    },
   ],
 }
-export default { testnetConfig, mainnetConfig }
+export { testnetConfig, mainnetConfig }
