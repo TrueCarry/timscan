@@ -1147,4 +1147,4 @@ const mainnetConfig = {
     },
   ],
 }
-export { testnetConfig, mainnetConfig }
+export default { testnetConfig, mainnetConfig }
