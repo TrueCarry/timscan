@@ -49,7 +49,7 @@
     "rollup-plugin-visualizer": "^5.9.0",
     "symbol.inspect": "^1.0.3",
     "timeago.js": "^4.0.2",
-    "ton-core": "^0.49.1",
+    "ton-core": "^0.53.0",
     "ton-crypto": "^3.2.0",
     "ton-lite-client": "^2.1.0",
     "ton-tl": "^1.0.1",

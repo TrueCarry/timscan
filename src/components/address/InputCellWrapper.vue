@@ -17,29 +17,29 @@ const inputs = reactive({})
 watch(inputs, (oldVal, newVal) => {
   console.log('inputs update', oldVal, newVal)
   const cell = new Cell()
-  if (props.input.content) {
-    try {
-      for (let i = 0; i < props.input.content.length; i++) {
-        const inputContent = props.input.content[i]
-        if (inputContent.type === 'int') {
-          cell.bits.writeInt(new BN(inputs[i]), inputContent.length || 0)
-          console.log('writeInt', inputs[i], inputContent.length)
-        } else if (inputContent.type === 'slice') {
-          cell.bits.writeBuffer(Buffer.from([...new TextEncoder().encode(inputs[i])]))
-        } else if (inputContent.type === 'cell') {
-          const boc = inputs[i]
-          console.log('type cell', boc)
+  // if (props.input.content) {
+  //   try {
+  //     for (let i = 0; i < props.input.content.length; i++) {
+  //       const inputContent = props.input.content[i]
+  //       if (inputContent.type === 'int') {
+  //         cell.bits.writeInt(new BN(inputs[i]), inputContent.length || 0)
+  //         console.log('writeInt', inputs[i], inputContent.length)
+  //       } else if (inputContent.type === 'slice') {
+  //         cell.bits.writeBuffer(Buffer.from([...new TextEncoder().encode(inputs[i])]))
+  //       } else if (inputContent.type === 'cell') {
+  //         const boc = inputs[i]
+  //         console.log('type cell', boc)
 
-          const ref = Cell.fromBoc(Buffer.from(boc, 'base64'))[0]
-          cell.refs.push(ref)
-        }
-      }
-    } catch (e) {
-      console.log('parse error', e)
-    }
-  }
+  //         const ref = Cell.fromBoc(Buffer.from(boc, 'base64'))[0]
+  //         cell.refs.push(ref)
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.log('parse error', e)
+  //   }
+  // }
 
-  console.log('bits', cell.beginParse().readRemainingBytes())
+  console.log('bits', cell.beginParse().loadBuffer(cell.bits.length / 8))
 
   const boc = cell.toBoc({ idx: false }).toString('base64')
   console.log('boc', boc)

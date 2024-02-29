@@ -3,6 +3,7 @@ import { Transaction } from '@/models/Transaction'
 
 import BN from 'bn.js'
 import { computed, PropType, ref } from 'vue'
+import IconToncoin from '@/assets/images/icon-toncoin.svg?component'
 
 type SourceFrom = 'in' | 'out'
 
@@ -20,16 +21,11 @@ const sourceAddress = computed(() => {
 
 const isOut = computed(() => {
   return true
-  // return props.source === 'out'
-  //  props.address && sourceAddress.value && props.address.equals(sourceAddress.value)
 })
 
-const from = computed(() => {
-  return props.tx.outMessages[0].info.src // props.message.info.src
-})
-const to = computed(() => {
-  return props.tx.outMessages[0].info.src // props.message.info.dest
-})
+// const to = computed(() => {
+//   return props.tx.outMessages[0].info.src // props.message.info.dest
+// })
 
 // const isExternal = computed(() => {
 //   return props.message.info.type === 'external-in' || props.message.info.type === 'external-out'
@@ -39,10 +35,11 @@ const amount = computed(() => {
   // if (props.message.info.type === 'internal') {
   //   return props.message.info.value.coins
   // }
-  let total = new BN(0)
-  for (const out of props.tx.outMessages) {
+  let total = 0n
+  for (const [, out] of props.tx.outMessages) {
+    console.log('check out')
     if (out.info.type === 'internal') {
-      total = total.add(out.info.value.coins)
+      total += out.info.value.coins
     }
   }
   console.log('total', total.toString())
@@ -68,44 +65,41 @@ const isVisible = ref(true)
         </a>
       </td>
       <td>
-        <div class="tx-table__cell">
-          <ui-timeago :timestamp="tx.time * 1000 || 0" />
-          <!-- {{ message?.info.type }} -->
+        <div class="tx-table__cell mx-4 w-32">
+          <ui-timeago :timestamp="tx.now * 1000 || 0" />
         </div>
       </td>
       <td>
         <div class="tx-table__cell tx-table__cell--align-right">
-          <span v-if="!from">hidden</span>
+          <span v-if="!sourceAddress">hidden</span>
           <ui-address
             v-else
-            :address="from.toFriendly({ urlSafe: true, bounceable: true })"
+            :address="sourceAddress.toString({ urlSafe: true, bounceable: true })"
             :disabled="isOut"
           />
         </div>
       </td>
       <td>
-        <div class="tx-table__cell" style="padding: 0">
-          <span class="tx-table__badge tx-table__badge--out">OUT</span>
-          <!-- <span v-else class="tx-table__badge tx-table__badge--in">IN</span> -->
+        <div class="mx-4" style="padding: 0">
+          <div class="p-1 bg-cocoa-500 rounded-lg text-xs font-bold w-10 text-center text-white">
+            OUT
+          </div>
         </div>
       </td>
       <td>
-        <div v-if="to" class="tx-table__cell">
-          <span>{{ tx.outMessagesCount }} addrsses</span>
+        <div class="px-4">
+          <span>{{ tx.outMessagesCount }} outputs</span>
         </div>
       </td>
       <td>
-        <div
-          class="tx-table__cell tx-table__cell--align-right"
-          style="position: relative; padding-right: 26px"
-        >
-          {{ $ton(amount.toNumber()) }} TON
+        <div v-if="amount" class="whitespace-nowrap ml-4 flex items-center justify-end">
+          {{ $ton(amount) }} <IconToncoin class="w-4 ml-1" />
 
           <!-- <svg v-if="message" style="position: absolute; right: 1px;" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h14v14H0z"/><path d="M3.375 1.35h7.3a2 2 0 0 1 2 2v5.3a2 2 0 0 1-2 2H7.6l-2.77 2.424a.5.5 0 0 1-.83-.376V10.65h-.625a2 2 0 0 1-2-2v-5.3a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g></svg> -->
         </div>
       </td>
       <td>
-        <div class="tx-table__cell">
+        <!-- <div class="tx-table__cell">
           <svg
             class="tx-table-expand-caret"
             xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +114,7 @@ const isVisible = ref(true)
               d="m1.5 4.75 5.5 5.5 5.5-5.5"
             />
           </svg>
-        </div>
+        </div> -->
       </td>
     </tr>
   </tbody>

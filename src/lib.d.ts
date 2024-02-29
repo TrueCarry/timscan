@@ -13,7 +13,7 @@ declare module '*.vue' {
 
 declare module 'qrcode.vue'
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties {
     $store: Store
     $lc: LiteClient
