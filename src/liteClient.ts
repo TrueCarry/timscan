@@ -90,15 +90,35 @@ async function initLiteClient() {
   }
   initCalled = true
 
-  const data = IS_TESTNET ? networkConfig.testnetConfig : networkConfig.mainnetConfig
+  let data = IS_TESTNET ? networkConfig.testnetConfig : networkConfig.mainnetConfig
 
   const engines: LiteSingleEngine[] = []
+
+  let wsProxyHost = 'wss://ws.tonlens.com'
+  if (typeof window.localStorage !== 'undefined') {
+    const localProxy = window.localStorage.getItem('wsProxyHost')
+    if (localProxy) {
+      wsProxyHost = localProxy
+    }
+
+    const lsData = window.localStorage.getItem('liteServers')
+    if (lsData) {
+      try {
+        const config = JSON.parse(lsData)
+        if (config) {
+          data = config
+        }
+      } catch {
+        //
+      }
+    }
+  }
 
   while (true) {
     const ls = data.liteservers[Math.floor(Math.random() * data.liteservers.length)]
     const pubkey = encodeURIComponent(ls.id.key)
     const singleEngine = new LiteSingleEngine({
-      host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
+      host: `${wsProxyHost}/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
       publicKey: Buffer.from(ls.id.key, 'base64'),
       client: 'ws',
     })
@@ -111,7 +131,7 @@ async function initLiteClient() {
 
     engines.push(
       new LiteSingleEngine({
-        host: `wss://ws.tonlens.com/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
+        host: `${wsProxyHost}/?ip=${ls.ip}&port=${ls.port}&pubkey=${pubkey}`,
         publicKey: Buffer.from(ls.id.key, 'base64'),
         client: 'ws',
       })
